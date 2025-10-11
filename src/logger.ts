@@ -18,7 +18,7 @@ class Logger {
   }
 
   updateLogLevel() {
-    const config = workspace.getConfiguration('pnpmCatalogLens')
+    const config = workspace.getConfiguration('catalogLens')
     const levelStr = config.get<string>('logLevel', 'INFO').toUpperCase()
     this.logLevel = LogLevel[levelStr as keyof typeof LogLevel] ?? LogLevel.INFO
   }

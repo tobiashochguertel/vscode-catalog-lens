@@ -2,7 +2,7 @@
   "publisher": "TobiasHochguertel",
   "name": "catalog-lens",
   "displayName": "Catalog Lens (PNPM|YARN|BUN)",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": true,
   "packageManager": "pnpm@10.17.1",
   "description": "Show inlay version for PNPM/Yarn/Bun catalogs",
@@ -41,43 +41,43 @@
       {
         "category": "Catalog Lens",
         "title": "Toggle",
-        "command": "pnpmCatalogLens.toggle"
+        "command": "catalogLens.toggle"
       },
       {
         "category": "Catalog Lens",
         "title": "Go to Definition",
-        "command": "pnpmCatalogLens.gotoDefinition"
+        "command": "catalogLens.gotoDefinition"
       }
     ],
     "configuration": {
       "type": "object",
       "properties": {
-        "pnpmCatalogLens.enabled": {
+        "catalogLens.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable inlay hints"
         },
-        "pnpmCatalogLens.hover": {
+        "catalogLens.hover": {
           "type": "boolean",
           "default": true,
           "description": "Show dependency info on hover"
         },
-        "pnpmCatalogLens.namedCatalogsColors": {
+        "catalogLens.namedCatalogsColors": {
           "type": "boolean",
           "default": true,
           "description": "Give each named catalog a unique color"
         },
-        "pnpmCatalogLens.namedCatalogsColorsSalt": {
+        "catalogLens.namedCatalogsColorsSalt": {
           "type": "string",
           "default": "pnpm-catalog-lens",
           "description": "A random string to adding as the salt for the named catalogs colors"
         },
-        "pnpmCatalogLens.namedCatalogsLabel": {
+        "catalogLens.namedCatalogsLabel": {
           "type": "boolean",
           "default": true,
           "description": "Show a small label for named catalog in the inlay hint"
         },
-        "pnpmCatalogLens.logLevel": {
+        "catalogLens.logLevel": {
           "type": "string",
           "enum": ["DEBUG", "INFO", "WARNING", "ERROR"],
           "default": "INFO",
@@ -90,7 +90,7 @@
     "build": "tsdown src/index.ts --external vscode --format cjs",
     "dev": "nr build --watch",
     "prepare": "nr update",
-    "update": "vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens",
+    "update": "vscode-ext-gen --output src/generated/meta.ts --scope catalogLens",
     "lint": "eslint .",
     "vscode:prepublish": "nr build",
     "ext:publish": "vsce publish --no-dependencies",

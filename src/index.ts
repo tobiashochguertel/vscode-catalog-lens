@@ -18,11 +18,11 @@ const { activate, deactivate } = defineExtension(() => {
 
   // Watch for configuration changes
   useDisposable(workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration('pnpmCatalogLens.logLevel')) {
+    if (e.affectsConfiguration('catalogLens.logLevel')) {
       logger.updateLogLevel()
       logger.info('Log level updated')
     }
-    if (e.affectsConfiguration('pnpmCatalogLens.enabled')) {
+    if (e.affectsConfiguration('catalogLens.enabled')) {
       logger.info(`Extension ${config.enabled ? 'enabled' : 'disabled'}`)
     }
   }))

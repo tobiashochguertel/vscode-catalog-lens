@@ -5,3 +5,4 @@ export const config = defineConfigObject<Meta.ScopedConfigKeyTypeMap>(
   Meta.scopedConfigs.scope,
   Meta.scopedConfigs.defaults,
 )
+

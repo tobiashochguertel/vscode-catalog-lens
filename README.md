@@ -28,6 +28,57 @@ Show versions inline for <a href="https://pnpm.io/catalogs" target="_blank">PNPM
 - ✅ Go-to-definition support to jump to catalog definition
 - ✅ Works with both default (`catalog:`) and named catalogs (`catalog:name`)
 
+
+## 🔄 Migration Guide (v0.6.0 → v0.7.0)
+
+**Breaking Change:** Settings namespace renamed from `pnpmCatalogLens` to `catalogLens`.
+
+### Why?
+
+This change:
+- Avoids conflicts with the original forked extension (`antfu/vscode-pnpm-catalog-lens`)
+- Better reflects multi-package-manager support (PNPM, Yarn, Bun)
+- Simplifies the extension identity
+
+### Required Actions
+
+**Update your VS Code settings:**
+
+```json
+// OLD (v0.6.0 and earlier)
+{
+  "pnpmCatalogLens.enabled": true,
+  "pnpmCatalogLens.hover": true,
+  "pnpmCatalogLens.namedCatalogsColors": true,
+  "pnpmCatalogLens.namedCatalogsColorsSalt": "pnpm-catalog-lens",
+  "pnpmCatalogLens.namedCatalogsLabel": true,
+  "pnpmCatalogLens.logLevel": "INFO"
+}
+
+// NEW (v0.7.0+)
+{
+  "catalogLens.enabled": true,
+  "catalogLens.hover": true,
+  "catalogLens.namedCatalogsColors": true,
+  "catalogLens.namedCatalogsColorsSalt": "catalog-lens",
+  "catalogLens.namedCatalogsLabel": true,
+  "catalogLens.logLevel": "INFO"
+}
+```
+
+**Update keybindings (if any):**
+
+```json
+// OLD
+{ "key": "cmd+k cmd+c", "command": "pnpmCatalogLens.toggle" }
+
+// NEW
+{ "key": "cmd+k cmd+c", "command": "catalogLens.toggle" }
+```
+
+**Note:** Old settings will be ignored after upgrading to v0.7.0. The extension will use default values until you migrate your settings.
+
+
 ## Multi-Root Workspace Support
 
 This extension fully supports VS Code's [multi-root workspaces](https://code.visualstudio.com/docs/editor/multi-root-workspaces). When you have multiple workspace folders open, the extension will:
@@ -96,13 +147,14 @@ Then reference them in workspace packages:
 
 <!-- configs -->
 
-| Key                                       | Description                                                         | Type      | Default               |
-| ----------------------------------------- | ------------------------------------------------------------------- | --------- | --------------------- |
-| `pnpmCatalogLens.enabled`                 | Enable inlay hints                                                  | `boolean` | `true`                |
-| `pnpmCatalogLens.hover`                   | Show dependency info on hover                                       | `boolean` | `true`                |
-| `pnpmCatalogLens.namedCatalogsColors`     | Give each named catalog a unique color                              | `boolean` | `true`                |
-| `pnpmCatalogLens.namedCatalogsColorsSalt` | A random string to adding as the salt for the named catalogs colors | `string`  | `"pnpm-catalog-lens"` |
-| `pnpmCatalogLens.namedCatalogsLabel`      | Show a small label for named catalog in the inlay hint              | `boolean` | `true`                |
+| Key                                   | Description                                                         | Type      | Default               |
+| ------------------------------------- | ------------------------------------------------------------------- | --------- | --------------------- |
+| `catalogLens.enabled`                 | Enable inlay hints                                                  | `boolean` | `true`                |
+| `catalogLens.hover`                   | Show dependency info on hover                                       | `boolean` | `true`                |
+| `catalogLens.namedCatalogsColors`     | Give each named catalog a unique color                              | `boolean` | `true`                |
+| `catalogLens.namedCatalogsColorsSalt` | A random string to adding as the salt for the named catalogs colors | `string`  | `"catalog-lens"` |
+| `catalogLens.namedCatalogsLabel`      | Show a small label for named catalog in the inlay hint              | `boolean` | `true`                |
+| `catalogLens.logLevel`                | Log level for the extension output channel                          | `string`  | `"INFO"`              |
 
 <!-- configs -->
 
