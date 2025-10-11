@@ -37,11 +37,15 @@ export class WorkspaceManager {
   private positionDataMap = new Map<string, WorkspacePositionData>()
 
   async resolveCatalog(doc: TextDocument, name: string, catalog: string) {
+    logger.debug(`Resolving catalog for ${name} in catalog '${catalog}' from ${doc.uri.fsPath}`)
+    
     const workspaceInfo = await this.findWorkspace(doc.uri.fsPath)
     if (!workspaceInfo) {
+      logger.debug(`No workspace found for ${doc.uri.fsPath}`)
       return null
     }
 
+    logger.debug(`Using workspace: ${workspaceInfo.path} (${workspaceInfo.manager})`)
     const workspaceDoc = await workspace.openTextDocument(Uri.file(workspaceInfo.path))
 
     const data = await this.readWorkspace(workspaceDoc)
@@ -56,10 +60,18 @@ export class WorkspaceManager {
       : positionData.catalogs?.[catalog]
 
     if (!map) {
+      logger.debug(`No catalog '${catalog}' found in workspace`)
       return null
     }
 
     const version = map[name]
+    
+    if (!version) {
+      logger.debug(`Package '${name}' not found in catalog '${catalog}'`)
+      return null
+    }
+
+    logger.debug(`Resolved ${name} to version ${version} from catalog '${catalog}'`)
 
     const versionRange = positionMap?.[name]
     let definition: Location | undefined
@@ -74,11 +86,16 @@ export class WorkspaceManager {
   }
 
   private async findWorkspace(path: string): Promise<WorkspaceInfo | null> {
+    logger.debug(`Finding workspace for path: ${path}`)
+    
     if (this.findUpCache.has(path)) {
-      return this.findUpCache.get(path)!
+      const cached = this.findUpCache.get(path)!
+      logger.debug(`Using cached workspace info: ${cached.path} (${cached.manager})`)
+      return cached
     }
 
     // First, try to find PNPM or Yarn workspace files
+    logger.debug(`Searching for PNPM/Yarn workspace files from: ${path}`)
     const workspaceFile = await findUp([WORKSPACE_FILES.YARN, WORKSPACE_FILES.PNPM], {
       type: 'file',
       cwd: path,
@@ -89,17 +106,20 @@ export class WorkspaceManager {
         path: workspaceFile,
         manager: workspaceFile.includes(WORKSPACE_FILES.YARN) ? 'Yarn' : 'PNPM',
       }
+      logger.info(`Found ${workspaceInfo.manager} workspace: ${workspaceFile}`)
       this.findUpCache.set(path, workspaceInfo)
       return workspaceInfo
     }
 
     // If no PNPM/Yarn workspace file found, check for Bun (package.json with workspaces.catalog or catalog)
+    logger.debug(`Searching for Bun workspace (package.json with catalogs) from: ${path}`)
     const packageJsonFile = await findUp(['package.json'], {
       type: 'file',
       cwd: path,
     })
 
     if (packageJsonFile) {
+      logger.debug(`Found package.json: ${packageJsonFile}`)
       try {
         const doc = await workspace.openTextDocument(Uri.file(packageJsonFile))
         const content = JSON.parse(doc.getText())
@@ -107,16 +127,28 @@ export class WorkspaceManager {
         // Check if this package.json has catalog definitions (Bun style)
         if (content.catalog || content.catalogs || content.workspaces?.catalog || content.workspaces?.catalogs) {
           const workspaceInfo: WorkspaceInfo = { path: packageJsonFile, manager: 'Bun' }
+          logger.info(`Found Bun workspace: ${packageJsonFile}`)
           this.findUpCache.set(path, workspaceInfo)
           return workspaceInfo
         }
+        else {
+          logger.debug(`package.json at ${packageJsonFile} does not contain catalog definitions, continuing search...`)
+          
+          // Continue searching from parent directory
+          const parentDir = require('path').dirname(require('path').dirname(packageJsonFile))
+          if (parentDir !== packageJsonFile && parentDir !== path) {
+            logger.debug(`Searching parent directory: ${parentDir}`)
+            return this.findWorkspace(parentDir)
+          }
+        }
       }
-      catch {
+      catch (error) {
+        logger.error(`Error parsing package.json at ${packageJsonFile}`, error)
         // If JSON parsing fails, ignore this package.json
       }
     }
 
-    logger.error(`No workspace file (${WORKSPACE_FILES.YARN}, ${WORKSPACE_FILES.PNPM}, or Bun package.json) found in`, path)
+    logger.warning(`No workspace file (${WORKSPACE_FILES.YARN}, ${WORKSPACE_FILES.PNPM}, or Bun package.json) found for: ${path}`)
     return null
   }
 

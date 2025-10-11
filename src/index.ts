@@ -3,8 +3,6 @@ import type { DecorationOptions, Selection } from 'vscode'
 import type { JumpLocationParams } from './data'
 
 import { parseSync } from '@babel/core'
-// @ts-expect-error missing types
-import preset from '@babel/preset-typescript'
 import traverse from '@babel/traverse'
 import { computed, defineExtension, executeCommand, shallowRef, toValue as track, useActiveTextEditor, useCommand, useDisposable, useDocumentText, useEditorDecorations, watchEffect } from 'reactive-vscode'
 import { ConfigurationTarget, languages, MarkdownString, Position, Range, Uri, window, workspace } from 'vscode'
@@ -12,9 +10,23 @@ import { config } from './config'
 import { catalogPrefix } from './constants'
 import { WorkspaceManager } from './data'
 import { commands } from './generated/meta'
-import { getCatalogColor, getNodeRange, logger } from './utils'
+import { logger } from './logger'
+import { getCatalogColor, getNodeRange } from './utils'
 
 const { activate, deactivate } = defineExtension(() => {
+  logger.info('Catalog Lens extension activating...')
+
+  // Watch for configuration changes
+  useDisposable(workspace.onDidChangeConfiguration((e) => {
+    if (e.affectsConfiguration('pnpmCatalogLens.logLevel')) {
+      logger.updateLogLevel()
+      logger.info('Log level updated')
+    }
+    if (e.affectsConfiguration('pnpmCatalogLens.enabled')) {
+      logger.info(`Extension ${config.enabled ? 'enabled' : 'disabled'}`)
+    }
+  }))
+
   const manager = new WorkspaceManager()
 
   const editor = useActiveTextEditor()
@@ -59,14 +71,15 @@ const { activate, deactivate } = defineExtension(() => {
           combined,
           {
             filename: doc.value?.uri.fsPath,
-            presets: [preset],
+            presets: [['@babel/preset-typescript', { allowDeclareFields: true }]],
             babelrc: false,
+            configFile: false,
           },
         ),
       }
     }
     catch (error) {
-      logger.error(error)
+      logger.error('Error parsing package.json', error)
     }
   })
 
