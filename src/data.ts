@@ -85,9 +85,9 @@ export class WorkspaceManager {
     })
 
     if (workspaceFile) {
-      const workspaceInfo: WorkspaceInfo = { 
-        path: workspaceFile, 
-        manager: workspaceFile.includes(WORKSPACE_FILES.YARN) ? 'Yarn' : 'PNPM' 
+      const workspaceInfo: WorkspaceInfo = {
+        path: workspaceFile,
+        manager: workspaceFile.includes(WORKSPACE_FILES.YARN) ? 'Yarn' : 'PNPM',
       }
       this.findUpCache.set(path, workspaceInfo)
       return workspaceInfo
@@ -103,7 +103,7 @@ export class WorkspaceManager {
       try {
         const doc = await workspace.openTextDocument(Uri.file(packageJsonFile))
         const content = JSON.parse(doc.getText())
-        
+
         // Check if this package.json has catalog definitions (Bun style)
         if (content.catalog || content.catalogs || content.workspaces?.catalog || content.workspaces?.catalogs) {
           const workspaceInfo: WorkspaceInfo = { path: packageJsonFile, manager: 'Bun' }
@@ -111,7 +111,7 @@ export class WorkspaceManager {
           return workspaceInfo
         }
       }
-      catch (error) {
+      catch {
         // If JSON parsing fails, ignore this package.json
       }
     }
@@ -127,9 +127,9 @@ export class WorkspaceManager {
     if (this.dataMap.has(doc.uri.fsPath)) {
       return this.dataMap.get(doc.uri.fsPath)!
     }
-    
+
     let data: WorkspaceData
-    
+
     // Check if this is a JSON file (Bun's package.json) or YAML file (PNPM/Yarn)
     if (doc.uri.fsPath.endsWith('.json')) {
       // Parse as JSON for Bun
@@ -143,7 +143,7 @@ export class WorkspaceManager {
       // Parse as YAML for PNPM/Yarn
       data = YAML.load(doc.getText()) as WorkspaceData
     }
-    
+
     this.dataMap.set(doc.uri.fsPath, data)
     const disposable = workspace.onDidChangeTextDocument((e) => {
       if (e.document.uri.fsPath === doc.uri.fsPath) {
@@ -213,9 +213,9 @@ export class WorkspaceManager {
                       return
 
                     const depName = catalogProp.key.value
-                    const version = catalogProp.value.value
+                    const _version = catalogProp.value.value
                     const valueLoc = catalogProp.value.loc!
-                    
+
                     // Adjust for offset
                     const startLine = valueLoc.start.line
                     const endLine = valueLoc.end.line
@@ -251,7 +251,7 @@ export class WorkspaceManager {
 
                       const depName = catalogProp.key.value
                       const valueLoc = catalogProp.value.loc!
-                      
+
                       // Adjust for offset
                       const startLine = valueLoc.start.line
                       const endLine = valueLoc.end.line
@@ -273,8 +273,8 @@ export class WorkspaceManager {
                     if (workspaceProp.key.type !== 'Identifier' && workspaceProp.key.type !== 'StringLiteral')
                       return
 
-                    const workspaceKeyName = workspaceProp.key.type === 'Identifier' 
-                      ? workspaceProp.key.name 
+                    const workspaceKeyName = workspaceProp.key.type === 'Identifier'
+                      ? workspaceProp.key.name
                       : workspaceProp.key.value
 
                     if (workspaceKeyName === 'catalog' && workspaceProp.value.type === 'ObjectExpression') {
@@ -289,7 +289,7 @@ export class WorkspaceManager {
 
                         const depName = catalogProp.key.value
                         const valueLoc = catalogProp.value.loc!
-                        
+
                         // Adjust for offset
                         const startLine = valueLoc.start.line
                         const endLine = valueLoc.end.line
@@ -325,7 +325,7 @@ export class WorkspaceManager {
 
                           const depName = catalogProp.key.value
                           const valueLoc = catalogProp.value.loc!
-                          
+
                           // Adjust for offset
                           const startLine = valueLoc.start.line
                           const endLine = valueLoc.end.line

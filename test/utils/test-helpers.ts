@@ -1,5 +1,5 @@
-import { Uri, workspace } from 'vscode'
 import * as path from 'node:path'
+import { Uri, workspace } from 'vscode'
 
 /**
  * Get the absolute path to a fixture file

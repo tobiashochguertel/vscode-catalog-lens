@@ -1,13 +1,20 @@
+import path from 'node:path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  test: {
-    // Mock vscode module for tests
+  resolve: {
     alias: {
-      vscode: new URL('./test/mocks/vscode.ts', import.meta.url).pathname,
+      vscode: path.resolve(__dirname, './test/mocks/vscode.ts'),
     },
+  },
+  test: {
     globals: true,
     environment: 'node',
+    server: {
+      deps: {
+        inline: ['reactive-vscode'],
+      },
+    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],

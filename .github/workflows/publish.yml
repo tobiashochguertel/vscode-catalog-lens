@@ -5,21 +5,21 @@ on:
   workflow_dispatch:
     inputs:
       publish_marketplace:
-        description: 'Publish to VS Code Marketplace'
+        description: Publish to VS Code Marketplace
         required: true
         type: boolean
         default: true
       publish_openvsx:
-        description: 'Publish to Open VSX'
+        description: Publish to Open VSX
         required: true
         type: boolean
         default: true
       create_release:
-        description: 'Create GitHub Release'
+        description: Create GitHub Release
         required: true
         type: boolean
         default: true
-  
+
   # Automatic trigger on version tags
   push:
     tags:
@@ -32,27 +32,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
-      
+          cache: pnpm
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Run tests
         run: pnpm test
-      
+
       - name: Type check
         run: pnpm typecheck
-      
+
       - name: Lint
         run: pnpm lint
 
@@ -66,27 +66,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
-      
+          cache: pnpm
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Build
         run: pnpm build
-      
+
       - name: Package
         run: pnpm package
-      
+
       - name: Get package info
         id: package_info
         run: |
@@ -94,7 +94,7 @@ jobs:
           VSIX_FILE="catalog-lens-${VERSION}.vsix"
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "vsix_file=${VSIX_FILE}" >> $GITHUB_OUTPUT
-      
+
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4
         with:
@@ -112,24 +112,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
-      
+          cache: pnpm
+
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Build
         run: pnpm build
-      
+
       - name: Publish to Marketplace
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
@@ -145,17 +145,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Download VSIX artifact
         uses: actions/download-artifact@v4
         with:
           name: vsix-package
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Publish to Open VSX
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
@@ -174,12 +174,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Download VSIX artifact
         uses: actions/download-artifact@v4
         with:
           name: vsix-package
-      
+
       - name: Generate changelog
         id: changelog
         run: |
@@ -190,14 +190,14 @@ jobs:
           else
             COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
           fi
-          
+
           # Create changelog
           echo "## Changes" > changelog.md
           echo "" >> changelog.md
           echo "$COMMITS" >> changelog.md
-          
+
           cat changelog.md
-      
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:

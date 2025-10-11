@@ -80,10 +80,11 @@ npm run lint
    - Create a publisher if you don't have one named "TobiasHochguertel"
 
 2. **Personal Access Token (PAT)**
+
    ```bash
    # Create PAT at: https://dev.azure.com/[YOUR-ORG]/_usersSettings/tokens
    # Scopes needed: Marketplace > Manage
-   
+
    # Login to vsce
    npx vsce login TobiasHochguertel
    # Enter your PAT when prompted
@@ -137,10 +138,11 @@ Open VSX is the open-source alternative marketplace for VSCodium and other edito
    - Get an access token: https://open-vsx.org/user-settings/tokens
 
 2. **Publish**
+
    ```bash
    # Set access token
    export OVSX_PAT=your-token-here
-   
+
    # Publish
    npx ovsx publish catalog-lens-0.5.0.vsix -p $OVSX_PAT
    ```
@@ -244,17 +246,17 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '20'
-          cache: 'pnpm'
-      
+          cache: pnpm
+
       - run: pnpm install
       - run: pnpm build
       - run: pnpm package
-      
+
       - name: Publish to Marketplace
         run: pnpm ext:publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-      
+
       - name: Publish to Open VSX
         run: npx ovsx publish *.vsix -p $OVSX_PAT
         env:

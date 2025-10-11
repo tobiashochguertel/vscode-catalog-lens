@@ -14,6 +14,15 @@ export const window = {
   showErrorMessage: vi.fn(),
   showWarningMessage: vi.fn(),
   onDidChangeTextEditorSelection: vi.fn(() => ({ dispose: vi.fn() })),
+  createOutputChannel: vi.fn(() => ({
+    append: vi.fn(),
+    appendLine: vi.fn(),
+    replace: vi.fn(),
+    clear: vi.fn(),
+    dispose: vi.fn(),
+    hide: vi.fn(),
+    show: vi.fn(),
+  })),
 }
 
 export const languages = {
@@ -59,13 +68,14 @@ export class Range {
     if (typeof startOrLine === 'number') {
       this.start = new Position(startOrLine as number, endOrChar as number)
       this.end = new Position(endLine!, endChar!)
-    } else {
+    }
+    else {
       this.start = startOrLine as Position
       this.end = endOrChar as Position
     }
   }
 
-  contains(positionOrRange: Position | Range): boolean {
+  contains(_positionOrRange: Position | Range): boolean {
     return true
   }
 }
