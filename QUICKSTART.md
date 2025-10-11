@@ -18,7 +18,7 @@
 
 **Prerequisites:**
 - Add `VSCE_PAT` secret (see `.github/SECRETS_SETUP.md`)
-- `OVSX_PAT` is already configured
+- Add `OVSX_PAT` secret (see `.github/SECRETS_SETUP.md`)
 
 ### Option 2: Local Build Script 🛠️
 
@@ -56,7 +56,7 @@ pnpm package
 pnpm ext:publish
 
 # Publish to Open VSX
-export OVSX_PAT="e2427da7-5e17-43d2-9ca4-573c43459d1e"
+export OVSX_PAT="your-openvsx-token-here"
 npx ovsx publish catalog-lens-0.5.0.vsix -p $OVSX_PAT
 ```
 

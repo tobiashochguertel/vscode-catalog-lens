@@ -100,7 +100,12 @@ case $choice in
         ;;
     3)
         echo "📤 Publishing to Open VSX..."
-        export OVSX_PAT="e2427da7-5e17-43d2-9ca4-573c43459d1e"
+        if [ -z "$OVSX_PAT" ]; then
+            echo "⚠️  OVSX_PAT environment variable not set"
+            echo "Please set it with your Open VSX token:"
+            echo "  export OVSX_PAT='your-token-here'"
+            exit 1
+        fi
         npx ovsx publish "${VSIX_FILE}" -p "${OVSX_PAT}"
         echo "✅ Published to Open VSX!"
         ;;
@@ -110,7 +115,12 @@ case $choice in
         echo "✅ Published to VS Code Marketplace!"
         echo ""
         echo "📤 Publishing to Open VSX..."
-        export OVSX_PAT="e2427da7-5e17-43d2-9ca4-573c43459d1e"
+        if [ -z "$OVSX_PAT" ]; then
+            echo "⚠️  OVSX_PAT environment variable not set"
+            echo "Please set it with your Open VSX token:"
+            echo "  export OVSX_PAT='your-token-here'"
+            exit 1
+        fi
         npx ovsx publish "${VSIX_FILE}" -p "${OVSX_PAT}"
         echo "✅ Published to Open VSX!"
         ;;

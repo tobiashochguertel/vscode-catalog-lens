@@ -30,15 +30,22 @@ To enable automated publishing via GitHub Actions, you need to set up the follow
 
 **Purpose:** Allows publishing to Open VSX Registry
 
-**Value:** `e2427da7-5e17-43d2-9ca4-573c43459d1e`
+**How to get it:**
+1. Go to https://open-vsx.org/
+2. Sign in with GitHub
+3. Go to https://open-vsx.org/user-settings/tokens
+4. Click "Generate New Token"
+5. Copy the token (you won't see it again!)
 
 **Add to GitHub:**
 1. Go to your repository: https://github.com/tobiashochguertel/vscode-catalog-lens
 2. Click "Settings" → "Secrets and variables" → "Actions"
 3. Click "New repository secret"
 4. Name: `OVSX_PAT`
-5. Value: `e2427da7-5e17-43d2-9ca4-573c43459d1e`
+5. Value: Paste your Open VSX token
 6. Click "Add secret"
+
+**Note:** The OVSX_PAT should be kept secret and never committed to the repository.
 
 ## Using the Publish Workflow
 
@@ -126,7 +133,8 @@ The existing CI workflow runs on every push and pull request:
 ### "OVSX_PAT not found" Error
 
 - Make sure you've added the secret with exact name: `OVSX_PAT`
-- Value should be: `e2427da7-5e17-43d2-9ca4-573c43459d1e`
+- Check the secret value is not empty
+- Verify the token is valid at https://open-vsx.org/user-settings/tokens
 
 ### Tests Failing
 
@@ -178,15 +186,15 @@ For the first time publishing to VS Code Marketplace:
 
 ## Security Notes
 
-- Never commit PAT tokens to the repository
-- Tokens should only be stored in GitHub Secrets
+- **NEVER** commit PAT tokens to the repository
+- Tokens should **ONLY** be stored in GitHub Secrets
 - Rotate tokens periodically for security
 - Use minimal scope permissions when creating tokens
-- The OVSX_PAT token shown above is already added to the repository secrets
+- If a token is accidentally exposed, revoke it immediately and generate a new one
 
 ## Quick Reference
 
 | Secret Name | Purpose | Where to Get |
 |------------|---------|--------------|
 | `VSCE_PAT` | VS Code Marketplace | https://dev.azure.com/_usersSettings/tokens |
-| `OVSX_PAT` | Open VSX Registry | Already provided: `e2427da7-5e17-43d2-9ca4-573c43459d1e` |
+| `OVSX_PAT` | Open VSX Registry | https://open-vsx.org/user-settings/tokens |
