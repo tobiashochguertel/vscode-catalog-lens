@@ -1,5 +1,6 @@
 import type { Location, TextDocument } from 'vscode'
 import type { AST } from 'yaml-eslint-parser'
+import { dirname } from 'node:path'
 import { parseSync } from '@babel/core'
 // @ts-expect-error missing types
 import preset from '@babel/preset-typescript'
@@ -9,7 +10,7 @@ import YAML from 'js-yaml'
 import { Range, Uri, workspace } from 'vscode'
 import { parseYAML } from 'yaml-eslint-parser'
 import { WORKSPACE_FILES } from './constants'
-import { logger } from './utils'
+import { logger } from './logger'
 
 export interface WorkspaceData {
   catalog?: Record<string, string>

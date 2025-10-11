@@ -7,6 +7,21 @@ export const workspace = {
   openTextDocument: vi.fn(),
   onDidChangeTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
   onDidOpenTextDocument: vi.fn(() => ({ dispose: vi.fn() })),
+  getConfiguration: vi.fn((section?: string) => ({
+    get: vi.fn((key: string, defaultValue?: any) => {
+      if (section === 'pnpmCatalogLens' && key === 'logLevel') {
+        return 'INFO'
+      }
+      if (section === 'pnpmCatalogLens' && key === 'enabled') {
+        return true
+      }
+      return defaultValue
+    }),
+    has: vi.fn(() => true),
+    inspect: vi.fn(),
+    update: vi.fn(),
+  })),
+  onDidChangeConfiguration: vi.fn(() => ({ dispose: vi.fn() })),
 }
 
 export const window = {
