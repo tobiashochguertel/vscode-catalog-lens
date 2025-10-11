@@ -1,21 +1,83 @@
 <p align="center">
-<img src="https://github.com/antfu/vscode-pnpm-catalog-lens/blob/main/res/icon.png?raw=true" height="150">
+<img src="https://github.com/tobiashochguertel/vscode-catalog-lens/blob/main/res/icon.png?raw=true" height="150">
 </p>
 
-<h1 align="center">PNPM Catalog Lens <sup>VS Code</sup></h1>
+<h1 align="center">Catalog Lens <sup>VS Code</sup></h1>
 
 <p align="center">
-<a href="https://marketplace.visualstudio.com/items?itemName=antfu.pnpm-catalog-lens" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/v/antfu.pnpm-catalog-lens.svg?color=eee&amp;label=VS%20Code%20Marketplace&logo=visual-studio-code" alt="Visual Studio Marketplace Version" /></a>
+<a href="https://marketplace.visualstudio.com/items?itemName=tobiashochguertel.catalog-lens" target="__blank"><img src="https://img.shields.io/visual-studio-marketplace/v/tobiashochguertel.catalog-lens.svg?color=eee&amp;label=VS%20Code%20Marketplace&logo=visual-studio-code" alt="Visual Studio Marketplace Version" /></a>
 <a href="https://kermanx.github.io/reactive-vscode/" target="__blank"><img src="https://img.shields.io/badge/made_with-reactive--vscode-%23eee?style=flat"  alt="Made with reactive-vscode" /></a>
 </p>
 
 <p align="center">
-Show versions inline for <a href="https://pnpm.io/catalogs" target="_blank">PNPM</a> and <a href="https://yarnpkg.com/features/catalogs" target="_blank">Yarn</a> <code>catalog:</code> fields.<br>
+Show versions inline for <a href="https://pnpm.io/catalogs" target="_blank">PNPM</a>, <a href="https://yarnpkg.com/features/catalogs" target="_blank">Yarn</a>, and <a href="https://bun.sh/docs/install/workspaces#catalogs" target="_blank">Bun</a> <code>catalog:</code> fields.<br>
 </p>
 
 <p align="center">
 <img width="600" alt="Screenshot" src="https://github.com/user-attachments/assets/fc4a6f53-2f1f-4c2e-b154-2f735a8a5f04">
 </p>
+
+## Features
+
+- ✅ Support for **PNPM** catalogs (via `pnpm-workspace.yaml`)
+- ✅ Support for **Yarn** catalogs (via `.yarnrc.yml`)
+- ✅ Support for **Bun** catalogs (via `package.json` with `catalog` or `catalogs` fields)
+- ✅ Inline version display with color-coded named catalogs
+- ✅ Hover information with catalog name and version
+- ✅ Go-to-definition support to jump to catalog definition
+- ✅ Works with both default (`catalog:`) and named catalogs (`catalog:name`)
+
+## Bun Catalogs Support
+
+This extension supports Bun's catalog feature as documented at https://bun.sh/docs/install/workspaces#catalogs
+
+Bun catalogs can be defined in your root `package.json` in two ways:
+
+### 1. At the top level:
+```json
+{
+  "name": "my-monorepo",
+  "catalog": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "catalogs": {
+    "testing": {
+      "jest": "30.0.0"
+    }
+  }
+}
+```
+
+### 2. Within the workspaces object:
+```json
+{
+  "name": "my-monorepo",
+  "workspaces": {
+    "packages": ["packages/*"],
+    "catalog": {
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0"
+    },
+    "catalogs": {
+      "testing": {
+        "jest": "30.0.0"
+      }
+    }
+  }
+}
+```
+
+Then reference them in workspace packages:
+```json
+{
+  "name": "my-package",
+  "dependencies": {
+    "react": "catalog:",
+    "jest": "catalog:testing"
+  }
+}
+```
 
 ## Configs
 
@@ -31,18 +93,12 @@ Show versions inline for <a href="https://pnpm.io/catalogs" target="_blank">PNPM
 
 <!-- configs -->
 
-## Sponsors
-
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src='https://cdn.jsdelivr.net/gh/antfu/static/sponsors.png'/>
-  </a>
-</p>
-
 ## Credits
+
+This extension is a fork of [vscode-pnpm-catalog-lens](https://github.com/antfu/vscode-pnpm-catalog-lens) by [Anthony Fu](https://github.com/antfu), with added support for Bun catalogs.
 
 Logo is modified from [Catppuccin Icons](https://github.com/catppuccin/vscode-icons) ([`pnpm.svg`](https://github.com/catppuccin/vscode-icons/blob/main/icons/css-variables/pnpm.svg)), licensed under [MIT](https://github.com/catppuccin/vscode-icons/blob/main/LICENSE).
 
 ## License
 
-[MIT](./LICENSE) License © 2022 [Anthony Fu](https://github.com/antfu)
+[MIT](./LICENSE) License © 2022-2024 [Anthony Fu](https://github.com/antfu) & [Tobias Hochgürtel](https://github.com/tobiashochguertel)

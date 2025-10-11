@@ -1,5 +1,9 @@
 import type { Location, TextDocument } from 'vscode'
 import type { AST } from 'yaml-eslint-parser'
+import { parseSync } from '@babel/core'
+// @ts-expect-error missing types
+import preset from '@babel/preset-typescript'
+import traverse from '@babel/traverse'
 import { findUp } from 'find-up'
 import YAML from 'js-yaml'
 import { Range, Uri, workspace } from 'vscode'
@@ -24,7 +28,7 @@ export interface JumpLocationParams {
 
 export interface WorkspaceInfo {
   path: string
-  manager: 'PNPM' | 'Yarn'
+  manager: 'PNPM' | 'Yarn' | 'Bun'
 }
 
 export class WorkspaceManager {
@@ -74,19 +78,46 @@ export class WorkspaceManager {
       return this.findUpCache.get(path)!
     }
 
-    const file = await findUp([WORKSPACE_FILES.YARN, WORKSPACE_FILES.PNPM], {
+    // First, try to find PNPM or Yarn workspace files
+    const workspaceFile = await findUp([WORKSPACE_FILES.YARN, WORKSPACE_FILES.PNPM], {
       type: 'file',
       cwd: path,
     })
 
-    if (!file) {
-      logger.error(`No workspace file (${WORKSPACE_FILES.YARN} or ${WORKSPACE_FILES.PNPM}) found in`, path)
-      return null
+    if (workspaceFile) {
+      const workspaceInfo: WorkspaceInfo = { 
+        path: workspaceFile, 
+        manager: workspaceFile.includes(WORKSPACE_FILES.YARN) ? 'Yarn' : 'PNPM' 
+      }
+      this.findUpCache.set(path, workspaceInfo)
+      return workspaceInfo
     }
 
-    const workspaceInfo: WorkspaceInfo = { path: file, manager: file.includes(WORKSPACE_FILES.YARN) ? 'Yarn' : 'PNPM' }
-    this.findUpCache.set(path, workspaceInfo)
-    return workspaceInfo
+    // If no PNPM/Yarn workspace file found, check for Bun (package.json with workspaces.catalog or catalog)
+    const packageJsonFile = await findUp(['package.json'], {
+      type: 'file',
+      cwd: path,
+    })
+
+    if (packageJsonFile) {
+      try {
+        const doc = await workspace.openTextDocument(Uri.file(packageJsonFile))
+        const content = JSON.parse(doc.getText())
+        
+        // Check if this package.json has catalog definitions (Bun style)
+        if (content.catalog || content.catalogs || content.workspaces?.catalog || content.workspaces?.catalogs) {
+          const workspaceInfo: WorkspaceInfo = { path: packageJsonFile, manager: 'Bun' }
+          this.findUpCache.set(path, workspaceInfo)
+          return workspaceInfo
+        }
+      }
+      catch (error) {
+        // If JSON parsing fails, ignore this package.json
+      }
+    }
+
+    logger.error(`No workspace file (${WORKSPACE_FILES.YARN}, ${WORKSPACE_FILES.PNPM}, or Bun package.json) found in`, path)
+    return null
   }
 
   private async readWorkspace(doc: TextDocument | Uri): Promise<WorkspaceData> {
@@ -96,7 +127,23 @@ export class WorkspaceManager {
     if (this.dataMap.has(doc.uri.fsPath)) {
       return this.dataMap.get(doc.uri.fsPath)!
     }
-    const data = YAML.load(doc.getText()) as WorkspaceData
+    
+    let data: WorkspaceData
+    
+    // Check if this is a JSON file (Bun's package.json) or YAML file (PNPM/Yarn)
+    if (doc.uri.fsPath.endsWith('.json')) {
+      // Parse as JSON for Bun
+      const jsonData = JSON.parse(doc.getText())
+      data = {
+        catalog: jsonData.catalog || jsonData.workspaces?.catalog,
+        catalogs: jsonData.catalogs || jsonData.workspaces?.catalogs,
+      }
+    }
+    else {
+      // Parse as YAML for PNPM/Yarn
+      data = YAML.load(doc.getText()) as WorkspaceData
+    }
+    
     this.dataMap.set(doc.uri.fsPath, data)
     const disposable = workspace.onDidChangeTextDocument((e) => {
       if (e.document.uri.fsPath === doc.uri.fsPath) {
@@ -120,48 +167,234 @@ export class WorkspaceManager {
 
     const code = doc.getText()
     const lines = code.split('\n')
-    const ast: AST.YAMLProgram = parseYAML(code)
-    const astBody = ast.body[0].content as AST.YAMLMapping
-    if (!astBody) {
-      return data
-    }
 
-    const defaultCatalog = astBody.pairs.find(pair => pair.key?.type === 'YAMLScalar' && pair.key.value === 'catalog')
-    const namedCatalog = astBody.pairs.find(pair => pair.key?.type === 'YAMLScalar' && pair.key.value === 'catalogs')
+    // Check if this is a JSON file (Bun's package.json)
+    if (doc.uri.fsPath.endsWith('.json')) {
+      try {
+        // Parse JSON and find positions using Babel AST (already used in index.ts)
+        const prefix = 'const x = '
+        const offset = -prefix.length
+        const combined = prefix + code
 
-    function setActualPosition(data: Record<string, [AST.Position, AST.Position]>, pairs: AST.YAMLPair[]) {
-      pairs.forEach(({ key, value }) => {
-        if (key?.type === 'YAMLScalar' && value?.type === 'YAMLScalar') {
-          const line = value.loc.start.line
-          const lineText = lines[line - 1]
-          const column = lineText.indexOf(value.value as unknown as string)
-          const endLine = value.loc.end.line
-          const endColumn = column + (value.value as unknown as string).length
-          data[key.value as unknown as string] = [
-            { line, column },
-            { line: endLine, column: endColumn },
-          ]
+        const ast = parseSync(
+          combined,
+          {
+            filename: doc.uri.fsPath,
+            presets: [preset],
+            babelrc: false,
+          },
+        )
+
+        if (ast) {
+          traverse(ast, {
+            ObjectExpression(path) {
+              // Check if this is the root object
+              const parent = path.parent
+              if (parent.type !== 'VariableDeclarator')
+                return
+
+              // Look for catalog or catalogs properties
+              path.node.properties.forEach((prop) => {
+                if (prop.type !== 'ObjectProperty')
+                  return
+                if (prop.key.type !== 'Identifier' && prop.key.type !== 'StringLiteral')
+                  return
+
+                const keyName = prop.key.type === 'Identifier' ? prop.key.name : prop.key.value
+
+                if (keyName === 'catalog' && prop.value.type === 'ObjectExpression') {
+                  // Process default catalog
+                  prop.value.properties.forEach((catalogProp) => {
+                    if (catalogProp.type !== 'ObjectProperty')
+                      return
+                    if (catalogProp.key.type !== 'StringLiteral')
+                      return
+                    if (catalogProp.value.type !== 'StringLiteral')
+                      return
+
+                    const depName = catalogProp.key.value
+                    const version = catalogProp.value.value
+                    const valueLoc = catalogProp.value.loc!
+                    
+                    // Adjust for offset
+                    const startLine = valueLoc.start.line
+                    const endLine = valueLoc.end.line
+                    const startColumn = valueLoc.start.column + offset + 1 // +1 for the quote
+                    const endColumn = valueLoc.end.column + offset - 1 // -1 for the quote
+
+                    data.catalog[depName] = [
+                      { line: startLine, column: startColumn },
+                      { line: endLine, column: endColumn },
+                    ]
+                  })
+                }
+                else if (keyName === 'catalogs' && prop.value.type === 'ObjectExpression') {
+                  // Process named catalogs
+                  prop.value.properties.forEach((namedCatalogProp) => {
+                    if (namedCatalogProp.type !== 'ObjectProperty')
+                      return
+                    if (namedCatalogProp.key.type !== 'StringLiteral')
+                      return
+                    if (namedCatalogProp.value.type !== 'ObjectExpression')
+                      return
+
+                    const catalogName = namedCatalogProp.key.value
+                    data.catalogs[catalogName] = {}
+
+                    namedCatalogProp.value.properties.forEach((catalogProp) => {
+                      if (catalogProp.type !== 'ObjectProperty')
+                        return
+                      if (catalogProp.key.type !== 'StringLiteral')
+                        return
+                      if (catalogProp.value.type !== 'StringLiteral')
+                        return
+
+                      const depName = catalogProp.key.value
+                      const valueLoc = catalogProp.value.loc!
+                      
+                      // Adjust for offset
+                      const startLine = valueLoc.start.line
+                      const endLine = valueLoc.end.line
+                      const startColumn = valueLoc.start.column + offset + 1 // +1 for the quote
+                      const endColumn = valueLoc.end.column + offset - 1 // -1 for the quote
+
+                      data.catalogs[catalogName][depName] = [
+                        { line: startLine, column: startColumn },
+                        { line: endLine, column: endColumn },
+                      ]
+                    })
+                  })
+                }
+                // Also check for workspaces.catalog and workspaces.catalogs (Bun format)
+                else if (keyName === 'workspaces' && prop.value.type === 'ObjectExpression') {
+                  prop.value.properties.forEach((workspaceProp) => {
+                    if (workspaceProp.type !== 'ObjectProperty')
+                      return
+                    if (workspaceProp.key.type !== 'Identifier' && workspaceProp.key.type !== 'StringLiteral')
+                      return
+
+                    const workspaceKeyName = workspaceProp.key.type === 'Identifier' 
+                      ? workspaceProp.key.name 
+                      : workspaceProp.key.value
+
+                    if (workspaceKeyName === 'catalog' && workspaceProp.value.type === 'ObjectExpression') {
+                      // Process default catalog in workspaces
+                      workspaceProp.value.properties.forEach((catalogProp) => {
+                        if (catalogProp.type !== 'ObjectProperty')
+                          return
+                        if (catalogProp.key.type !== 'StringLiteral')
+                          return
+                        if (catalogProp.value.type !== 'StringLiteral')
+                          return
+
+                        const depName = catalogProp.key.value
+                        const valueLoc = catalogProp.value.loc!
+                        
+                        // Adjust for offset
+                        const startLine = valueLoc.start.line
+                        const endLine = valueLoc.end.line
+                        const startColumn = valueLoc.start.column + offset + 1
+                        const endColumn = valueLoc.end.column + offset - 1
+
+                        data.catalog[depName] = [
+                          { line: startLine, column: startColumn },
+                          { line: endLine, column: endColumn },
+                        ]
+                      })
+                    }
+                    else if (workspaceKeyName === 'catalogs' && workspaceProp.value.type === 'ObjectExpression') {
+                      // Process named catalogs in workspaces
+                      workspaceProp.value.properties.forEach((namedCatalogProp) => {
+                        if (namedCatalogProp.type !== 'ObjectProperty')
+                          return
+                        if (namedCatalogProp.key.type !== 'StringLiteral')
+                          return
+                        if (namedCatalogProp.value.type !== 'ObjectExpression')
+                          return
+
+                        const catalogName = namedCatalogProp.key.value
+                        data.catalogs[catalogName] = {}
+
+                        namedCatalogProp.value.properties.forEach((catalogProp) => {
+                          if (catalogProp.type !== 'ObjectProperty')
+                            return
+                          if (catalogProp.key.type !== 'StringLiteral')
+                            return
+                          if (catalogProp.value.type !== 'StringLiteral')
+                            return
+
+                          const depName = catalogProp.key.value
+                          const valueLoc = catalogProp.value.loc!
+                          
+                          // Adjust for offset
+                          const startLine = valueLoc.start.line
+                          const endLine = valueLoc.end.line
+                          const startColumn = valueLoc.start.column + offset + 1
+                          const endColumn = valueLoc.end.column + offset - 1
+
+                          data.catalogs[catalogName][depName] = [
+                            { line: startLine, column: startColumn },
+                            { line: endLine, column: endColumn },
+                          ]
+                        })
+                      })
+                    }
+                  })
+                }
+              })
+            },
+          })
         }
-      })
-    }
-
-    try {
-      if (defaultCatalog?.value?.type === 'YAMLMapping') {
-        setActualPosition(data.catalog, defaultCatalog.value.pairs)
       }
-
-      if (namedCatalog?.value?.type === 'YAMLMapping') {
-        namedCatalog.value.pairs.forEach(({ key, value }) => {
-          if (key?.type === 'YAMLScalar' && value?.type === 'YAMLMapping') {
-            const catalogName = key.value as unknown as string
-            data.catalogs[catalogName] = {}
-            setActualPosition(data.catalogs[catalogName], value.pairs)
-          }
-        })
+      catch (err: any) {
+        logger.error(`readWorkspacePosition JSON error ${err.message}`)
       }
     }
-    catch (err: any) {
-      logger.error(`readWorkspacePosition error ${err.message}`)
+    else {
+      // Parse as YAML for PNPM/Yarn
+      try {
+        const ast: AST.YAMLProgram = parseYAML(code)
+        const astBody = ast.body[0].content as AST.YAMLMapping
+        if (!astBody) {
+          return data
+        }
+
+        const defaultCatalog = astBody.pairs.find(pair => pair.key?.type === 'YAMLScalar' && pair.key.value === 'catalog')
+        const namedCatalog = astBody.pairs.find(pair => pair.key?.type === 'YAMLScalar' && pair.key.value === 'catalogs')
+
+        function setActualPosition(data: Record<string, [AST.Position, AST.Position]>, pairs: AST.YAMLPair[]) {
+          pairs.forEach(({ key, value }) => {
+            if (key?.type === 'YAMLScalar' && value?.type === 'YAMLScalar') {
+              const line = value.loc.start.line
+              const lineText = lines[line - 1]
+              const column = lineText.indexOf(value.value as unknown as string)
+              const endLine = value.loc.end.line
+              const endColumn = column + (value.value as unknown as string).length
+              data[key.value as unknown as string] = [
+                { line, column },
+                { line: endLine, column: endColumn },
+              ]
+            }
+          })
+        }
+
+        if (defaultCatalog?.value?.type === 'YAMLMapping') {
+          setActualPosition(data.catalog, defaultCatalog.value.pairs)
+        }
+
+        if (namedCatalog?.value?.type === 'YAMLMapping') {
+          namedCatalog.value.pairs.forEach(({ key, value }) => {
+            if (key?.type === 'YAMLScalar' && value?.type === 'YAMLMapping') {
+              const catalogName = key.value as unknown as string
+              data.catalogs[catalogName] = {}
+              setActualPosition(data.catalogs[catalogName], value.pairs)
+            }
+          })
+        }
+      }
+      catch (err: any) {
+        logger.error(`readWorkspacePosition YAML error ${err.message}`)
+      }
     }
 
     this.positionDataMap.set(doc.uri.fsPath, data)

@@ -1,24 +1,20 @@
 {
-  "publisher": "antfu",
-  "name": "pnpm-catalog-lens",
+  "publisher": "TobiasHochguertel",
+  "name": "catalog-lens",
   "displayName": "Catalog Lens",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "packageManager": "pnpm@10.17.1",
-  "description": "Show inlay version for PNPM/Yarn catalogs",
-  "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+  "description": "Show inlay version for PNPM/Yarn/Bun catalogs",
+  "author": "Tobias Hochgürtel <tobias.hochguertel@googlemail.com>",
   "license": "MIT",
-  "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/vscode-pnpm-catalog-lens#readme",
+  "homepage": "https://github.com/tobiashochguertel/vscode-catalog-lens#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/antfu/vscode-pnpm-catalog-lens"
+    "url": "https://github.com/tobiashochguertel/vscode-catalog-lens"
   },
   "bugs": {
-    "url": "https://github.com/antfu/vscode-pnpm-catalog-lens/issues"
-  },
-  "sponsor": {
-    "url": "https://github.com/sponsors/antfu"
+    "url": "https://github.com/tobiashochguertel/vscode-catalog-lens/issues"
   },
   "categories": [
     "Other"
@@ -35,17 +31,19 @@
   },
   "activationEvents": [
     "workspaceContains:pnpm-workspace.yaml",
-    "workspaceContains:.yarnrc.yml"
+    "workspaceContains:.yarnrc.yml",
+    "workspaceContains:bun.lockb",
+    "workspaceContains:bunfig.toml"
   ],
   "contributes": {
     "commands": [
       {
-        "category": "PNPM Catalog Lens",
+        "category": "Catalog Lens",
         "title": "Toggle",
         "command": "pnpmCatalogLens.toggle"
       },
       {
-        "category": "PNPM Catalog Lens",
+        "category": "Catalog Lens",
         "title": "Go to Definition",
         "command": "pnpmCatalogLens.gotoDefinition"
       }
