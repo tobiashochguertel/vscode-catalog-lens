@@ -94,7 +94,7 @@
   "scripts": {
     "build": "tsdown src/index.ts --external vscode --format cjs",
     "dev": "nr build --watch",
-    "prepare": "husky install && nr update",
+    "prepare": "husky && nr update",
     "update": "vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",

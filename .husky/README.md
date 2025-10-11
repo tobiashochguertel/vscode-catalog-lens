@@ -1,6 +1,16 @@
-# 🪝 Git Hooks Documentation
+# 🪝 Git Hooks Documentation (Husky v9)
 
-This directory contains Git hooks powered by [Husky](https://typicode.github.io/husky/).
+This directory contains Git hooks powered by [Husky v9](https://typicode.github.io/husky/).
+
+## 🆕 Modern Husky v9 Setup
+
+We use the modern Husky v9+ style. See [MODERN_HUSKY_MIGRATION.md](./MODERN_HUSKY_MIGRATION.md) for migration details.
+
+**Key changes from old versions:**
+
+- ✅ No `.husky/_/` directory needed
+- ✅ No need to source `husky.sh` in hook scripts
+- ✅ Simpler and faster hook execution
 
 ## 📋 Available Hooks
 
@@ -47,8 +57,6 @@ This directory contains Git hooks powered by [Husky](https://typicode.github.io/
 💡 Please review and fix the errors above.
 ```
 
----
-
 ### Pre-Push Hook
 
 **Location:** `.husky/pre-push`
@@ -57,237 +65,226 @@ This directory contains Git hooks powered by [Husky](https://typicode.github.io/
 
 **Checks Performed:**
 
-1. **🧪 Run Tests** - Executes full test suite (all 21 tests)
+- **🧪 Test Suite** - Runs full test suite
 
-**Why Separate from Pre-Commit?**
+## 🔄 Pre-Commit Hook Strategy
 
-- Tests are slower (can take 30-60 seconds)
-- Pre-commit should be fast (< 10 seconds)
-- Tests verify runtime behavior, not just static checks
+### The Problem We Solve
 
----
+Pre-commit hooks can be **slow**. We want to:
 
-## ⚠️ Bypassing Hooks
+- ✅ **Catch errors early** - Before they reach CI
+- ✅ **Auto-fix when possible** - Save developer time
+- ✅ **Fast feedback** - Don't slow down development
+- ✅ **Comprehensive checks** - Don't let broken code through
 
-### Using --no-verify
+### Our Solution: 4-Step Pre-Commit Process
 
-If you try to bypass hooks with `git commit --no-verify`, you'll see this warning:
+| Step | Action       | Tool        | Purpose                       | Fail Fast |
+| ---- | ------------ | ----------- | ----------------------------- | --------- |
+| 1    | Auto-fix     | `lint:fix`  | Fix common issues             | ✅        |
+| 2    | Verify Lint  | `lint`      | Ensure no errors remain       | ✅        |
+| 3    | Type Check   | `typecheck` | Verify TypeScript correctness | ✅        |
+| 4    | Build        | `build`     | Ensure extension builds       | ✅        |
+| -    | Tests (push) | `test`      | Full test suite before push   | ✅        |
 
-```bash
-⚠️  WARNING: BYPASSING PRE-COMMIT HOOK!
+### Why Not Run Tests in Pre-Commit?
 
-You used --no-verify flag.
+Tests are **slow** and would make every commit sluggish. Instead:
 
-This means:
-  ❌ No linting was performed
-  ❌ No type checking was performed
-  ❌ No build verification was performed
-  ❌ CI might fail!
+- ✅ Run tests in **pre-push** hook
+- ✅ Run tests in **CI workflow**
+- ✅ Developers can run `pnpm test` manually
 
-Are you SURE you want to bypass pre-commit checks?
+### What Runs Where?
 
-Type 'yes' to confirm, or Ctrl+C to cancel:
-```
+| Check      | Pre-Commit  | Pre-Push | CI           |
+| ---------- | ----------- | -------- | ------------ |
+| Lint       | ✅ Step 1-2 | -        | ✅ lint      |
+| Type Check | ✅ Step 3   | -        | ✅ typecheck |
+| Build      | ✅ Step 4   | -        | ✅ build     |
+| Tests      | ❌ (slow)   | ✅       | ✅ test      |
 
-**When is it okay to bypass?**
+## 🚫 Important: The `--no-verify` Reality
 
-- ✅ Creating WIP commits on feature branches
-- ✅ Debugging hook issues
-- ✅ Emergency hotfixes (but still run checks manually!)
+### What You Need to Know
 
-**When should you NOT bypass?**
+Git's `--no-verify` flag **COMPLETELY BYPASSES** all hooks. This is a **Git feature**, not a Husky limitation.
 
-- ❌ Committing to main branch
-- ❌ Creating pull requests
-- ❌ Before pushing to remote
-- ❌ When CI is expected to pass
+**The hard truth:**
 
----
+- ❌ We **CANNOT** intercept `--no-verify`
+- ❌ We **CANNOT** warn about it before it happens
+- ❌ We **CANNOT** force a confirmation dialog
+- ❌ Hooks **NEVER RUN** when `--no-verify` is used
 
-## 🛠️ Manual Commands
+### Why Not?
 
-### Run All Pre-Commit Checks Manually
+When you use `--no-verify`:
 
-```bash
-pnpm lint:fix      # Auto-fix issues
-pnpm lint          # Verify no errors remain
-pnpm typecheck     # Check types
-pnpm build         # Build extension
-```
+1. Git skips hook execution entirely
+2. Husky never runs
+3. No code executes to show warnings
 
-### Run All Pre-Push Checks Manually
+It's like unplugging a smoke detector - it can't alert you if it's not powered.
 
-```bash
-pnpm test          # Run all tests
-```
+### What We Do Instead
 
-### Run Everything
+1. ✅ **Document best practices** (this file)
+2. ✅ **Provide manual script** (`pnpm precommit`)
+3. ✅ **Rely on CI workflows** (catches all issues)
+4. ✅ **Code review process** (human verification)
 
-```bash
-pnpm lint:fix && pnpm lint && pnpm typecheck && pnpm build && pnpm test
-```
+### Best Practices
 
----
+**DO:**
 
-## 🔧 Hook Management
+- ✅ Use `--no-verify` for WIP commits on personal branches
+- ✅ Run `pnpm precommit` manually after bypassing hooks
+- ✅ Ensure CI checks pass before merging
+- ✅ Explain in PR why hooks were bypassed
 
-### Disable Hooks Temporarily
+**DON'T:**
 
-```bash
-export HUSKY=0     # Disable all hooks
-git commit -m "..."
-unset HUSKY        # Re-enable hooks
-```
+- ❌ Use `--no-verify` on shared branches
+- ❌ Skip manual checks if you bypass hooks
+- ❌ Merge PRs with failing CI checks
+- ❌ Use `--no-verify` to avoid fixing real issues
 
-### Reinstall Hooks
+## 🛠️ Usage
 
-```bash
-pnpm install       # Auto-installs hooks
-# or
-npx husky install  # Manual installation
-```
-
-### Skip Specific Hook
+### Normal Workflow (Hooks Run Automatically)
 
 ```bash
-git commit --no-verify          # Skip pre-commit
-git push --no-verify            # Skip pre-push
+# Make changes
+git add .
+
+# Commit (pre-commit hook runs automatically)
+git commit -m "feat: add new feature"
+
+# Push (pre-push hook runs automatically)
+git push
 ```
 
----
-
-## 📊 Hook Performance
-
-### Pre-Commit (~10 seconds)
-
-```
-📝 Lint & Auto-fix:     ~3s
-📋 Verify Lint:         ~3s
-🔧 Type Check:          ~2s
-🏗️  Build:              ~2s
-----------------------------
-Total:                  ~10s
-```
-
-### Pre-Push (~30-60 seconds)
-
-```
-🧪 Run Tests:           ~30-60s
-```
-
----
-
-## 🎯 Best Practices
-
-### DO ✅
-
-1. **Let hooks run** - They catch 99% of issues before CI
-2. **Trust auto-fix** - It handles formatting automatically
-3. **Fix issues locally** - Faster feedback than waiting for CI
-4. **Run tests before push** - Pre-push hook handles this
-5. **Keep commits small** - Hooks run faster on small changes
-
-### DON'T ❌
-
-1. **Don't bypass without reason** - You'll regret it in CI
-2. **Don't commit broken code** - Fix errors shown by hooks
-3. **Don't skip tests** - They catch runtime issues
-4. **Don't commit --no-verify to main** - Always run checks
-5. **Don't ignore warnings** - They're there to help
-
----
-
-## 🐛 Troubleshooting
-
-### Hook Not Running
-
-**Problem:** Hook doesn't execute on commit/push
-
-**Solutions:**
+### Bypass Hooks (Emergency Only)
 
 ```bash
-# 1. Reinstall hooks
-npx husky install
+# ⚠️ WARNING: This completely bypasses ALL hooks!
+git commit -m "WIP: work in progress" --no-verify
 
-# 2. Check if hooks are executable
-ls -la .husky/pre-commit
-# Should show: -rwxr-xr-x (executable)
-
-# 3. Make hooks executable
-chmod +x .husky/pre-commit
-chmod +x .husky/pre-push
+# IMPORTANT: Run checks manually!
+pnpm precommit
 ```
 
-### Hook Fails on CI But Passes Locally
+### Manual Pre-Commit Checks
 
-**Problem:** Pre-commit passes locally but CI fails
-
-**Cause:** Using `--no-verify` or `HUSKY=0`
-
-**Solution:** Run hooks normally before pushing:
+If you bypass hooks or want to run checks manually:
 
 ```bash
-# Don't bypass hooks
-git commit -m "..."  # Let pre-commit run
-git push             # Let pre-push run
+pnpm precommit
 ```
 
-### Auto-Fix Changes My Code
+This runs the same checks as the pre-commit hook.
 
-**Problem:** Hook modifies files during commit
+## 🔧 Troubleshooting
 
-**Expected Behavior:** This is correct! The hook:
+### Hooks Not Running
 
-1. Auto-fixes formatting/style issues
-2. Re-adds fixed files to staging
-3. Commits the fixed version
+1. **Check Git config:**
 
-**What to do:**
+   ```bash
+   git config core.hooksPath
+   # Should output: .husky
+   ```
 
-- ✅ Review the auto-fixes (usually just formatting)
-- ✅ Trust the linter (it follows project style)
-- ❌ Don't fight it - consistent style helps everyone
+2. **Re-initialize Husky:**
+
+   ```bash
+   pnpm prepare
+   ```
+
+3. **Verify hook executable:**
+   ```bash
+   ls -la .husky/pre-commit
+   # Should show: -rwxr-xr-x (executable)
+   ```
+
+### "command not found" Errors
+
+If you see `pnpm: command not found`:
+
+1. **For VS Code users:** Restart VS Code
+2. **For terminal users:** Ensure pnpm is in PATH
+3. **For Node version managers:**
+
+   Create `~/.config/husky/init.sh`:
+
+   ```sh
+   # Load your version manager
+   export NVM_DIR="$HOME/.nvm"
+   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+   ```
+
+### Hook Runs But Fails
+
+1. **Read the error message** - It tells you which step failed
+2. **Fix the issue** - Run the failing command manually
+3. **Try again** - Commit after fixing
+
+## ✨ Key Features
+
+### 1. Auto-Fix Support
+
+The hook automatically fixes common issues:
+
+```bash
+git commit -m "fix: something"
+
+# Hook runs:
+# 1. Runs lint:fix → Auto-fixes issues
+# 2. Re-stages fixed files → Includes fixes in commit
+# 3. Verifies no errors → Ensures quality
+```
+
+### 2. Fail Fast
+
+Stops at the first error to save time:
+
+```
+✅ Step 1: Lint auto-fix → Passed
+✅ Step 2: Verify lint → Passed
+❌ Step 3: Type check → FAILED
+
+❌ Type check failed!
+```
+
+### 3. Clear Feedback
+
+Color-coded output:
+
+- 🔵 **Blue** - Step in progress
+- 🟢 **Green** - Step passed
+- 🟡 **Yellow** - Warning or tip
+- 🔴 **Red** - Error
+
+### 4. Silent Build
+
+Build output hidden to reduce noise. Run `pnpm build` manually to see details.
+
+## 📁 Files
+
+- `pre-commit` - Main pre-commit hook script (modern Husky v9 style)
+- `pre-push` - Main pre-push hook script (modern Husky v9 style)
+- `README.md` - This file
+- `MODERN_HUSKY_MIGRATION.md` - Migration guide
+- `no-verify-warning.sh` - Legacy script (kept for reference, but doesn't work with `--no-verify`)
+
+## 🔗 References
+
+- [Husky v9 Documentation](https://typicode.github.io/husky/)
+- [Husky Migration Guide](https://typicode.github.io/husky/migrate-from-v4.html)
+- [Git Hooks Documentation](https://git-scm.com/docs/githooks)
 
 ---
 
-## 🔗 Related Documentation
-
-- **Husky Documentation:** https://typicode.github.io/husky/
-- **ESLint Documentation:** https://eslint.org/docs/latest/
-- **TypeScript Documentation:** https://www.typescriptlang.org/docs/
-- **Vitest Documentation:** https://vitest.dev/guide/
-
----
-
-## 📈 Statistics
-
-### Issues Prevented (This Project)
-
-- **Lint Errors:** 45 prevented in last session
-- **Type Errors:** 3 prevented in last session
-- **Build Failures:** 2 prevented in last session
-- **Test Failures:** 5 prevented in last session
-
-### Time Saved
-
-- **Per Developer:** ~15 minutes per failed CI run
-- **Team (5 devs):** ~75 minutes per failed CI run
-- **This Project:** ~3 hours saved by fixing hooks
-
----
-
-## ✅ Summary
-
-**Git hooks are your friends!** They:
-
-- ✅ Catch issues before CI
-- ✅ Auto-fix 80% of problems
-- ✅ Save time and frustration
-- ✅ Ensure consistent code quality
-
-**Let them do their job** - don't bypass unless absolutely necessary!
-
----
-
-**Maintained by:** Tobias Hochgürtel
-**Last Updated:** October 11, 2025
+**Note:** This project uses modern Husky v9+. The old `.husky/_/` style is deprecated.

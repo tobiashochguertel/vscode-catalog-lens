@@ -13,3 +13,4 @@ temp
 src/generated
 .env
 SECRETS_SETUP.md
+.husky-repo
