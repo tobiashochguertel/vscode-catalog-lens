@@ -1,7 +1,65 @@
+import type { TextDocument } from 'vscode'
 import * as path from 'node:path'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { WorkspaceManager } from '../../src/data'
 import { createMockDocument, getFixturePath } from '../utils/test-helpers'
+
+// Mock find-up to stay within fixture directories and not escape to parent repository
+vi.mock('find-up', () => ({
+  findUp: async (patterns: string[], options?: { cwd?: string, type?: string }) => {
+    const cwd = options?.cwd || process.cwd()
+
+    // Determine which fixture directory we're in
+    const fixtureMatch = cwd.match(/test\/fixtures\/([^/]+)/)
+    if (!fixtureMatch) {
+      return null // Not in a fixture, return null
+    }
+
+    const fixtureName = fixtureMatch[1]
+    const fixtureRoot = path.join(process.cwd(), 'test', 'fixtures', fixtureName)
+
+    // Check for each pattern in the fixture root only
+    const fs = await import('node:fs/promises')
+    for (const pattern of Array.isArray(patterns) ? patterns : [patterns]) {
+      const filePath = path.join(fixtureRoot, pattern)
+      try {
+        await fs.access(filePath)
+        return filePath
+      }
+      catch {
+        // File doesn't exist, try next pattern
+      }
+    }
+
+    return null
+  },
+}))
+
+// Mock vscode workspace.openTextDocument to read from actual filesystem
+vi.mock('vscode', async () => {
+  const actualMock = await vi.importActual<typeof import('../mocks/vscode')>('../mocks/vscode')
+
+  return {
+    ...actualMock,
+    workspace: {
+      ...actualMock.workspace,
+      openTextDocument: async (uri: any) => {
+        const fs = await import('node:fs/promises')
+        const filePath = uri.fsPath || uri.path
+        const content = await fs.readFile(filePath, 'utf-8')
+        return {
+          getText: () => content,
+          uri,
+          fileName: filePath,
+          positionAt: (offset: number) => {
+            const lines = content.slice(0, offset).split('\n')
+            return new actualMock.Position(lines.length - 1, lines[lines.length - 1].length)
+          },
+        } as TextDocument
+      },
+    },
+  }
+})
 
 describe('workspaceManager', () => {
   let manager: WorkspaceManager

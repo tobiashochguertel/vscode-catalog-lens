@@ -43,6 +43,10 @@ describe('utils', () => {
         start: 17,
         end: 41,
         type: 'ObjectProperty',
+        value: {
+          start: 26, // Position of "catalog:"
+          end: 36,
+        },
       } as any
 
       const range = getNodeRange(doc, node, 0)
@@ -60,6 +64,10 @@ describe('utils', () => {
         start: 10,
         end: 31,
         type: 'ObjectProperty',
+        value: {
+          start: 20, // Position of "catalog:"
+          end: 30,
+        },
       } as any
 
       const offset = -10 // Remove "const x = " prefix
