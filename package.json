@@ -97,13 +97,17 @@
     "prepare": "husky install && nr update",
     "update": "vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "precommit": "pnpm lint:fix && pnpm lint && pnpm typecheck && pnpm build",
+    "prepush": "pnpm test:run",
+    "check": "pnpm lint && pnpm typecheck && pnpm build && pnpm test:run",
     "vscode:prepublish": "nr build",
     "ext:publish": "vsce publish --no-dependencies",
     "package": "vsce package --no-dependencies",
-    "test": "vitest",
-    "typecheck": "tsc --noEmit",
-    "release": "bumpp",
-    "lint:fix": "eslint . --fix"
+    "release": "bumpp"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.4.1",
