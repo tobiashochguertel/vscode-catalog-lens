@@ -22,10 +22,20 @@ Show versions inline for <a href="https://pnpm.io/catalogs" target="_blank">PNPM
 - ✅ Support for **PNPM** catalogs (via `pnpm-workspace.yaml`)
 - ✅ Support for **Yarn** catalogs (via `.yarnrc.yml`)
 - ✅ Support for **Bun** catalogs (via `package.json` with `catalog` or `catalogs` fields)
+- ✅ **Multi-root workspace support** - Works seamlessly with VS Code multi-root workspaces
 - ✅ Inline version display with color-coded named catalogs
 - ✅ Hover information with catalog name and version
 - ✅ Go-to-definition support to jump to catalog definition
 - ✅ Works with both default (`catalog:`) and named catalogs (`catalog:name`)
+
+## Multi-Root Workspace Support
+
+This extension fully supports VS Code's [multi-root workspaces](https://code.visualstudio.com/docs/editor/multi-root-workspaces). When you have multiple workspace folders open, the extension will:
+
+- Automatically detect the correct workspace configuration file for each `package.json` being edited
+- Use `findUp` to traverse from the current file to locate the nearest workspace root
+- Support different package managers in different workspace folders (e.g., PNPM in one folder, Bun in another)
+- Cache workspace lookups for performance
 
 ## Bun Catalogs Support
 
@@ -92,6 +102,29 @@ Then reference them in workspace packages:
 | `pnpmCatalogLens.namedCatalogsLabel`      | Show a small label for named catalog in the inlay hint              | `boolean` | `true`                |
 
 <!-- configs -->
+
+## Development
+
+### Testing
+
+The extension includes a test suite using Vitest. To run tests:
+
+```bash
+pnpm install
+pnpm test
+```
+
+### Building
+
+```bash
+pnpm build
+```
+
+### Development Mode
+
+```bash
+pnpm dev  # Watch mode for development
+```
 
 ## Credits
 
