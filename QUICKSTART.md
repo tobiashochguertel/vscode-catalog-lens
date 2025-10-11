@@ -17,6 +17,7 @@
 6. Wait ~5 minutes for completion
 
 **Prerequisites:**
+
 - Add `VSCE_PAT` secret (see `.github/SECRETS_SETUP.md`)
 - Add `OVSX_PAT` secret (see `.github/SECRETS_SETUP.md`)
 
@@ -30,6 +31,7 @@ cd /Users/tobiashochgurtel/work-dev/vscode/vscode-catalog-lens
 ```
 
 This script will:
+
 - ✅ Install dependencies
 - ✅ Run tests
 - ✅ Build the extension
@@ -70,6 +72,7 @@ npx ovsx publish catalog-lens-0.5.0.vsix -p $OVSX_PAT
 ## 🚀 Ready to Publish!
 
 The extension is complete with:
+
 - ✅ Full Bun catalog support
 - ✅ Multi-root workspace support
 - ✅ Comprehensive test infrastructure
@@ -92,11 +95,13 @@ See `.github/SECRETS_SETUP.md` for detailed instructions.
 ## 📦 What Gets Published
 
 When you publish, users will be able to:
+
 - Install from VS Code Marketplace
 - Install from Open VSX (for VSCodium, etc.)
 - Download .vsix from GitHub Releases
 
 The extension will work with:
+
 - 📦 PNPM catalogs (pnpm-workspace.yaml)
 - 📦 Yarn catalogs (.yarnrc.yml)
 - 📦 Bun catalogs (package.json with catalog/catalogs)
@@ -123,6 +128,7 @@ code --install-extension catalog-lens-0.5.0.vsix
 ## 📖 Documentation
 
 All documentation is up-to-date:
+
 - `README.md` - Main documentation with Bun support info
 - `PUBLISHING.md` - Detailed publishing guide
 - `test/README.md` - Test infrastructure guide
@@ -138,6 +144,7 @@ All documentation is up-to-date:
 ---
 
 **Need help?** Check the detailed guides:
+
 - Publishing: `PUBLISHING.md`
 - GitHub Actions: `.github/SECRETS_SETUP.md`
 - Development: `README.md`

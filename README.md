@@ -44,6 +44,7 @@ This extension supports Bun's catalog feature as documented at https://bun.sh/do
 Bun catalogs can be defined in your root `package.json` in two ways:
 
 ### 1. At the top level:
+
 ```json
 {
   "name": "my-monorepo",
@@ -60,6 +61,7 @@ Bun catalogs can be defined in your root `package.json` in two ways:
 ```
 
 ### 2. Within the workspaces object:
+
 ```json
 {
   "name": "my-monorepo",
@@ -79,6 +81,7 @@ Bun catalogs can be defined in your root `package.json` in two ways:
 ```
 
 Then reference them in workspace packages:
+
 ```json
 {
   "name": "my-package",

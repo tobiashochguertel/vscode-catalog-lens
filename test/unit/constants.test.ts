@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { WORKSPACE_FILES, catalogPrefix } from '../../src/constants'
+import { catalogPrefix, WORKSPACE_FILES } from '../../src/constants'
 
 describe('constants', () => {
-  describe('WORKSPACE_FILES', () => {
+  describe('wORKSPACE_FILES', () => {
     it('should have PNPM workspace file', () => {
       expect(WORKSPACE_FILES.PNPM).toBe('pnpm-workspace.yaml')
     })

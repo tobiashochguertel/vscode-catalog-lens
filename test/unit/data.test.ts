@@ -1,28 +1,28 @@
-import { describe, expect, it, beforeEach } from 'vitest'
+import * as path from 'node:path'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { WorkspaceManager } from '../../src/data'
 import { createMockDocument, getFixturePath } from '../utils/test-helpers'
-import * as path from 'node:path'
 
-describe('WorkspaceManager', () => {
+describe('workspaceManager', () => {
   let manager: WorkspaceManager
 
   beforeEach(() => {
     manager = new WorkspaceManager()
   })
 
-  describe('Bun workspace support', () => {
+  describe('bun workspace support', () => {
     it('should detect Bun workspace with workspaces.catalog', async () => {
-      const fixturePath = getFixturePath('bun-workspace', 'package.json')
+      const _fixturePath = getFixturePath('bun-workspace', 'package.json')
       const packageJsonPath = path.join(getFixturePath('bun-workspace', 'packages', 'app'), 'package.json')
-      
-      const doc = createMockDocument(
+
+      const _doc = createMockDocument(
         JSON.stringify({ dependencies: { react: 'catalog:' } }),
         packageJsonPath,
       )
 
       // The findWorkspace method should find the root package.json with catalogs
       const result = await (manager as any).findWorkspace(packageJsonPath)
-      
+
       expect(result).toBeTruthy()
       if (result) {
         expect(result.manager).toBe('Bun')
@@ -32,9 +32,9 @@ describe('WorkspaceManager', () => {
 
     it('should detect Bun workspace with top-level catalog', async () => {
       const fixturePath = getFixturePath('bun-workspace-toplevel', 'package.json')
-      
+
       const result = await (manager as any).findWorkspace(fixturePath)
-      
+
       expect(result).toBeTruthy()
       if (result) {
         expect(result.manager).toBe('Bun')
@@ -51,11 +51,11 @@ describe('WorkspaceManager', () => {
           }
         }
       }`
-      
+
       const doc = createMockDocument(content, fixturePath)
-      
+
       const data = await (manager as any).readWorkspace(doc)
-      
+
       expect(data.catalog).toBeDefined()
       expect(data.catalog.react).toBe('^19.0.0')
       expect(data.catalog['react-dom']).toBe('^19.0.0')
@@ -76,11 +76,11 @@ describe('WorkspaceManager', () => {
           }
         }
       }`
-      
+
       const doc = createMockDocument(content, fixturePath)
-      
+
       const data = await (manager as any).readWorkspace(doc)
-      
+
       expect(data.catalogs).toBeDefined()
       expect(data.catalogs.testing).toBeDefined()
       expect(data.catalogs.testing.jest).toBe('30.0.0')
@@ -97,23 +97,23 @@ describe('WorkspaceManager', () => {
           "vue": "^3.3.0"
         }
       }`
-      
+
       const doc = createMockDocument(content, fixturePath)
-      
+
       const data = await (manager as any).readWorkspace(doc)
-      
+
       expect(data.catalog).toBeDefined()
       expect(data.catalog.react).toBe('^18.2.0')
       expect(data.catalog.vue).toBe('^3.3.0')
     })
   })
 
-  describe('PNPM workspace support', () => {
+  describe('pNPM workspace support', () => {
     it('should detect PNPM workspace', async () => {
       const fixturePath = getFixturePath('pnpm-workspace', 'pnpm-workspace.yaml')
-      
+
       const result = await (manager as any).findWorkspace(fixturePath)
-      
+
       expect(result).toBeTruthy()
       if (result) {
         expect(result.manager).toBe('PNPM')
@@ -121,12 +121,12 @@ describe('WorkspaceManager', () => {
     })
   })
 
-  describe('Yarn workspace support', () => {
+  describe('yarn workspace support', () => {
     it('should detect Yarn workspace', async () => {
       const fixturePath = getFixturePath('yarn-workspace', '.yarnrc.yml')
-      
+
       const result = await (manager as any).findWorkspace(fixturePath)
-      
+
       expect(result).toBeTruthy()
       if (result) {
         expect(result.manager).toBe('Yarn')
@@ -136,10 +136,10 @@ describe('WorkspaceManager', () => {
 
   describe('catalog resolution', () => {
     it('should resolve default catalog reference', async () => {
-      const fixturePath = getFixturePath('bun-workspace', 'package.json')
+      const _fixturePath = getFixturePath('bun-workspace', 'package.json')
       const packageJsonPath = path.join(getFixturePath('bun-workspace', 'packages', 'app'), 'package.json')
-      
-      const doc = createMockDocument(
+
+      const _doc = createMockDocument(
         JSON.stringify({ dependencies: { react: 'catalog:' } }),
         packageJsonPath,
       )
@@ -150,10 +150,10 @@ describe('WorkspaceManager', () => {
     })
 
     it('should resolve named catalog reference', async () => {
-      const fixturePath = getFixturePath('bun-workspace', 'package.json')
+      const _fixturePath = getFixturePath('bun-workspace', 'package.json')
       const packageJsonPath = path.join(getFixturePath('bun-workspace', 'packages', 'app'), 'package.json')
-      
-      const doc = createMockDocument(
+
+      const _doc = createMockDocument(
         JSON.stringify({ devDependencies: { jest: 'catalog:testing' } }),
         packageJsonPath,
       )
@@ -174,9 +174,9 @@ describe('WorkspaceManager', () => {
   }
 }`
       const doc = createMockDocument(content, '/test/package.json')
-      
+
       const positionData = (manager as any).readWorkspacePosition(doc)
-      
+
       expect(positionData.catalog).toBeDefined()
       expect(positionData.catalog.react).toBeDefined()
       expect(positionData.catalog.react).toHaveLength(2)
