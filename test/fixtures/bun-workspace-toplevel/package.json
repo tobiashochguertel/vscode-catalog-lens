@@ -1,0 +1,12 @@
+{
+  "name": "bun-workspace-toplevel-fixture",
+  "catalog": {
+    "react": "^18.2.0",
+    "vue": "^3.3.0"
+  },
+  "catalogs": {
+    "testing": {
+      "vitest": "1.0.0"
+    }
+  }
+}

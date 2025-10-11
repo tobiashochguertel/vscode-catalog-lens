@@ -1,0 +1,11 @@
+{
+  "name": "app",
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "jest": "catalog:testing",
+    "webpack": "catalog:build"
+  }
+}

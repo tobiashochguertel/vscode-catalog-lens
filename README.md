@@ -105,26 +105,80 @@ Then reference them in workspace packages:
 
 ## Development
 
-### Testing
+### Prerequisites
 
-The extension includes a test suite using Vitest. To run tests:
+This extension uses `pnpm` for dependency management and `vsce` (VS Code Extension Manager) for packaging and publishing.
 
 ```bash
+# Install pnpm if you don't have it
+npm install -g pnpm
+
+# Install @vscode/vsce for publishing
+npm install -g @vscode/vsce
+```
+
+### Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/tobiashochguertel/vscode-catalog-lens.git
+cd vscode-catalog-lens
+
+# Install dependencies
 pnpm install
+```
+
+### Testing
+
+The extension includes a test suite using Vitest:
+
+```bash
+# Run tests
 pnpm test
+
+# Run tests in watch mode
+pnpm test --watch
 ```
 
 ### Building
 
 ```bash
+# Build the extension
 pnpm build
+
+# Type checking
+pnpm typecheck
+
+# Linting
+pnpm lint
 ```
 
-### Development Mode
+### Development Workflow
 
 ```bash
-pnpm dev  # Watch mode for development
+# Watch mode for development (rebuilds on file changes)
+pnpm dev
 ```
+
+Then press `F5` in VS Code to launch the extension development host.
+
+### Publishing
+
+```bash
+# Package the extension (creates .vsix file)
+pnpm package
+
+# Publish to VS Code Marketplace (requires authentication)
+pnpm ext:publish
+
+# Or publish to Open VSX
+npx ovsx publish
+
+# Create a new release (bumps version and creates git tag)
+pnpm release
+```
+
+**Note:** VS Code extension publishing works with `npm`, `yarn`, and `pnpm`. This project uses `pnpm` with `vsce --no-dependencies` flag to avoid bundling dependencies that should be bundled by the build process.
 
 ## Credits
 

@@ -32,6 +32,7 @@
   "activationEvents": [
     "workspaceContains:pnpm-workspace.yaml",
     "workspaceContains:.yarnrc.yml",
+    "workspaceContains:bun.lock",
     "workspaceContains:bun.lockb",
     "workspaceContains:bunfig.toml"
   ],

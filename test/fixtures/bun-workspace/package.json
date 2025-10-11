@@ -1,0 +1,20 @@
+{
+  "name": "bun-workspace-fixture",
+  "workspaces": {
+    "packages": ["packages/*"],
+    "catalog": {
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0"
+    },
+    "catalogs": {
+      "testing": {
+        "jest": "30.0.0",
+        "vitest": "2.0.0"
+      },
+      "build": {
+        "webpack": "5.88.2",
+        "vite": "5.0.0"
+      }
+    }
+  }
+}

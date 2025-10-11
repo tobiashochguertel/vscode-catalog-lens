@@ -1,0 +1,12 @@
+catalog:
+  react: ^19.0.0
+  react-dom: ^19.0.0
+  typescript: ~5.2.0
+
+catalogs:
+  testing:
+    jest: 29.6.2
+    vitest: 1.0.0
+  build:
+    webpack: 5.88.2
+    vite: 5.0.0
