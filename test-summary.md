@@ -11,9 +11,11 @@ The PR fixes CI workflow errors by addressing linting issues, vitest configurati
 **Status:** NOT USED (Good decision)
 
 The PR description states:
+
 > "Investigated using `@reactive-vscode/mock` package for a more future-proof solution, but encountered vitest hoisting issues. The custom vscode mock is more reliable for this use case as it's tailored to our specific needs and has better compatibility with vitest's module mocking system."
 
 **Why this is correct:**
+
 - Custom mock gives us full control
 - No additional dependencies
 - Better vitest compatibility
@@ -22,15 +24,17 @@ The PR description states:
 ### 2. Vitest Configuration Fixes ✅
 
 **Before (incorrect):**
+
 ```typescript
 export default defineConfig({
   test: {
-    alias: { vscode: '...' }  // Wrong location
+    alias: { vscode: '...' } // Wrong location
   }
 })
 ```
 
 **After (correct):**
+
 ```typescript
 export default defineConfig({
   resolve: {
@@ -43,6 +47,7 @@ export default defineConfig({
 ```
 
 **Why this is correct:**
+
 - `resolve.alias` is the correct location for module resolution in Vite/Vitest
 - `server.deps.inline` allows the mock to work through reactive-vscode dependency
 - Uses proper path resolution with `__dirname`
@@ -56,8 +61,9 @@ vi.mock('find-up', () => ({
   findUp: async (patterns, options) => {
     // Constrained to stay within test/fixtures/* only
     const fixtureMatch = cwd.match(/test\/fixtures\/([^/]+)/)
-    if (!fixtureMatch) return null
-    
+    if (!fixtureMatch)
+      return null
+
     // Only search within the fixture directory
     const fixtureRoot = path.join(process.cwd(), 'test', 'fixtures', fixtureName)
     // ... search only in fixtureRoot
@@ -66,6 +72,7 @@ vi.mock('find-up', () => ({
 ```
 
 **Why this is correct:**
+
 - Prevents tests from finding the repository's `pnpm-workspace.yaml`
 - Ensures tests only use fixture data
 - Proper test isolation
@@ -73,12 +80,14 @@ vi.mock('find-up', () => ({
 ### 4. Enhanced vscode Mock ✅
 
 Added missing methods to vscode mock:
+
 - `createOutputChannel` with methods: `append`, `appendLine`, `replace`, `clear`, etc.
 - Proper mock functions for all methods
 
 ### 5. Linting Fixes ✅
 
 Fixed 125 linting errors:
+
 - Workflow files: trailing spaces, YAML formatting
 - Source code: unused variables (prefixed with `_`)
 - Test files: import ordering, test naming
@@ -89,6 +98,7 @@ Fixed 125 linting errors:
 ### ⚠️ No CI Checks Running
 
 The PR shows "no checks reported" which suggests:
+
 1. Workflows might not be configured to run on PRs from this branch
 2. Workflows might be disabled
 3. There might be a GitHub Actions configuration issue

@@ -1,0 +1,28 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running pre-commit checks..."
+
+# Run lint with auto-fix
+echo "📝 Linting and auto-fixing..."
+pnpm lint:fix || {
+  echo "❌ Lint failed! Some issues couldn't be auto-fixed."
+  echo "💡 Review the errors above and fix manually."
+  exit 1
+}
+
+# Run type check
+echo "🔧 Type checking..."
+pnpm typecheck || {
+  echo "❌ Type check failed!"
+  exit 1
+}
+
+# Run build
+echo "🏗️  Building..."
+pnpm build || {
+  echo "❌ Build failed!"
+  exit 1
+}
+
+echo "✅ All pre-commit checks passed!"

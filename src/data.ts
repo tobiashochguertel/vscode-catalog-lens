@@ -38,7 +38,7 @@ export class WorkspaceManager {
 
   async resolveCatalog(doc: TextDocument, name: string, catalog: string) {
     logger.debug(`Resolving catalog for ${name} in catalog '${catalog}' from ${doc.uri.fsPath}`)
-    
+
     const workspaceInfo = await this.findWorkspace(doc.uri.fsPath)
     if (!workspaceInfo) {
       logger.debug(`No workspace found for ${doc.uri.fsPath}`)
@@ -65,7 +65,7 @@ export class WorkspaceManager {
     }
 
     const version = map[name]
-    
+
     if (!version) {
       logger.debug(`Package '${name}' not found in catalog '${catalog}'`)
       return null
@@ -87,7 +87,7 @@ export class WorkspaceManager {
 
   private async findWorkspace(path: string): Promise<WorkspaceInfo | null> {
     logger.debug(`Finding workspace for path: ${path}`)
-    
+
     if (this.findUpCache.has(path)) {
       const cached = this.findUpCache.get(path)!
       logger.debug(`Using cached workspace info: ${cached.path} (${cached.manager})`)
@@ -133,9 +133,9 @@ export class WorkspaceManager {
         }
         else {
           logger.debug(`package.json at ${packageJsonFile} does not contain catalog definitions, continuing search...`)
-          
+
           // Continue searching from parent directory
-          const parentDir = require('path').dirname(require('path').dirname(packageJsonFile))
+          const parentDir = dirname(dirname(packageJsonFile))
           if (parentDir !== packageJsonFile && parentDir !== path) {
             logger.debug(`Searching parent directory: ${parentDir}`)
             return this.findWorkspace(parentDir)
