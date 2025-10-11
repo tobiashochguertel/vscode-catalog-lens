@@ -102,6 +102,7 @@
     "@babel/types": "^7.28.4",
     "@reactive-vscode/vueuse": "^0.3.2",
     "@types/babel__core": "^7.20.5",
+    "@types/babel__traverse": "^7.20.6",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.6.0",
     "@types/vscode": "1.90.0",
