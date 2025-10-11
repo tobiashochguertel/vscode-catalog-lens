@@ -9,8 +9,11 @@ vi.mock('find-up', () => ({
   findUp: async (patterns: string[], options?: { cwd?: string, type?: string }) => {
     const cwd = options?.cwd || process.cwd()
 
+    // Normalize path separators for cross-platform compatibility
+    const normalizedCwd = cwd.replace(/\\/g, '/')
+
     // Determine which fixture directory we're in
-    const fixtureMatch = cwd.match(/test\/fixtures\/([^/]+)/)
+    const fixtureMatch = normalizedCwd.match(/test\/fixtures\/([^/]+)/)
     if (!fixtureMatch) {
       return null // Not in a fixture, return null
     }
