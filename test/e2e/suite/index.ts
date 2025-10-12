@@ -16,6 +16,9 @@ export async function run(): Promise<void> {
     timeout: 60000, // 60 seconds for E2E tests
   })
 
+  // Expose Mocha's BDD interface to global scope
+  mocha.suite.emit('pre-require', globalThis, null, mocha)
+
   const testsRoot = path.resolve(__dirname, '.')
 
   try {
