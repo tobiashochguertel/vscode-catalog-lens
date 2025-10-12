@@ -4,18 +4,18 @@
 version: 2
 updates:
   # GitHub Actions - Check for action updates weekly
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: 'weekly'
-      day: 'monday'
+      interval: weekly
+      day: monday
       time: '09:00'
     labels:
-      - 'dependencies'
-      - 'github-actions'
+      - dependencies
+      - github-actions
     commit-message:
-      prefix: 'ci'
-      include: 'scope'
+      prefix: ci
+      include: scope
     open-pull-requests-limit: 10
     # Group all patch updates into a single PR
     groups:
@@ -23,24 +23,24 @@ updates:
         patterns:
           - '*'
         update-types:
-          - 'patch'
+          - patch
     # Allow both version updates and security updates
     allow:
-      - dependency-type: 'all'
+      - dependency-type: all
 
   # npm dependencies - Check for package updates weekly
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: npm
+    directory: /
     schedule:
-      interval: 'weekly'
-      day: 'monday'
+      interval: weekly
+      day: monday
       time: '09:00'
     labels:
-      - 'dependencies'
-      - 'npm'
+      - dependencies
+      - npm
     commit-message:
-      prefix: 'chore'
-      include: 'scope'
+      prefix: chore
+      include: scope
     open-pull-requests-limit: 10
     # Group all patch and minor updates
     groups:
@@ -48,14 +48,14 @@ updates:
         patterns:
           - '*'
         update-types:
-          - 'patch'
-          - 'minor'
-        dependency-type: 'development'
+          - patch
+          - minor
+        dependency-type: development
       npm-production:
         patterns:
           - '*'
         update-types:
-          - 'patch'
-        dependency-type: 'production'
+          - patch
+        dependency-type: production
     allow:
-      - dependency-type: 'all'
+      - dependency-type: all

@@ -4,16 +4,16 @@ on:
   workflow_call:
     inputs:
       node-version:
-        description: 'Node.js version to use'
+        description: Node.js version to use
         required: false
         type: string
         default: 'lts/*'
       runner-os:
-        description: 'Runner OS'
+        description: Runner OS
         required: true
         type: string
       is-windows:
-        description: 'Is this a Windows runner'
+        description: Is this a Windows runner
         required: false
         type: boolean
         default: false

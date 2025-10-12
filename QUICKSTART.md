@@ -6,7 +6,7 @@
 
 **One-Click Publishing:**
 
-1. Go to https://github.com/tobiashochguertel/vscode-catalog-lens/actions
+1. Go to <https://github.com/tobiashochguertel/vscode-catalog-lens/actions>
 2. Click on "Publish Extension" workflow
 3. Click "Run workflow" button (top right)
 4. Check the boxes for what you want:
@@ -69,7 +69,7 @@ npx ovsx publish catalog-lens-0.5.0.vsix -p $OVSX_PAT
 ✅ Build script created
 ✅ All code changes committed and pushed
 
-## 🚀 Ready to Publish!
+## 🚀 Ready to Publish
 
 The extension is complete with:
 
@@ -86,7 +86,7 @@ See `.github/SECRETS_SETUP.md` for detailed instructions.
 
 **Quick setup:**
 
-1. Get VSCE_PAT from https://dev.azure.com/_usersSettings/tokens
+1. Get VSCE_PAT from <https://dev.azure.com/_usersSettings/tokens>
 2. Add to GitHub: Repository Settings → Secrets → New secret
    - Name: `VSCE_PAT`
    - Value: [your token]

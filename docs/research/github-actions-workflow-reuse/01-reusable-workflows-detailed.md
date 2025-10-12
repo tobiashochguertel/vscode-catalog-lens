@@ -18,17 +18,17 @@ on:
   workflow_call:
     inputs:
       node-version:
-        description: 'Node.js version to use'
+        description: Node.js version to use
         required: true
         type: string
       runner-os:
-        description: 'Runner OS'
+        description: Runner OS
         required: false
         type: string
-        default: 'ubuntu-latest'
+        default: ubuntu-latest
     secrets:
       npm-token:
-        description: 'NPM authentication token'
+        description: NPM authentication token
         required: false
 
 jobs:
@@ -65,7 +65,7 @@ jobs:
 jobs:
   call-reusable:
     uses: ./.github/workflows/reusable.yml
-    secrets: inherit  # All secrets passed automatically
+    secrets: inherit # All secrets passed automatically
 ```
 
 ### 3. Calling Reusable Workflows
@@ -78,7 +78,7 @@ jobs:
     uses: ./.github/workflows/reusable-test.yml
     with:
       node-version: 'lts/*'
-      runner-os: 'ubuntu-latest'
+      runner-os: ubuntu-latest
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
 ```
@@ -108,7 +108,7 @@ on:
   workflow_call:
     outputs:
       test-result:
-        description: "Test result status"
+        description: Test result status
         value: ${{ jobs.test-job.outputs.result }}
 
 jobs:
@@ -156,9 +156,9 @@ on:
       package-manager:
         required: false
         type: string
-        default: 'pnpm'
+        default: pnpm
       use-hoisted:
-        description: 'Use hoisted node-linker for pnpm (Windows)'
+        description: Use hoisted node-linker for pnpm (Windows)
         required: false
         type: boolean
         default: false
@@ -207,12 +207,12 @@ jobs:
   setup-unix:
     uses: ./.github/workflows/setup-node-and-deps.yml
     with:
-      package-manager: 'pnpm'
+      package-manager: pnpm
 
   setup-windows:
     uses: ./.github/workflows/setup-node-and-deps.yml
     with:
-      package-manager: 'pnpm'
+      package-manager: pnpm
       use-hoisted: true
 ```
 
@@ -239,7 +239,7 @@ jobs:
     uses: ./.github/workflows/setup-node-and-deps.yml
     with:
       node-version: ${{ inputs.node-version }}
-      package-manager: 'pnpm'
+      package-manager: pnpm
 
   test:
     needs: setup
@@ -272,8 +272,8 @@ jobs:
     uses: ./.github/workflows/setup-node-and-deps.yml
     with:
       node-version: ${{ inputs.node-version }}
-      package-manager: 'pnpm'
-      use-hoisted: true  # Windows-specific
+      package-manager: pnpm
+      use-hoisted: true # Windows-specific
 
   test:
     needs: setup
@@ -286,7 +286,7 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('pnpm-lock.yaml') }}
       - name: Run tests
-        run: npm run test:unit  # Use npm on Windows
+        run: npm run test:unit # Use npm on Windows
 ```
 
 ### Use Case 3: Matrix Strategy with Reusable Workflows
@@ -385,10 +385,10 @@ on:
 ```yaml
 inputs:
   package-manager:
-    description: 'Package manager to use'
+    description: Package manager to use
     required: false
     type: string
-    default: 'pnpm'  # Sensible default
+    default: pnpm # Sensible default
 ```
 
 ### 4. Inherit Secrets When Possible
@@ -415,7 +415,7 @@ jobs:
 # Reusable workflow
 outputs:
   cache-hit:
-    description: "Whether cache was hit"
+    description: Whether cache was hit
     value: ${{ jobs.setup.outputs.cache-hit }}
 
 # Caller can use this
@@ -433,8 +433,8 @@ jobs:
 
 ## Advantages
 
-| Advantage                 | Description                                      |
-| ------------------------- | ------------------------------------------------ |
+| Advantage                  | Description                                      |
+| -------------------------- | ------------------------------------------------ |
 | ✅ **DRY Principle**       | Define once, use many times                      |
 | ✅ **Job-Level Reuse**     | Complete jobs can be reused                      |
 | ✅ **Platform Isolation**  | Separate files for different platforms           |
@@ -444,8 +444,8 @@ jobs:
 
 ## Limitations
 
-| Limitation                   | Impact                                              |
-| ---------------------------- | --------------------------------------------------- |
+| Limitation                    | Impact                                              |
+| ----------------------------- | --------------------------------------------------- |
 | ⚠️ **4-Level Nesting Limit**  | Cannot nest more than 4 levels deep                 |
 | ⚠️ **Same Repo Limitation**   | Must use `./.github/workflows/` for same-repo calls |
 | ⚠️ **No Environment Secrets** | Cannot pass environment secrets via `workflow_call` |

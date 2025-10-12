@@ -26,11 +26,11 @@ Combine **reusable workflows** with **matrix strategy** to create platform-speci
 
 ### Key Metrics Comparison
 
-| Approach           | Code Reuse | Platform Isolation | Debugging | Maintainability |
-| ------------------ | ---------- | ------------------ | --------- | --------------- |
-| Reusable Workflows | ⭐⭐⭐⭐⭐      | ⭐⭐⭐⭐⭐              | ⭐⭐⭐⭐      | ⭐⭐⭐⭐⭐           |
-| Composite Actions  | ⭐⭐⭐⭐       | ⭐⭐⭐                | ⭐⭐⭐⭐⭐     | ⭐⭐⭐⭐            |
-| Inline Duplication | ⭐          | ⭐⭐                 | ⭐⭐⭐       | ⭐⭐              |
+| Approach           | Code Reuse | Platform Isolation | Debugging  | Maintainability |
+| ------------------ | ---------- | ------------------ | ---------- | --------------- |
+| Reusable Workflows | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐         | ⭐⭐⭐⭐   | ⭐⭐⭐⭐⭐      |
+| Composite Actions  | ⭐⭐⭐⭐   | ⭐⭐⭐             | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐        |
+| Inline Duplication | ⭐         | ⭐⭐               | ⭐⭐⭐     | ⭐⭐            |
 
 ## 🔍 Research Methodology
 

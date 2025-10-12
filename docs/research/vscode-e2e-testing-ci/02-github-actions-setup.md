@@ -383,16 +383,16 @@ xvfb-run -a npm test
 Modify `runTest.ts` to support version env var:
 
 ```typescript
-import { runTests } from '@vscode/test-electron'
+import { runTests } from '@vscode/test-electron';
 
 async function main() {
-  const vscodeVersion = process.env.VSCODE_VERSION || 'stable'
+  const vscodeVersion = process.env.VSCODE_VERSION || 'stable';
 
   await runTests({
     version: vscodeVersion,
     extensionDevelopmentPath,
-    extensionTestsPath
-  })
+    extensionTestsPath,
+  });
 }
 ```
 
@@ -473,8 +473,8 @@ Error: Timeout of 20000ms exceeded
 const mocha = new Mocha({
   ui: 'tdd',
   color: true,
-  timeout: 60000 // 60 seconds
-})
+  timeout: 60000, // 60 seconds
+});
 ```
 
 ### Issue: Flaky tests
@@ -491,15 +491,15 @@ const mocha = new Mocha({
 // ❌ Don't use arbitrary delays
 test('Bad test', () => {
   setTimeout(() => {
-    assert.ok(true)
-  }, 1000)
-})
+    assert.ok(true);
+  }, 1000);
+});
 
 // ✅ Use proper async/await
 test('Good test', async () => {
-  const result = await someAsyncOperation()
-  assert.ok(result)
-})
+  const result = await someAsyncOperation();
+  assert.ok(result);
+});
 ```
 
 ## Status Badges

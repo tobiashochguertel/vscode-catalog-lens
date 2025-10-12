@@ -13,7 +13,19 @@
       "options": {
         "embeddedLanguageFormatting": "auto",
         "endOfLine": "lf",
-        "printWidth": 600
+        "printWidth": 120,
+        "proseWrap": "preserve",
+        "singleQuote": false
+      }
+    },
+    {
+      "files": [
+        "*.yaml",
+        "*.yml"
+      ],
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2
       }
     }
   ],
@@ -22,7 +34,7 @@
     "/Users/tobiashochgurtel/dotfiles/apps-config/prettier/node_modules/@prettier/plugin-oxc/index.mjs"
   ],
   "printWidth": 200,
-  "proseWrap": "always",
+  "proseWrap": "preserve",
   "semi": true,
   "singleQuote": true,
   "tabWidth": 2,

@@ -39,11 +39,11 @@ This extension fully supports VS Code's [multi-root workspaces](https://code.vis
 
 ## Bun Catalogs Support
 
-This extension supports Bun's catalog feature as documented at https://bun.sh/docs/install/workspaces#catalogs
+This extension supports Bun's catalog feature as documented at <https://bun.sh/docs/install/workspaces#catalogs>
 
 Bun catalogs can be defined in your root `package.json` in two ways:
 
-### 1. At the top level:
+### 1. At the top level
 
 ```json
 {
@@ -60,7 +60,7 @@ Bun catalogs can be defined in your root `package.json` in two ways:
 }
 ```
 
-### 2. Within the workspaces object:
+### 2. Within the workspaces object
 
 ```json
 {

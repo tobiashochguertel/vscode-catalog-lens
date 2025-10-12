@@ -192,14 +192,15 @@ Done
 
 ```typescript
 // test/e2e/suite/index.ts (Test Suite Loader Context)
-const mocha = new Mocha({ ui: 'bdd' })
-mocha.suite.emit('pre-require', globalThis, null, mocha)
+const mocha = new Mocha({ ui: 'bdd' });
+mocha.suite.emit('pre-require', globalThis, null, mocha);
 // globalThis now has: suite, test, before, after, etc.
 
 // test/e2e/suite/extension.test.ts (Extension Host Context - ISOLATED)
-suite('Test', () => { // ReferenceError: suite is not defined
+suite('Test', () => {
+  // ReferenceError: suite is not defined
   // Never reached
-})
+});
 ```
 
 **Problem**: Two separate contexts, cannot communicate
@@ -209,17 +210,19 @@ suite('Test', () => { // ReferenceError: suite is not defined
 ```typescript
 // All code in same Node.js context
 const context = await vi.hoisted(async () => {
-  return createMockVSCode({ manifest: {} })
-})
+  return createMockVSCode({ manifest: {} });
+});
 
-vi.mock('vscode', () => context)
+vi.mock('vscode', () => context);
 
 // describe, it provided by vitest - same context
-describe('Test', () => { // ✅ Works
-  it('should work', () => { // ✅ Works
+describe('Test', () => {
+  // ✅ Works
+  it('should work', () => {
+    // ✅ Works
     // Test code
-  })
-})
+  });
+});
 ```
 
 **Solution**: Single context, no isolation issues

@@ -93,7 +93,7 @@ inputs:
 test-unix:
   uses: ./.github/workflows/test-unix.yml
   with:
-    node-version: '20'  # Override default
+    node-version: "20" # Override default
 ```
 
 ### Debug Windows Issues
@@ -122,41 +122,41 @@ test-unix:
 
 1. **Create new reusable workflow:**
 
-    ```yaml
-    # .github/workflows/test-freebsd.yml
-    name: Test FreeBSD (Reusable)
+   ```yaml
+   # .github/workflows/test-freebsd.yml
+   name: Test FreeBSD (Reusable)
 
-    on:
-      workflow_call:
-        inputs:
-          node-version:
-            required: false
-            type: string
-            default: 'lts/*'
+   on:
+     workflow_call:
+       inputs:
+         node-version:
+           required: false
+           type: string
+           default: "lts/*"
 
-    jobs:
-      test:
-        runs-on: freebsd-latest
-        steps:
-          - uses: actions/checkout@v4
-          - run: pkg install pnpm
-          - run: pnpm install --frozen-lockfile
-          - run: pnpm test:unit
-    ```
+   jobs:
+     test:
+       runs-on: freebsd-latest
+       steps:
+         - uses: actions/checkout@v4
+         - run: pkg install pnpm
+         - run: pnpm install --frozen-lockfile
+         - run: pnpm test:unit
+   ```
 
 2. **Add to main CI:**
 
-    ```yaml
-    # ci.yml
-    jobs:
-      # ... existing jobs ...
+   ```yaml
+   # ci.yml
+   jobs:
+     # ... existing jobs ...
 
-      test-freebsd:
-        needs: [build]
-        uses: ./.github/workflows/test-freebsd.yml
-        with:
-          node-version: 'lts/*'
-    ```
+     test-freebsd:
+       needs: [build]
+       uses: ./.github/workflows/test-freebsd.yml
+       with:
+         node-version: "lts/*"
+   ```
 
 ## Workflow Input Reference
 
@@ -306,7 +306,7 @@ jobs:
   typecheck: ...
   build: ...
 
-# These wait for build
+  # These wait for build
   test-unix:
     needs: [build]
   test-windows:

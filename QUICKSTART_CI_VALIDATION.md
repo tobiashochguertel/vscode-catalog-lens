@@ -83,12 +83,12 @@ pnpm act:test pull_request
 
 ## 🎯 When to Use Each Tool
 
-| Scenario | Tool | Command | Speed |
-|----------|------|---------|-------|
-| **Quick validation** | actionlint | `pnpm workflow:lint` | Milliseconds |
-| **Test workflow changes** | act | `pnpm act:test` | Seconds |
-| **Test specific job** | act | `pnpm act:test -j job-name` | Seconds |
-| **Before commit** | Pre-commit hook | `git commit` | Automatic |
+| Scenario                  | Tool            | Command                     | Speed        |
+| ------------------------- | --------------- | --------------------------- | ------------ |
+| **Quick validation**      | actionlint      | `pnpm workflow:lint`        | Milliseconds |
+| **Test workflow changes** | act             | `pnpm act:test`             | Seconds      |
+| **Test specific job**     | act             | `pnpm act:test -j job-name` | Seconds      |
+| **Before commit**         | Pre-commit hook | `git commit`                | Automatic    |
 
 ---
 
@@ -155,7 +155,7 @@ On first run, act will ask:
 
 ---
 
-## 🎉 You're Ready!
+## 🎉 You're Ready
 
 ```bash
 # Make workflow changes

@@ -160,5 +160,5 @@ jobs:
     uses: ./.github/workflows/e2e-test.yml
     with:
       node-version: 'lts/*'
-      runner-os: 'windows-latest'
+      runner-os: windows-latest
       is-windows: true

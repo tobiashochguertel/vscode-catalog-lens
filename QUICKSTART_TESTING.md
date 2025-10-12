@@ -76,6 +76,7 @@ PM_TOOL=bun pnpm test:run
    - View → Output
    - Select "Catalog Lens (PNPM|YARN|BUN)"
    - Should see:
+
      ```
      [2025-10-11T...] [INFO] Catalog Lens extension activating...
      [2025-10-11T...] [INFO] Extension enabled

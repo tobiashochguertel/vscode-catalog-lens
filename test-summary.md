@@ -28,9 +28,9 @@ The PR description states:
 ```typescript
 export default defineConfig({
   test: {
-    alias: { vscode: '...' } // Wrong location
-  }
-})
+    alias: { vscode: "..." }, // Wrong location
+  },
+});
 ```
 
 **After (correct):**
@@ -38,12 +38,12 @@ export default defineConfig({
 ```typescript
 export default defineConfig({
   resolve: {
-    alias: { vscode: path.resolve(__dirname, './test/mocks/vscode.ts') }
+    alias: { vscode: path.resolve(__dirname, "./test/mocks/vscode.ts") },
   },
   test: {
-    server: { deps: { inline: ['reactive-vscode'] } }
-  }
-})
+    server: { deps: { inline: ["reactive-vscode"] } },
+  },
+});
 ```
 
 **Why this is correct:**
@@ -57,18 +57,17 @@ export default defineConfig({
 The PR adds proper mocking of `find-up` to prevent tests from escaping fixture directories:
 
 ```typescript
-vi.mock('find-up', () => ({
+vi.mock("find-up", () => ({
   findUp: async (patterns, options) => {
     // Constrained to stay within test/fixtures/* only
-    const fixtureMatch = cwd.match(/test\/fixtures\/([^/]+)/)
-    if (!fixtureMatch)
-      return null
+    const fixtureMatch = cwd.match(/test\/fixtures\/([^/]+)/);
+    if (!fixtureMatch) return null;
 
     // Only search within the fixture directory
-    const fixtureRoot = path.join(process.cwd(), 'test', 'fixtures', fixtureName)
+    const fixtureRoot = path.join(process.cwd(), "test", "fixtures", fixtureName);
     // ... search only in fixtureRoot
-  }
-}))
+  },
+}));
 ```
 
 **Why this is correct:**

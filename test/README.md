@@ -91,26 +91,26 @@ pnpm test --coverage
 ### Unit Test Example
 
 ```typescript
-import { describe, expect, it } from 'vitest'
-import { myFunction } from '../../src/my-module'
+import { describe, expect, it } from 'vitest';
+import { myFunction } from '../../src/my-module';
 
 describe('myFunction', () => {
   it('should do something', () => {
-    const result = myFunction('input')
-    expect(result).toBe('expected output')
-  })
-})
+    const result = myFunction('input');
+    expect(result).toBe('expected output');
+  });
+});
 ```
 
 ### Using Test Fixtures
 
 ```typescript
-import { getFixturePath, openFixtureDocument } from '../utils/test-helpers'
+import { getFixturePath, openFixtureDocument } from '../utils/test-helpers';
 
 it('should work with fixture', async () => {
-  const doc = await openFixtureDocument('bun-workspace', 'package.json')
+  const doc = await openFixtureDocument('bun-workspace', 'package.json');
   // Test with real file
-})
+});
 ```
 
 ## VS Code Extension Testing

@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       node-version:
-        description: 'Node.js version to use'
+        description: Node.js version to use
         required: false
         type: string
         default: 'lts/*'
@@ -13,12 +13,12 @@ on:
         required: true
         type: string
       use-hoisted:
-        description: 'Use hoisted node-linker for pnpm (Windows)'
+        description: Use hoisted node-linker for pnpm (Windows)
         required: false
         type: boolean
         default: false
       skip-pnpm-install:
-        description: 'Skip pnpm installation (for Windows)'
+        description: Skip pnpm installation (for Windows)
         required: false
         type: boolean
         default: false

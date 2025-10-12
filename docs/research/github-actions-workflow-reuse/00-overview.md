@@ -124,7 +124,7 @@ jobs:
 jobs:
   test:
     uses: ./.github/workflows/test.yml
-    secrets: inherit  # All secrets automatically available
+    secrets: inherit # All secrets automatically available
 ```
 
 ## Recommended Architecture
@@ -215,8 +215,8 @@ Refactor `ci.yml`:
 
 ### Advantages of Reusable Workflows
 
-| Benefit                  | Description                                |
-| ------------------------ | ------------------------------------------ |
+| Benefit                   | Description                                |
+| ------------------------- | ------------------------------------------ |
 | ✅ **Code Reuse**         | Define once, use many times                |
 | ✅ **Platform Isolation** | Separate files for platform-specific logic |
 | ✅ **Easier Debugging**   | Failures isolated to specific workflow     |
@@ -225,8 +225,8 @@ Refactor `ci.yml`:
 
 ### Potential Challenges
 
-| Challenge                    | Mitigation                                         |
-| ---------------------------- | -------------------------------------------------- |
+| Challenge                     | Mitigation                                         |
+| ----------------------------- | -------------------------------------------------- |
 | ⚠️ **Learning Curve**         | Provide clear documentation                        |
 | ⚠️ **Workflow Nesting**       | Limit to 4 levels (GitHub limit)                   |
 | ⚠️ **Debugging Across Files** | Use descriptive names, clear inputs/outputs        |

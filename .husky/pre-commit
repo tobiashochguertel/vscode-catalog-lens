@@ -12,8 +12,37 @@ NC='\033[0m' # No Color
 printf "${BLUE}🔍 Running pre-commit checks...${NC}\n"
 printf "\n"
 
-# STEP 1: Auto-fix linting issues
-printf "${BLUE}📝 Step 1/5: Linting and auto-fixing...${NC}\n"
+# STEP 1: Format code with Prettier
+printf "${BLUE}✨ Step 1/7: Formatting code with Prettier...${NC}\n"
+pnpm format > /dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+  printf "\n"
+  printf "${RED}❌ Prettier formatting failed!${NC}\n"
+  printf "${YELLOW}💡 Run 'pnpm format' to see errors.${NC}\n"
+  exit 1
+fi
+
+printf "${GREEN}✓ Prettier formatting completed${NC}\n"
+git add -u
+
+# STEP 2: Lint and fix markdown
+printf "\n"
+printf "${BLUE}📝 Step 2/7: Linting markdown files...${NC}\n"
+pnpm markdown:fix > /dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+  printf "\n"
+  printf "${YELLOW}⚠️  Markdown linting found issues (attempting fix)${NC}\n"
+  pnpm markdown:fix
+fi
+
+printf "${GREEN}✓ Markdown linting completed${NC}\n"
+git add -u
+
+# STEP 3: Auto-fix linting issues
+printf "\n"
+printf "${BLUE}� Step 3/7: Linting and auto-fixing...${NC}\n"
 pnpm lint:fix
 
 # Check if auto-fix worked
@@ -30,9 +59,9 @@ printf "${GREEN}✓ Auto-fix completed${NC}\n"
 printf "${BLUE}📦 Re-staging auto-fixed files...${NC}\n"
 git add -u
 
-# STEP 2: Verify no lint errors remain
+# STEP 4: Verify no lint errors remain
 printf "\n"
-printf "${BLUE}📋 Step 2/5: Verifying lint status...${NC}\n"
+printf "${BLUE}📋 Step 4/7: Verifying lint status...${NC}\n"
 pnpm lint
 
 if [ $? -ne 0 ]; then
@@ -45,9 +74,9 @@ fi
 
 printf "${GREEN}✓ No lint errors${NC}\n"
 
-# STEP 3: Type checking
+# STEP 5: Type checking
 printf "\n"
-printf "${BLUE}🔧 Step 3/5: Type checking...${NC}\n"
+printf "${BLUE}� Step 5/7: Type checking...${NC}\n"
 pnpm typecheck
 
 if [ $? -ne 0 ]; then
@@ -59,9 +88,9 @@ fi
 
 printf "${GREEN}✓ Type check passed${NC}\n"
 
-# STEP 4: Build
+# STEP 6: Build
 printf "\n"
-printf "${BLUE}🏗️  Step 4/5: Building...${NC}\n"
+printf "${BLUE}🏗️  Step 6/7: Building...${NC}\n"
 pnpm build > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
@@ -73,9 +102,9 @@ fi
 
 printf "${GREEN}✓ Build successful${NC}\n"
 
-# STEP 5: Validate GitHub Actions workflows (if actionlint is available)
+# STEP 7: Validate GitHub Actions workflows (if actionlint is available)
 printf "\n"
-printf "${BLUE}🔍 Step 5/5: Validating GitHub Actions workflows...${NC}\n"
+printf "${BLUE}⚙️  Step 7/7: Validating GitHub Actions workflows...${NC}\n"
 
 if command -v actionlint > /dev/null 2>&1; then
   if ./scripts/lint-workflows.sh > /dev/null 2>&1; then

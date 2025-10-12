@@ -98,23 +98,23 @@ brew install act
 
 ### New Files Created
 
-| File | Purpose | Lines |
-|------|---------|-------|
-| `scripts/lint-workflows.sh` | Validate workflows with actionlint | 47 |
-| `scripts/act-test.sh` | Run workflows locally with act | 61 |
-| `scripts/README.md` | Documentation for validation scripts | ~200 |
-| `.github/dependabot.yml` | Dependabot configuration | 63 |
-| `docs/research/ci-local-validation/README.md` | Research overview and findings | ~250 |
-| `docs/research/ci-local-validation/00-overview.md` | Executive summary | ~250 |
+| File                                               | Purpose                              | Lines |
+| -------------------------------------------------- | ------------------------------------ | ----- |
+| `scripts/lint-workflows.sh`                        | Validate workflows with actionlint   | 47    |
+| `scripts/act-test.sh`                              | Run workflows locally with act       | 61    |
+| `scripts/README.md`                                | Documentation for validation scripts | ~200  |
+| `.github/dependabot.yml`                           | Dependabot configuration             | 63    |
+| `docs/research/ci-local-validation/README.md`      | Research overview and findings       | ~250  |
+| `docs/research/ci-local-validation/00-overview.md` | Executive summary                    | ~250  |
 
 **Total new files:** 6 files, ~871 lines
 
 ### Modified Files
 
-| File | Changes | Impact |
-|------|---------|--------|
-| `.husky/pre-commit` | Added Step 5/5: Workflow validation | +18 lines |
-| `package.json` | Added workflow:lint, act:list, act:test scripts | +3 scripts |
+| File                | Changes                                         | Impact     |
+| ------------------- | ----------------------------------------------- | ---------- |
+| `.husky/pre-commit` | Added Step 5/5: Workflow validation             | +18 lines  |
+| `package.json`      | Added workflow:lint, act:list, act:test scripts | +3 scripts |
 
 **Total modified files:** 2 files
 
@@ -248,21 +248,21 @@ graph LR
 
 ### Metrics Before Implementation
 
-| Metric | Value | Impact |
-|--------|-------|--------|
-| **CI failures from workflow errors** | ~30% of commits | High frustration |
-| **Time to discover errors** | 5-10 minutes (CI wait) | Slow iteration |
-| **Action version updates** | Manual (monthly, if at all) | Outdated actions |
-| **Developer workflow interruptions** | Frequent (CI failures) | Lost focus |
+| Metric                               | Value                       | Impact           |
+| ------------------------------------ | --------------------------- | ---------------- |
+| **CI failures from workflow errors** | ~30% of commits             | High frustration |
+| **Time to discover errors**          | 5-10 minutes (CI wait)      | Slow iteration   |
+| **Action version updates**           | Manual (monthly, if at all) | Outdated actions |
+| **Developer workflow interruptions** | Frequent (CI failures)      | Lost focus       |
 
 ### Metrics After Implementation
 
-| Metric | Value | Impact |
-|--------|-------|--------|
-| **CI failures from workflow errors** | <5% of commits | Low frustration ✅ |
-| **Time to discover errors** | Seconds (actionlint) | Fast iteration ✅ |
-| **Action version updates** | Automatic (weekly PRs) | Always up-to-date ✅ |
-| **Developer workflow interruptions** | Rare (pre-commit catches errors) | Maintained focus ✅ |
+| Metric                               | Value                            | Impact               |
+| ------------------------------------ | -------------------------------- | -------------------- |
+| **CI failures from workflow errors** | <5% of commits                   | Low frustration ✅   |
+| **Time to discover errors**          | Seconds (actionlint)             | Fast iteration ✅    |
+| **Action version updates**           | Automatic (weekly PRs)           | Always up-to-date ✅ |
+| **Developer workflow interruptions** | Rare (pre-commit catches errors) | Maintained focus ✅  |
 
 ### Time Savings
 

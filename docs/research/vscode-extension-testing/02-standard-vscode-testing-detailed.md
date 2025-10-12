@@ -99,16 +99,16 @@ extension-root/
 ### Step 1: Test Runner Script (runTests.ts)
 
 ```typescript
-import * as path from 'node:path'
-import { runTests } from '@vscode/test-electron'
+import * as path from 'node:path';
+import { runTests } from '@vscode/test-electron';
 
 async function main() {
   try {
     // The folder containing the Extension Manifest package.json
-    const extensionDevelopmentPath = path.resolve(__dirname, '../../')
+    const extensionDevelopmentPath = path.resolve(__dirname, '../../');
 
     // The path to the test suite
-    const extensionTestsPath = path.resolve(__dirname, './suite/index')
+    const extensionTestsPath = path.resolve(__dirname, './suite/index');
 
     // Download VS Code, unzip it and run the integration test
     await runTests({
@@ -122,15 +122,14 @@ async function main() {
         '--disable-gpu',
         '--no-sandbox',
       ],
-    })
-  }
-  catch (err) {
-    console.error('Failed to run tests:', err)
-    process.exit(1)
+    });
+  } catch (err) {
+    console.error('Failed to run tests:', err);
+    process.exit(1);
   }
 }
 
-main()
+main();
 ```
 
 **Key Points**:
@@ -142,9 +141,9 @@ main()
 ### Step 2: Test Suite Configuration (suite/index.ts)
 
 ```typescript
-import * as path from 'node:path'
-import { glob } from 'glob'
-import * as Mocha from 'mocha'
+import * as path from 'node:path';
+import { glob } from 'glob';
+import * as Mocha from 'mocha';
 
 export function run(): Promise<void> {
   // Create the mocha test
@@ -152,36 +151,34 @@ export function run(): Promise<void> {
     ui: 'bdd',
     color: true,
     timeout: 60000,
-  })
+  });
 
-  const testsRoot = path.resolve(__dirname, '..')
+  const testsRoot = path.resolve(__dirname, '..');
 
   return new Promise((resolve, reject) => {
     glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
       if (err) {
-        return reject(err)
+        return reject(err);
       }
 
       // Add files to the test suite
-      files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)))
+      files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
 
       try {
         // Run the mocha test
-        mocha.run((failures) => {
+        mocha.run(failures => {
           if (failures > 0) {
-            reject(new Error(`${failures} tests failed.`))
+            reject(new Error(`${failures} tests failed.`));
+          } else {
+            resolve();
           }
-          else {
-            resolve()
-          }
-        })
+        });
+      } catch (err) {
+        console.error(err);
+        reject(err);
       }
-      catch (err) {
-        console.error(err)
-        reject(err)
-      }
-    })
-  })
+    });
+  });
 }
 ```
 
@@ -195,29 +192,29 @@ export function run(): Promise<void> {
 ### Step 3: Test Files (\*.test.ts)
 
 ```typescript
-import * as assert from 'node:assert'
-import * as vscode from 'vscode'
+import * as assert from 'node:assert';
+import * as vscode from 'vscode';
 
 suite('Extension Test Suite', () => {
-  vscode.window.showInformationMessage('Start all tests.')
+  vscode.window.showInformationMessage('Start all tests.');
 
   test('Sample test', () => {
-    assert.strictEqual(-1, [1, 2, 3].indexOf(5))
-    assert.strictEqual(-1, [1, 2, 3].indexOf(0))
-  })
+    assert.strictEqual(-1, [1, 2, 3].indexOf(5));
+    assert.strictEqual(-1, [1, 2, 3].indexOf(0));
+  });
 
   test('VS Code API access', async () => {
     // Full vscode API available
-    const editor = vscode.window.activeTextEditor
-    assert.ok(editor !== undefined)
-  })
+    const editor = vscode.window.activeTextEditor;
+    assert.ok(editor !== undefined);
+  });
 
   test('Command execution', async () => {
-    await vscode.commands.executeCommand('workbench.action.files.newUntitledFile')
-    const editor = vscode.window.activeTextEditor
-    assert.ok(editor)
-  })
-})
+    await vscode.commands.executeCommand('workbench.action.files.newUntitledFile');
+    const editor = vscode.window.activeTextEditor;
+    assert.ok(editor);
+  });
+});
 ```
 
 **Key Points**:
@@ -231,20 +228,20 @@ suite('Extension Test Suite', () => {
 ### Testing Extension Activation
 
 ```typescript
-import * as assert from 'node:assert'
-import * as vscode from 'vscode'
+import * as assert from 'node:assert';
+import * as vscode from 'vscode';
 
 suite('Extension Activation', () => {
   test('should be activated', async () => {
     // Get extension
-    const ext = vscode.extensions.getExtension('publisher.extension-name')
-    assert.ok(ext)
+    const ext = vscode.extensions.getExtension('publisher.extension-name');
+    assert.ok(ext);
 
     // Activate
-    await ext.activate()
-    assert.ok(ext.isActive)
-  })
-})
+    await ext.activate();
+    assert.ok(ext.isActive);
+  });
+});
 ```
 
 ### Testing Commands
@@ -252,15 +249,15 @@ suite('Extension Activation', () => {
 ```typescript
 suite('Commands', () => {
   test('should register command', async () => {
-    const commands = await vscode.commands.getCommands(true)
-    assert.ok(commands.includes('myExt.command'))
-  })
+    const commands = await vscode.commands.getCommands(true);
+    assert.ok(commands.includes('myExt.command'));
+  });
 
   test('should execute command', async () => {
-    const result = await vscode.commands.executeCommand('myExt.command', 'arg')
-    assert.strictEqual(result, 'expected')
-  })
-})
+    const result = await vscode.commands.executeCommand('myExt.command', 'arg');
+    assert.strictEqual(result, 'expected');
+  });
+});
 ```
 
 ### Testing Configuration
@@ -268,19 +265,19 @@ suite('Commands', () => {
 ```typescript
 suite('Configuration', () => {
   test('should read configuration', () => {
-    const config = vscode.workspace.getConfiguration('myExt')
-    const setting = config.get('settingName')
-    assert.strictEqual(setting, 'defaultValue')
-  })
+    const config = vscode.workspace.getConfiguration('myExt');
+    const setting = config.get('settingName');
+    assert.strictEqual(setting, 'defaultValue');
+  });
 
   test('should update configuration', async () => {
-    const config = vscode.workspace.getConfiguration('myExt')
-    await config.update('settingName', 'newValue', vscode.ConfigurationTarget.Global)
+    const config = vscode.workspace.getConfiguration('myExt');
+    await config.update('settingName', 'newValue', vscode.ConfigurationTarget.Global);
 
-    const updated = config.get('settingName')
-    assert.strictEqual(updated, 'newValue')
-  })
-})
+    const updated = config.get('settingName');
+    assert.strictEqual(updated, 'newValue');
+  });
+});
 ```
 
 ### Testing Text Editing
@@ -288,32 +285,30 @@ suite('Configuration', () => {
 ```typescript
 suite('Text Editing', () => {
   test('should insert text', async () => {
-    const doc = await vscode.workspace.openTextDocument({ content: '' })
-    const editor = await vscode.window.showTextDocument(doc)
+    const doc = await vscode.workspace.openTextDocument({ content: '' });
+    const editor = await vscode.window.showTextDocument(doc);
 
-    await editor.edit((editBuilder) => {
-      editBuilder.insert(new vscode.Position(0, 0), 'Hello World')
-    })
+    await editor.edit(editBuilder => {
+      editBuilder.insert(new vscode.Position(0, 0), 'Hello World');
+    });
 
-    assert.strictEqual(doc.getText(), 'Hello World')
-  })
+    assert.strictEqual(doc.getText(), 'Hello World');
+  });
 
   test('should apply decoration', async () => {
-    const doc = await vscode.workspace.openTextDocument({ content: 'test' })
-    const editor = await vscode.window.showTextDocument(doc)
+    const doc = await vscode.workspace.openTextDocument({ content: 'test' });
+    const editor = await vscode.window.showTextDocument(doc);
 
     const decorationType = vscode.window.createTextEditorDecorationType({
-      backgroundColor: 'red'
-    })
+      backgroundColor: 'red',
+    });
 
-    editor.setDecorations(decorationType, [
-      new vscode.Range(0, 0, 0, 4)
-    ])
+    editor.setDecorations(decorationType, [new vscode.Range(0, 0, 0, 4)]);
 
     // Verify decoration applied (check editor state)
-    assert.ok(true)
-  })
-})
+    assert.ok(true);
+  });
+});
 ```
 
 ## 📦 package.json Configuration
@@ -501,23 +496,27 @@ suite('Extension E2E', () => {
   // Shared setup (runs once)
   suiteSetup(async () => {
     // Heavy setup here
-    await activateExtension()
-  })
+    await activateExtension();
+  });
 
   // Per-test setup (runs before each)
   setup(async () => {
     // Clean state
-    await vscode.commands.executeCommand('workbench.action.closeAllEditors')
-  })
+    await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+  });
 
-  test('test 1', () => { /* ... */ })
-  test('test 2', () => { /* ... */ })
+  test('test 1', () => {
+    /* ... */
+  });
+  test('test 2', () => {
+    /* ... */
+  });
 
   // Cleanup
   suiteTeardown(() => {
     // One-time cleanup
-  })
-})
+  });
+});
 ```
 
 ### 3. Use Timeouts Wisely
@@ -526,24 +525,23 @@ suite('Extension E2E', () => {
 const mocha = new Mocha({
   ui: 'bdd',
   timeout: 60000, // 60 seconds - generous for E2E
-})
+});
 ```
 
 ### 4. Clean Up Resources
 
 ```typescript
 test('resource test', async () => {
-  const doc = await vscode.workspace.openTextDocument({ content: 'test' })
-  const editor = await vscode.window.showTextDocument(doc)
+  const doc = await vscode.workspace.openTextDocument({ content: 'test' });
+  const editor = await vscode.window.showTextDocument(doc);
 
   try {
     // Test code
-  }
-  finally {
+  } finally {
     // Clean up
-    await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
+    await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   }
-})
+});
 ```
 
 ### 5. Use Helper Functions
@@ -551,22 +549,22 @@ test('resource test', async () => {
 ```typescript
 // test/helpers.ts
 // test/extension.test.ts
-import { closeAllEditors, openDocument } from '../helpers'
+import { closeAllEditors, openDocument } from '../helpers';
 
 export async function openDocument(content: string) {
-  const doc = await vscode.workspace.openTextDocument({ content })
-  return vscode.window.showTextDocument(doc)
+  const doc = await vscode.workspace.openTextDocument({ content });
+  return vscode.window.showTextDocument(doc);
 }
 
 export async function closeAllEditors() {
-  await vscode.commands.executeCommand('workbench.action.closeAllEditors')
+  await vscode.commands.executeCommand('workbench.action.closeAllEditors');
 }
 
 test('test', async () => {
-  const editor = await openDocument('content')
+  const editor = await openDocument('content');
   // ...
-  await closeAllEditors()
-})
+  await closeAllEditors();
+});
 ```
 
 ## 🔬 When to Use Standard Approach

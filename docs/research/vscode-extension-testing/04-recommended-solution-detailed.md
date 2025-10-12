@@ -37,8 +37,8 @@ pnpm list @reactive-vscode/mock
 Create `vitest.e2e.config.ts`:
 
 ```typescript
-import { resolve } from 'node:path'
-import { defineConfig } from 'vitest/config'
+import { resolve } from 'node:path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
@@ -62,7 +62,7 @@ export default defineConfig({
       'reactive-vscode': resolve(__dirname, 'node_modules/reactive-vscode'),
     },
   },
-})
+});
 ```
 
 **Why this configuration?**:
@@ -76,106 +76,104 @@ export default defineConfig({
 Create `test/e2e/extension.test.ts`:
 
 ```typescript
-import type { ExtensionContext } from 'vscode'
-import { resolve } from 'node:path'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { ExtensionContext } from 'vscode';
+import { resolve } from 'node:path';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Import your extension code
 // Adjust path based on your actual extension entry point
-import { activate, deactivate } from '../../src/index'
+import { activate, deactivate } from '../../src/index';
 
 // Create mock context
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock')
+  const { createMockVSCode } = await import('@reactive-vscode/mock');
   // Import package.json for manifest
-  const manifest = await import('../../package.json')
+  const manifest = await import('../../package.json');
 
   return createMockVSCode({
     manifest,
     root: resolve(__dirname, '../..'),
-  })
-})
+  });
+});
 
 // Mock vscode module
-vi.mock('vscode', () => context)
+vi.mock('vscode', () => context);
 
 describe('Extension E2E Tests', () => {
   describe('Extension Lifecycle', () => {
     it('should activate without errors', async () => {
       expect(() => {
-        activate(context._extensionContext)
-      }).not.toThrow()
-    })
+        activate(context._extensionContext);
+      }).not.toThrow();
+    });
 
     it('should deactivate without errors', async () => {
-      activate(context._extensionContext)
+      activate(context._extensionContext);
 
       expect(() => {
-        deactivate()
-      }).not.toThrow()
-    })
-  })
+        deactivate();
+      }).not.toThrow();
+    });
+  });
 
   describe('Extension API', () => {
     beforeEach(() => {
       // Ensure clean state for each test
       if (typeof deactivate === 'function') {
-        deactivate()
+        deactivate();
       }
-    })
+    });
 
     it('should register commands on activation', async () => {
       // Activate extension
-      activate(context._extensionContext)
+      activate(context._extensionContext);
 
       // Check if commands are registered
       // Adjust command IDs based on your package.json contributes.commands
-      const registeredCommands = context._extensionContext.subscriptions
-        .filter((sub: any) => sub.commandId)
-        .map((sub: any) => sub.commandId)
+      const registeredCommands = context._extensionContext.subscriptions.filter((sub: any) => sub.commandId).map((sub: any) => sub.commandId);
 
       // Example assertions - adjust to your actual commands
-      expect(registeredCommands).toContain('catalogLens.showManifest')
-      expect(registeredCommands).toContain('catalogLens.refreshTree')
-    })
+      expect(registeredCommands).toContain('catalogLens.showManifest');
+      expect(registeredCommands).toContain('catalogLens.refreshTree');
+    });
 
     it('should execute commands successfully', async () => {
-      activate(context._extensionContext)
+      activate(context._extensionContext);
 
       // Execute a command
       // This uses the mocked commands.executeCommand
-      const result = await context.commands.executeCommand('catalogLens.showManifest')
+      const result = await context.commands.executeCommand('catalogLens.showManifest');
 
       // Assert command executed (adjust based on your command behavior)
-      expect(result).toBeDefined()
-    })
-  })
+      expect(result).toBeDefined();
+    });
+  });
 
   describe('Configuration', () => {
     it('should read configuration values', () => {
-      activate(context._extensionContext)
+      activate(context._extensionContext);
 
       // Get configuration
-      const config = context.workspace.getConfiguration('catalogLens')
+      const config = context.workspace.getConfiguration('catalogLens');
 
       // Check default values (adjust based on your package.json configuration)
-      expect(config).toBeDefined()
-      expect(config.get('enabled')).toBeDefined()
-    })
-  })
+      expect(config).toBeDefined();
+      expect(config.get('enabled')).toBeDefined();
+    });
+  });
 
   describe('Window State', () => {
     it('should handle active text editor', () => {
-      activate(context._extensionContext)
+      activate(context._extensionContext);
 
       // Mock active editor
-      const activeEditor = context.window.activeTextEditor
+      const activeEditor = context.window.activeTextEditor;
 
       // Check if extension handles it correctly
-      expect(activeEditor).toBeDefined()
-    })
-  })
-})
+      expect(activeEditor).toBeDefined();
+    });
+  });
+});
 ```
 
 **Note**: This is a **template**. Adjust based on your actual extension:

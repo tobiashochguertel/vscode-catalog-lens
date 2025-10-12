@@ -75,7 +75,7 @@ npm run lint
 ### Prerequisites
 
 1. **VS Code Publisher Account**
-   - Go to https://marketplace.visualstudio.com/manage
+   - Go to <https://marketplace.visualstudio.com/manage>
    - Sign in with your Microsoft account
    - Create a publisher if you don't have one named "TobiasHochguertel"
 
@@ -133,9 +133,9 @@ Open VSX is the open-source alternative marketplace for VSCodium and other edito
 ### Prerequisites
 
 1. **Open VSX Account**
-   - Go to https://open-vsx.org/
+   - Go to <https://open-vsx.org/>
    - Sign in with GitHub
-   - Get an access token: https://open-vsx.org/user-settings/tokens
+   - Get an access token: <https://open-vsx.org/user-settings/tokens>
 
 2. **Publish**
 
@@ -235,7 +235,7 @@ name: Publish Extension
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 jobs:
   publish:
@@ -245,7 +245,7 @@ jobs:
       - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
           cache: pnpm
 
       - run: pnpm install

@@ -4,12 +4,12 @@ on:
   workflow_call:
     inputs:
       node-version:
-        description: 'Node.js version to use'
+        description: Node.js version to use
         required: false
         type: string
         default: 'lts/*'
       runner-os:
-        description: 'Runner OS (ubuntu-latest or macos-latest)'
+        description: Runner OS (ubuntu-latest or macos-latest)
         required: true
         type: string
 

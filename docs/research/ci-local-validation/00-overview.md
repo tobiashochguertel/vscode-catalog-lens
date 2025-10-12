@@ -70,10 +70,10 @@ brew install actionlint
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
 ```
 
 **Key Features:**
@@ -108,8 +108,8 @@ updates:
 | Tool           | Speed          | Accuracy | CI Integration    | Ease of Use | Cost |
 | -------------- | -------------- | -------- | ----------------- | ----------- | ---- |
 | **act**        | Fast (seconds) | ~85%     | N/A (local only)  | Easy        | Free |
-| **actionlint** | Very Fast (ms) | 100%     | ✅ GitHub Action   | Very Easy   | Free |
-| **Dependabot** | Automatic      | 100%     | ✅ Built-in        | Very Easy   | Free |
+| **actionlint** | Very Fast (ms) | 100%     | ✅ GitHub Action  | Very Easy   | Free |
+| **Dependabot** | Automatic      | 100%     | ✅ Built-in       | Very Easy   | Free |
 | **Husky**      | Instant        | 100%     | N/A (local hooks) | Easy        | Free |
 
 ---

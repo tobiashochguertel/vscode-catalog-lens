@@ -204,6 +204,7 @@ This runs the same checks as the pre-commit hook.
    ```
 
 3. **Verify hook executable:**
+
    ```bash
    ls -la .husky/pre-commit
    # Should show: -rwxr-xr-x (executable)

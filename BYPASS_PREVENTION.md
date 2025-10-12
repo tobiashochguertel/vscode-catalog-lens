@@ -196,6 +196,7 @@ git commit --no-verify -m "fix: Fix bug"
    ```
 
 3. **Emergency hotfix** (but still run checks manually!)
+
    ```bash
    git commit -m "hotfix: Critical bug" --no-verify
    pnpm check  # Run all checks manually

@@ -209,8 +209,8 @@ This is **working as designed** for pnpm:
 async function linkPackage(pkg, target) {
   await fs.symlink(
     pkg.storePath, // C:\pnpm-store\v3\files\[hash]
-    target // D:\project\node_modules\.pnpm\...
-  )
+    target, // D:\project\node_modules\.pnpm\...
+  );
 }
 ```
 

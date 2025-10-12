@@ -38,12 +38,13 @@ This was caused by incorrectly importing the Babel preset as a module variable i
 
 - Removed the problematic import: `import preset from '@babel/preset-typescript'`
 - Changed to use the string name directly in parseSync:
+
   ```typescript
   parseSync(code, {
-    presets: [['@babel/preset-typescript', { allowDeclareFields: true }]],
+    presets: [["@babel/preset-typescript", { allowDeclareFields: true }]],
     babelrc: false,
     configFile: false,
-  })
+  });
   ```
 
 **Files Changed:**
@@ -307,10 +308,10 @@ To verify all fixes work:
 
 ```typescript
 // New (recommended)
-import { getLogger } from './logger'
+import { getLogger } from "./logger";
 
-const logger = getLogger()
-logger.initialize() // Call once during activation
+const logger = getLogger();
+logger.initialize(); // Call once during activation
 ```
 
 **Testing:**
@@ -318,9 +319,9 @@ logger.initialize() // Call once during activation
 ```typescript
 // Always reset logger between tests
 beforeEach(async () => {
-  const LoggerClass = (await import('../../src/logger')) as any
-  LoggerClass.default?.resetForTesting?.()
-})
+  const LoggerClass = (await import("../../src/logger")) as any;
+  LoggerClass.default?.resetForTesting?.();
+});
 ```
 
 ## Future Improvements

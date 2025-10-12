@@ -32,7 +32,7 @@ The CI workflow has been successfully restructured using **GitHub Actions reusab
 
 **Inputs:**
 
-- `node-version` (default: 'lts/*')
+- `node-version` (default: 'lts/\*')
 - `runner-os` (required)
 - `use-hoisted` (boolean, for Windows pnpm)
 - `skip-pnpm-install` (boolean, for Windows npm fallback)
@@ -49,7 +49,7 @@ The CI workflow has been successfully restructured using **GitHub Actions reusab
 
 **Inputs:**
 
-- `node-version` (default: 'lts/*')
+- `node-version` (default: 'lts/\*')
 - `runner-os` (required)
 
 **Features:**
@@ -64,7 +64,7 @@ The CI workflow has been successfully restructured using **GitHub Actions reusab
 
 **Inputs:**
 
-- `node-version` (default: 'lts/*')
+- `node-version` (default: 'lts/\*')
 
 **Features:**
 
@@ -78,7 +78,7 @@ The CI workflow has been successfully restructured using **GitHub Actions reusab
 
 **Inputs:**
 
-- `node-version` (default: 'lts/*')
+- `node-version` (default: 'lts/\*')
 - `runner-os` (required)
 - `is-windows` (boolean)
 
@@ -254,7 +254,7 @@ docs/research/github-actions-workflow-reuse/
 workflow_dispatch:
   inputs:
     package_manager:
-      description: 'Package manager to use'
+      description: Package manager to use
       type: choice
       options: [npm, yarn, pnpm, bun]
 ```
@@ -304,20 +304,20 @@ If issues arise:
 
 1. **Revert `ci.yml`:**
 
-    ```bash
-    git checkout HEAD~1 .github/workflows/ci.yml
-    git commit -m "Rollback: Revert CI restructure"
-    ```
+   ```bash
+   git checkout HEAD~1 .github/workflows/ci.yml
+   git commit -m "Rollback: Revert CI restructure"
+   ```
 
 2. **Remove new workflows:**
 
-    ```bash
-    git rm .github/workflows/setup-node-and-deps.yml
-    git rm .github/workflows/test-unix.yml
-    git rm .github/workflows/test-windows.yml
-    git rm .github/workflows/e2e-test.yml
-    git commit -m "Rollback: Remove reusable workflows"
-    ```
+   ```bash
+   git rm .github/workflows/setup-node-and-deps.yml
+   git rm .github/workflows/test-unix.yml
+   git rm .github/workflows/test-windows.yml
+   git rm .github/workflows/e2e-test.yml
+   git commit -m "Rollback: Remove reusable workflows"
+   ```
 
 ## Future Enhancements
 

@@ -115,11 +115,11 @@ The `lint-workflows.sh` script is integrated into the Husky pre-commit hook (Ste
 
 The following scripts are available:
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `workflow:lint` | `pnpm workflow:lint` | Validate all workflow files |
-| `act:list` | `pnpm act:list` | List all workflows and jobs |
-| `act:test` | `pnpm act:test` | Run workflows locally with act |
+| Script          | Command              | Description                    |
+| --------------- | -------------------- | ------------------------------ |
+| `workflow:lint` | `pnpm workflow:lint` | Validate all workflow files    |
+| `act:list`      | `pnpm act:list`      | List all workflows and jobs    |
+| `act:test`      | `pnpm act:test`      | Run workflows locally with act |
 
 ---
 
@@ -148,12 +148,12 @@ git push
 
 ### When to Use Each Tool
 
-| Scenario | Tool | Why |
-|----------|------|-----|
-| Quick syntax check | `actionlint` | Milliseconds, catches 95% of errors |
-| Test workflow changes | `act` | Seconds, simulates GitHub environment |
-| Verify job execution | `act -j job-name` | Test specific job in isolation |
-| Final verification | GitHub CI | 100% accurate, source of truth |
+| Scenario              | Tool              | Why                                   |
+| --------------------- | ----------------- | ------------------------------------- |
+| Quick syntax check    | `actionlint`      | Milliseconds, catches 95% of errors   |
+| Test workflow changes | `act`             | Seconds, simulates GitHub environment |
+| Verify job execution  | `act -j job-name` | Test specific job in isolation        |
+| Final verification    | GitHub CI         | 100% accurate, source of truth        |
 
 ### Error Handling
 
