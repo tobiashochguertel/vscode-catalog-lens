@@ -172,7 +172,11 @@ jobs:
 
       - name: Install
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        run: |
+          for i in 1 2 3; do
+            pnpm install --frozen-lockfile --ignore-scripts && break || sleep 5
+          done
+        shell: bash
 
       - name: Generate metadata
         run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
@@ -226,7 +230,11 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        run: |
+          for i in 1 2 3; do
+            pnpm install --frozen-lockfile --ignore-scripts && break || sleep 5
+          done
+        shell: bash
 
       - name: Generate metadata
         run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
