@@ -157,12 +157,20 @@ jobs:
         with:
           version: 10.17.1
 
-      - name: Set node version to ${{ matrix.node }}
+      # Setup Node with cache only on Unix (Windows doesn't have package-lock.json)
+      - name: Set node version to ${{ matrix.node }} (Unix)
+        if: runner.os != 'Windows'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          # Use npm cache on Windows, pnpm on Unix
-          cache: ${{ runner.os == 'Windows' && 'npm' || 'pnpm' }}
+          cache: pnpm
+
+      # Setup Node without cache on Windows
+      - name: Set node version to ${{ matrix.node }} (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
 
       - name: Cache node_modules
         uses: actions/cache@v4
@@ -240,12 +248,20 @@ jobs:
         with:
           version: 10.17.1
 
-      - name: Set node version to ${{ matrix.node }}
+      # Setup Node with cache only on Unix (Windows doesn't have package-lock.json)
+      - name: Set node version to ${{ matrix.node }} (Unix)
+        if: runner.os != 'Windows'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          # Use npm cache on Windows, pnpm on Unix
-          cache: ${{ runner.os == 'Windows' && 'npm' || 'pnpm' }}
+          cache: pnpm
+
+      # Setup Node without cache on Windows
+      - name: Set node version to ${{ matrix.node }} (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
 
       - name: Cache node_modules
         uses: actions/cache@v4
