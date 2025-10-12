@@ -100,7 +100,7 @@ jobs:
         run: pnpm build
 
       - name: Unit Tests
-        run: pnpm test:run
+        run: pnpm test:unit
 
   e2e:
     runs-on: ${{ matrix.os }}
