@@ -132,33 +132,7 @@ jobs:
       - name: Build extension
         run: pnpm build
 
-      - name: Install Linux dependencies
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            xvfb \
-            libgtk-3-0 \
-            libgbm1 \
-            libnss3 \
-            libasound2t64 \
-            libxss1 \
-            libxtst6
-
-      - name: Cache VS Code
-        uses: actions/cache@v4
-        with:
-          path: .vscode-test
-          key: ${{ runner.os }}-vscode-test-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-vscode-test-
-
-      - name: Run E2E Tests (Linux)
-        if: runner.os == 'Linux'
-        run: xvfb-run -a pnpm test:e2e
-
-      - name: Run E2E Tests (macOS/Windows)
-        if: runner.os != 'Linux'
+      - name: Run E2E Tests
         run: pnpm test:e2e
 
       - name: Upload test results
@@ -167,6 +141,5 @@ jobs:
         with:
           name: e2e-test-results-${{ matrix.os }}
           path: |
-            .vscode-test/
             out/
           retention-days: 7

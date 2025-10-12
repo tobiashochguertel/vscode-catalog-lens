@@ -47,14 +47,14 @@ const { activate, deactivate } = defineExtension(() => {
     track(tick)
     if (!editor.value || !editor.value.document)
       return
+
     if (!editor.value.document.fileName.match(/[\\/]package\.json$/))
       return
+
     return editor.value.document
   })
 
-  const text = useDocumentText(() => doc.value)
-
-  // const workspaceData = computed(() => {
+  const text = useDocumentText(() => doc.value) // const workspaceData = computed(() => {
   //   if (!doc.value)
   //     return
   //   return readCatalog(doc.value.uri.fsPath)
