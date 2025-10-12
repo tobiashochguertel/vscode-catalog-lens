@@ -55,6 +55,9 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
 
+      - name: Generate metadata
+        run: pnpm update
+
       - name: Lint
         run: pnpm lint
 
@@ -86,6 +89,9 @@ jobs:
       - name: Install
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
+
+      - name: Generate metadata
+        run: pnpm update
 
       - name: Typecheck
         run: pnpm typecheck
@@ -129,7 +135,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: dist
-          key: ${{ runner.os }}-build-${{ github.sha }}
+          key: build-${{ github.sha }}
 
   test:
     runs-on: ${{ matrix.os }}
@@ -172,7 +178,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: dist
-          key: ${{ runner.os }}-build-${{ github.sha }}
+          key: build-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Unit Tests
@@ -219,7 +225,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: dist
-          key: ${{ runner.os }}-build-${{ github.sha }}
+          key: build-${{ github.sha }}
           fail-on-cache-miss: true
 
       - name: Run E2E Tests
