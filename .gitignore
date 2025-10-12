@@ -19,3 +19,11 @@ SECRETS_SETUP.md
 .vscode-test
 .vscode-test-user-data
 out
+
+#.history
+**/.history
+**/.specstory
+
+# Github Instructions
+**/.github/Instructions
+**/.github/copilot-instructions.md
