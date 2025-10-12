@@ -1,0 +1,76 @@
+# Ignore problematic directories at any depth
+**/node_modules/
+.git/
+**/dist/
+**/build/
+**/coverage/
+.nx/
+**/.vscode/
+**/.idea/
+.history/
+**/logs/
+**/temp/
+**/tmp/
+
+# Python-specific ignores
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.Python
+**/pip-log.txt
+**/pip-delete-this-directory.txt
+**/.tox/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.coverage
+**/htmlcov/
+**/.pdm-python
+**/.pdm-build/
+**/__pypackages__/
+**/.venv/
+**/venv/
+**/env/
+**/ENV/
+**/env.bak/
+**/venv.bak/
+
+# Package manager specific
+**/pdm.lock
+**/poetry.lock
+**/Pipfile.lock
+**/bun.lockb
+
+# Ignore all file types by default
+*.*
+
+# Allow specific file types you want formatted (edit as needed)
+!*.md
+
+# Ignore specific file types we don't want formatted
+*.log
+.DS_Store
+.env
+.env.*
+**/__*
+*.json
+*.jsonc
+*.yaml
+
+
+# Everything else (including .md files) will be processed by Prettier
+
+# Allow other specific file types you want formatted (edit as needed)
+# !**/*.json
+# !**/*.css
+# !**/*.scss
+# !**/*.html
+# ======================================================================================
+
+# If you want to allow more specific folders only, add them explicitly, e.g.:
+# !/packages/my-app/src/**/*.ts
+
+# Prettier config files should be ignored
+.prettierrc
+.prettierignore

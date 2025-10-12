@@ -1,0 +1,91 @@
+{
+  // markdownlint-cli2 configuration
+  // See: https://github.com/DavidAnson/markdownlint-cli2
+
+  "config": {
+    // Enable all rules by default
+    "default": true,
+
+    // Allow inline configuration comments in markdown files
+    "noInlineConfig": false,
+
+    // MD012: Multiple consecutive blank lines
+    "MD012": false,
+
+    // MD013: Line length limit (increased to 600 for flexibility)
+    "MD013": {
+      "line_length": 600
+    },
+
+    // MD022: Headers should be surrounded by blank lines
+    "MD022": true,
+
+    // MD023: Headers must start at the beginning of the line
+    "MD023": false,
+
+    // MD024: Multiple headers with the same content (allow duplicates)
+    "MD024": false,
+
+    // MD025: Multiple top level headers in the same document
+    "MD025": false,
+
+    // MD031: Fenced code blocks should be surrounded by blank lines
+    "MD031": true,
+
+    // MD033: Inline HTML (allow specific elements)
+    "MD033": {
+      "allowed_elements": ["details", "summary", "br"]
+    },
+
+    // MD035: Horizontal rule style
+    "MD035": false,
+
+    // MD036: Emphasis used instead of a header
+    "MD036": false,
+
+    // MD038: Spaces inside code span elements
+    "MD038": false,
+
+    // MD048: Code fence style (allow mixed styles)
+    "MD048": false
+  },
+
+  // Glob patterns for files to lint
+  // "globs": [
+  //   "**/*.md"
+  // ],
+
+  // Glob patterns for files to ignore
+  "ignores": [
+    "**/node_modules/**",
+    "**/.venv/**",
+    "**/.git/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.history/**",
+    "**/tests/fixtures/**"
+  ],
+
+  // Enable auto-fixing
+  "fix": true,
+
+  "gitignore": true,
+
+  // "frontMatter": "(^---\\s*$[^]*?^---\\s*$)(\\r\\n|\\r|\\n|$)",
+
+  "markdownItPlugins": [
+    ["markdown-it"],
+    ["@mdit-vue/plugin-frontmatter"],
+    ["markdown-it-emoji/dist/light.cjs.js"]
+  ],
+
+  // Additional paths to resolve module locations from
+  "modulePaths": [
+    "/Users/tobiashochgurtel/dotfiles/apps-config/markdownlint-cli2"
+  ],
+
+  "outputFormatters": [
+    ["markdownlint-cli2-formatter-pretty"]
+    // [ "markdownlint-cli2-formatter-default" ]
+  ]
+}

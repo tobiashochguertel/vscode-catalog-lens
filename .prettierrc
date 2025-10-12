@@ -1,0 +1,31 @@
+{
+  "arrowParens": "avoid",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "embeddedLanguageFormatting": "auto",
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": [
+        "*.md",
+        "*.mdx"
+      ],
+      "options": {
+        "embeddedLanguageFormatting": "auto",
+        "endOfLine": "lf",
+        "printWidth": 600
+      }
+    }
+  ],
+  "plugins": [
+    "/Users/tobiashochgurtel/dotfiles/apps-config/prettier/node_modules/@prettier/plugin-hermes/index.mjs",
+    "/Users/tobiashochgurtel/dotfiles/apps-config/prettier/node_modules/@prettier/plugin-oxc/index.mjs"
+  ],
+  "printWidth": 200,
+  "proseWrap": "always",
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "useTabs": false
+}

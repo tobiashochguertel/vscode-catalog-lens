@@ -16,10 +16,14 @@ export async function run(): Promise<void> {
     timeout: 60000, // 60 seconds for E2E tests
   })
 
-  // Expose Mocha's BDD interface to global scope
-  mocha.suite.emit('pre-require', globalThis, null, mocha)
-
   const testsRoot = path.resolve(__dirname, '.')
+
+  // Expose Mocha BDD interface to global scope before loading test files
+  // This is required because test files are loaded in a different context in VS Code extension host
+  // eslint-disable-next-line ts/no-require-imports
+  const bdd = require('mocha/lib/interfaces/bdd')
+  bdd(mocha.suite)
+  mocha.suite.emit('pre-require', globalThis, null, mocha)
 
   try {
     // Find all test files
