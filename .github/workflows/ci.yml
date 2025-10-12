@@ -188,7 +188,7 @@ jobs:
 
       - name: Install (Windows - npm)
         if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: npm ci
+        run: npm install
 
       # Generate metadata using appropriate package manager
       - name: Generate metadata (Unix)
@@ -216,7 +216,7 @@ jobs:
       - name: Build (Windows - if cache miss)
         if: steps.cache-build.outputs.cache-hit != 'true' && runner.os == 'Windows'
         run: |
-          npm ci
+          npm install
           npm run build
 
       # Run tests using appropriate package manager
@@ -279,7 +279,7 @@ jobs:
 
       - name: Install dependencies (Windows - npm)
         if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: npm ci
+        run: npm install
 
       # Generate metadata using appropriate package manager
       - name: Generate metadata (Unix)
@@ -307,7 +307,7 @@ jobs:
       - name: Build (Windows - if cache miss)
         if: steps.cache-build.outputs.cache-hit != 'true' && runner.os == 'Windows'
         run: |
-          npm ci
+          npm install
           npm run build
 
       # Run E2E tests using appropriate package manager
