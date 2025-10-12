@@ -10,22 +10,9 @@ on:
       - main
 
   workflow_dispatch:
-    inputs:
-      package_manager:
-        description: 'Package manager to use (npm, yarn, pnpm, bun)'
-        required: false
-        default: pnpm
-        type: choice
-        options:
-          - npm
-          - yarn
-          - pnpm
-          - bun
-
-env:
-  PM_TOOL: ${{ github.event.inputs.package_manager || 'pnpm' }}
 
 jobs:
+  # Lint and typecheck jobs run on Ubuntu only
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -137,184 +124,41 @@ jobs:
           path: dist
           key: build-${{ github.sha }}
 
-  test:
-    runs-on: ${{ matrix.os }}
+  # Platform-specific test jobs using reusable workflows
+  test-unix:
     needs: [build]
-
     strategy:
       matrix:
-        node: [lts/*]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
       fail-fast: false
+    uses: ./.github/workflows/test-unix.yml
+    with:
+      node-version: 'lts/*'
+      runner-os: ${{ matrix.os }}
 
-    steps:
-      - uses: actions/checkout@v4
+  test-windows:
+    needs: [build]
+    uses: ./.github/workflows/test-windows.yml
+    with:
+      node-version: 'lts/*'
 
-      # Install pnpm only on Unix (skip Windows)
-      - name: Install pnpm
-        if: runner.os != 'Windows'
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.17.1
-
-      # Setup Node with cache only on Unix (Windows doesn't have package-lock.json)
-      - name: Set node version to ${{ matrix.node }} (Unix)
-        if: runner.os != 'Windows'
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-
-      # Setup Node without cache on Windows
-      - name: Set node version to ${{ matrix.node }} (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        id: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
-      # Install using npm on Windows, pnpm on Unix
-      - name: Install (Unix - pnpm)
-        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os != 'Windows'
-        run: pnpm install --frozen-lockfile
-
-      - name: Install (Windows - npm)
-        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: npm install
-
-      # Generate metadata using appropriate package manager
-      - name: Generate metadata (Unix)
-        if: runner.os != 'Windows'
-        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
-
-      - name: Generate metadata (Windows)
-        if: runner.os == 'Windows'
-        run: npx vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
-
-      - name: Restore build output
-        id: cache-build
-        uses: actions/cache@v4
-        with:
-          path: dist
-          key: build-${{ github.sha }}
-
-      # Build using appropriate package manager (if cache miss)
-      - name: Build (Unix - if cache miss)
-        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os != 'Windows'
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm build
-
-      - name: Build (Windows - if cache miss)
-        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: |
-          npm install
-          npm run build
-
-      # Run tests using appropriate package manager
-      - name: Unit Tests (Unix)
-        if: runner.os != 'Windows'
-        run: pnpm test:unit
-
-      - name: Unit Tests (Windows)
-        if: runner.os == 'Windows'
-        run: npm run test:unit
-
-  e2e:
-    runs-on: ${{ matrix.os }}
-    needs: [lint, typecheck, test]
-
+  # E2E tests using reusable workflow
+  e2e-unix:
+    needs: [lint, typecheck, test-unix]
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        node: [lts/*]
+        os: [ubuntu-latest, macos-latest]
       fail-fast: false
+    uses: ./.github/workflows/e2e-test.yml
+    with:
+      node-version: 'lts/*'
+      runner-os: ${{ matrix.os }}
+      is-windows: false
 
-    steps:
-      - uses: actions/checkout@v4
-
-      # Install pnpm only on Unix (skip Windows)
-      - name: Install pnpm
-        if: runner.os != 'Windows'
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.17.1
-
-      # Setup Node with cache only on Unix (Windows doesn't have package-lock.json)
-      - name: Set node version to ${{ matrix.node }} (Unix)
-        if: runner.os != 'Windows'
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-
-      # Setup Node without cache on Windows
-      - name: Set node version to ${{ matrix.node }} (Windows)
-        if: runner.os == 'Windows'
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        id: cache-node-modules
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
-      # Install using npm on Windows, pnpm on Unix
-      - name: Install dependencies (Unix - pnpm)
-        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os != 'Windows'
-        run: pnpm install --frozen-lockfile
-
-      - name: Install dependencies (Windows - npm)
-        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: npm install
-
-      # Generate metadata using appropriate package manager
-      - name: Generate metadata (Unix)
-        if: runner.os != 'Windows'
-        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
-
-      - name: Generate metadata (Windows)
-        if: runner.os == 'Windows'
-        run: npx vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
-
-      - name: Restore build output
-        id: cache-build
-        uses: actions/cache@v4
-        with:
-          path: dist
-          key: build-${{ github.sha }}
-
-      # Build using appropriate package manager (if cache miss)
-      - name: Build (Unix - if cache miss)
-        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os != 'Windows'
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm build
-
-      - name: Build (Windows - if cache miss)
-        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os == 'Windows'
-        run: |
-          npm install
-          npm run build
-
-      # Run E2E tests using appropriate package manager
-      - name: Run E2E Tests (Unix)
-        if: runner.os != 'Windows'
-        run: pnpm test:e2e
-
-      - name: Run E2E Tests (Windows)
-        if: runner.os == 'Windows'
-        run: npm run test:e2e
+  e2e-windows:
+    needs: [lint, typecheck, test-windows]
+    uses: ./.github/workflows/e2e-test.yml
+    with:
+      node-version: 'lts/*'
+      runner-os: 'windows-latest'
+      is-windows: true

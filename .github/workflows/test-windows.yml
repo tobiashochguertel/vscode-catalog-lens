@@ -1,0 +1,63 @@
+name: Test Windows (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: 'lts/*'
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup Node without cache on Windows
+      - name: Set node version
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      # Install dependencies using pnpm with hoisted mode
+      # This avoids EPERM errors on Windows
+      - name: Install dependencies (pnpm hoisted)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: |
+          npm install -g pnpm@10.17.1
+          pnpm install --config.node-linker=hoisted
+
+      # Generate metadata using npx
+      - name: Generate metadata
+        run: npx vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
+
+      # Restore build output from cache
+      - name: Restore build output
+        id: cache-build
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: build-${{ github.sha }}
+
+      # Build if cache miss
+      - name: Build (if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          npm install
+          npm run build
+
+      # Run unit tests
+      - name: Unit Tests
+        run: npm run test:unit

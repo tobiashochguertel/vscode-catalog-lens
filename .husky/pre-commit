@@ -9,70 +9,90 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-echo "${BLUE}🔍 Running pre-commit checks...${NC}"
-echo ""
+printf "${BLUE}🔍 Running pre-commit checks...${NC}\n"
+printf "\n"
 
 # STEP 1: Auto-fix linting issues
-echo "${BLUE}📝 Step 1/4: Linting and auto-fixing...${NC}"
+printf "${BLUE}📝 Step 1/5: Linting and auto-fixing...${NC}\n"
 pnpm lint:fix
 
 # Check if auto-fix worked
 if [ $? -ne 0 ]; then
-  echo ""
-  echo "${RED}❌ Lint auto-fix couldn't resolve all issues!${NC}"
-  echo "${YELLOW}💡 Please fix the remaining errors manually.${NC}"
-  echo "${YELLOW}💡 Run 'pnpm lint' to see all errors.${NC}"
+  printf "\n"
+  printf "${RED}❌ Lint auto-fix couldn't resolve all issues!${NC}\n"
+  printf "${YELLOW}💡 Please fix the remaining errors manually.${NC}\n"
+  printf "${YELLOW}💡 Run 'pnpm lint' to see all errors.${NC}\n"
   exit 1
 fi
 
 # Re-add auto-fixed files to staging
-echo "${GREEN}✓ Auto-fix completed${NC}"
-echo "${BLUE}📦 Re-staging auto-fixed files...${NC}"
+printf "${GREEN}✓ Auto-fix completed${NC}\n"
+printf "${BLUE}📦 Re-staging auto-fixed files...${NC}\n"
 git add -u
 
 # STEP 2: Verify no lint errors remain
-echo ""
-echo "${BLUE}📋 Step 2/4: Verifying lint status...${NC}"
+printf "\n"
+printf "${BLUE}📋 Step 2/5: Verifying lint status...${NC}\n"
 pnpm lint
 
 if [ $? -ne 0 ]; then
-  echo ""
-  echo "${RED}❌ Lint errors still exist after auto-fix!${NC}"
-  echo "${YELLOW}💡 Some issues require manual fixes.${NC}"
-  echo "${YELLOW}💡 Please review and fix the errors above.${NC}"
+  printf "\n"
+  printf "${RED}❌ Lint errors still exist after auto-fix!${NC}\n"
+  printf "${YELLOW}💡 Some issues require manual fixes.${NC}\n"
+  printf "${YELLOW}💡 Please review and fix the errors above.${NC}\n"
   exit 1
 fi
 
-echo "${GREEN}✓ No lint errors${NC}"
+printf "${GREEN}✓ No lint errors${NC}\n"
 
 # STEP 3: Type checking
-echo ""
-echo "${BLUE}🔧 Step 3/4: Type checking...${NC}"
+printf "\n"
+printf "${BLUE}🔧 Step 3/5: Type checking...${NC}\n"
 pnpm typecheck
 
 if [ $? -ne 0 ]; then
-  echo ""
-  echo "${RED}❌ Type check failed!${NC}"
-  echo "${YELLOW}💡 Fix type errors before committing.${NC}"
+  printf "\n"
+  printf "${RED}❌ Type check failed!${NC}\n"
+  printf "${YELLOW}💡 Fix type errors before committing.${NC}\n"
   exit 1
 fi
 
-echo "${GREEN}✓ Type check passed${NC}"
+printf "${GREEN}✓ Type check passed${NC}\n"
 
 # STEP 4: Build
-echo ""
-echo "${BLUE}🏗️  Step 4/4: Building...${NC}"
+printf "\n"
+printf "${BLUE}🏗️  Step 4/5: Building...${NC}\n"
 pnpm build > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
-  echo ""
-  echo "${RED}❌ Build failed!${NC}"
-  echo "${YELLOW}💡 Run 'pnpm build' to see build errors.${NC}"
+  printf "\n"
+  printf "${RED}❌ Build failed!${NC}\n"
+  printf "${YELLOW}💡 Run 'pnpm build' to see build errors.${NC}\n"
   exit 1
 fi
 
-echo "${GREEN}✓ Build successful${NC}"
+printf "${GREEN}✓ Build successful${NC}\n"
 
-echo ""
-echo "${GREEN}✅ All pre-commit checks passed!${NC}"
-echo ""
+# STEP 5: Validate GitHub Actions workflows (if actionlint is available)
+printf "\n"
+printf "${BLUE}🔍 Step 5/5: Validating GitHub Actions workflows...${NC}\n"
+
+if command -v actionlint > /dev/null 2>&1; then
+  if ./scripts/lint-workflows.sh > /dev/null 2>&1; then
+    printf "${GREEN}✓ Workflow validation passed${NC}\n"
+  else
+    printf "\n"
+    printf "${YELLOW}⚠️  Workflow validation found issues (non-blocking):${NC}\n"
+    ./scripts/lint-workflows.sh
+    printf "\n"
+    printf "${YELLOW}💡 Fix workflow errors when convenient.${NC}\n"
+    printf "${YELLOW}💡 Run 'pnpm workflow:lint' to see details.${NC}\n"
+  fi
+else
+  printf "${YELLOW}⚠️  actionlint not installed (skipping)${NC}\n"
+  printf "${YELLOW}💡 Install with: brew install actionlint${NC}\n"
+fi
+
+printf "\n"
+printf "${GREEN}✅ All pre-commit checks passed!${NC}\n"
+printf "\n"

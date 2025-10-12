@@ -1,0 +1,109 @@
+name: E2E Test (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: 'lts/*'
+      runner-os:
+        description: 'Runner OS'
+        required: true
+        type: string
+      is-windows:
+        description: 'Is this a Windows runner'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  e2e:
+    runs-on: ${{ inputs.runner-os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install pnpm only on Unix
+      - name: Install pnpm
+        if: ${{ !inputs.is-windows }}
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.1
+
+      # Setup Node with cache only on Unix
+      - name: Set node version (Unix)
+        if: ${{ !inputs.is-windows }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
+
+      # Setup Node without cache on Windows
+      - name: Set node version (Windows)
+        if: ${{ inputs.is-windows }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      # Install dependencies (Unix - pnpm)
+      - name: Install dependencies (Unix - pnpm)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && !inputs.is-windows
+        run: pnpm install --frozen-lockfile
+
+      # Install dependencies (Windows - npm)
+      - name: Install dependencies (Windows - npm)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && inputs.is-windows
+        run: npm install
+
+      # Generate metadata (Unix)
+      - name: Generate metadata (Unix)
+        if: ${{ !inputs.is-windows }}
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
+
+      # Generate metadata (Windows)
+      - name: Generate metadata (Windows)
+        if: ${{ inputs.is-windows }}
+        run: npx vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
+
+      # Restore build output from cache
+      - name: Restore build output
+        id: cache-build
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: build-${{ github.sha }}
+
+      # Build (Unix - if cache miss)
+      - name: Build (Unix - if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true' && !inputs.is-windows
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      # Build (Windows - if cache miss)
+      - name: Build (Windows - if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true' && inputs.is-windows
+        run: |
+          npm install
+          npm run build
+
+      # Run E2E tests (Unix)
+      - name: Run E2E Tests (Unix)
+        if: ${{ !inputs.is-windows }}
+        run: pnpm test:e2e
+
+      # Run E2E tests (Windows)
+      - name: Run E2E Tests (Windows)
+        if: ${{ inputs.is-windows }}
+        run: npm run test:e2e

@@ -1,0 +1,56 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v11/terminal-keeper.json",
+  "activateOnStartup": false,
+  "active": "default",
+  "keepExistingTerminals": false,
+  "sessions": {
+    "default": [
+      {
+        "autoExecuteCommands": true,
+        "color": "terminal.ansiGreen",
+        "commands": [
+          "echo hello"
+        ],
+        "icon": "person",
+        "name": "hello"
+      },
+      [
+        {
+          "commands": [
+            ""
+          ],
+          "name": "docker:ros"
+        },
+        {
+          "commands": [
+            ""
+          ],
+          "name": "docker:k8s"
+        }
+      ],
+      [
+        {
+          "commands": [
+            ""
+          ],
+          "name": "docker:nats"
+        },
+        {
+          "commands": [
+            ""
+          ],
+          "name": "docker:fleet"
+        }
+      ]
+    ],
+    "saved-session": [
+      {
+        "commands": [
+          ""
+        ],
+        "name": "connect"
+      }
+    ]
+  },
+  "theme": "tribe"
+}

@@ -1,0 +1,87 @@
+name: Setup Node and Dependencies (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: 'lts/*'
+      runner-os:
+        description: 'Runner OS (ubuntu-latest, windows-latest, macos-latest)'
+        required: true
+        type: string
+      use-hoisted:
+        description: 'Use hoisted node-linker for pnpm (Windows)'
+        required: false
+        type: boolean
+        default: false
+      skip-pnpm-install:
+        description: 'Skip pnpm installation (for Windows)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  setup:
+    runs-on: ${{ inputs.runner-os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install pnpm only on Unix (skip Windows if requested)
+      - name: Install pnpm
+        if: ${{ !inputs.skip-pnpm-install }}
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.1
+
+      # Setup Node with cache only on Unix
+      - name: Set node version (with pnpm cache)
+        if: ${{ !inputs.skip-pnpm-install }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
+
+      # Setup Node without cache on Windows (when pnpm install is skipped)
+      - name: Set node version (without cache)
+        if: ${{ inputs.skip-pnpm-install }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      # Install dependencies (Unix - pnpm frozen lockfile)
+      - name: Install dependencies (pnpm frozen)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && !inputs.use-hoisted && !inputs.skip-pnpm-install
+        run: pnpm install --frozen-lockfile
+
+      # Install dependencies (Windows - pnpm hoisted)
+      - name: Install dependencies (pnpm hoisted)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && inputs.use-hoisted
+        run: pnpm install --config.node-linker=hoisted
+
+      # Install dependencies (Windows - npm fallback)
+      - name: Install dependencies (npm)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && inputs.skip-pnpm-install
+        run: npm install
+
+      # Generate metadata (Unix)
+      - name: Generate metadata (pnpm)
+        if: ${{ !inputs.skip-pnpm-install }}
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
+
+      # Generate metadata (Windows npm)
+      - name: Generate metadata (npx)
+        if: ${{ inputs.skip-pnpm-install }}
+        run: npx vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens

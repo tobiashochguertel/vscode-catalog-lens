@@ -1,0 +1,71 @@
+name: Test Unix (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: 'lts/*'
+      runner-os:
+        description: 'Runner OS (ubuntu-latest or macos-latest)'
+        required: true
+        type: string
+
+jobs:
+  test:
+    runs-on: ${{ inputs.runner-os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.1
+
+      # Setup Node with cache
+      - name: Set node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
+
+      # Cache node_modules
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-v2-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      # Install dependencies if cache miss
+      - name: Install
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+      # Generate metadata
+      - name: Generate metadata
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
+
+      # Restore build output from cache
+      - name: Restore build output
+        id: cache-build
+        uses: actions/cache@v4
+        with:
+          path: dist
+          key: build-${{ github.sha }}
+
+      # Build if cache miss
+      - name: Build (if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      # Run unit tests
+      - name: Unit Tests
+        run: pnpm test:unit
