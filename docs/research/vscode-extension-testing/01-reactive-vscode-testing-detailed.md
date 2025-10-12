@@ -52,16 +52,16 @@ reactive-vscode Approach (@reactive-vscode/mock + vitest):
 
 ```typescript
 export interface MockVscode extends ExposedEnums, ExposedClases {
-  readonly _config: ResolvedConfig;
+  readonly _config: ResolvedConfig
   readonly _extention: {
-    manifest: Record<string, any>;
-    identifier: string;
-    root: string;
-  };
-  version: string;
-  _extensionContext: ExtensionContext;
-  window: MockWindow;
-  workspace: MockWorkspace;
+    manifest: Record<string, any>
+    identifier: string
+    root: string
+  }
+  version: string
+  _extensionContext: ExtensionContext
+  window: MockWindow
+  workspace: MockWorkspace
 }
 ```
 

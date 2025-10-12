@@ -112,7 +112,7 @@ if command -v actionlint > /dev/null 2>&1; then
   else
     printf "\n"
     printf "${YELLOW}⚠️  Workflow validation found issues (non-blocking):${NC}\n"
-    ./scripts/lint-workflows.sh
+    ./scripts/lint-workflows.sh || true  # Prevent exit code from failing the hook
     printf "\n"
     printf "${YELLOW}💡 Fix workflow errors when convenient.${NC}\n"
     printf "${YELLOW}💡 Run 'pnpm workflow:lint' to see details.${NC}\n"
