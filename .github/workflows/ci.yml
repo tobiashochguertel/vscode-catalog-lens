@@ -102,46 +102,71 @@ jobs:
       - name: Unit Tests
         run: pnpm test:run
 
-  # E2E tests are temporarily disabled pending proper Mocha integration
-  # See: https://github.com/microsoft/vscode-test/issues/issues
-  # e2e:
-  #   runs-on: ubuntu-latest
-  #   needs: [lint, typecheck, test]
-  #
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #
-  #     - name: Install pnpm
-  #       uses: pnpm/action-setup@v4
-  #       with:
-  #         version: 10.17.1
-  #
-  #     - name: Set node
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: lts/*
-  #         cache: pnpm
-  #
-  #     - name: Install
-  #       run: pnpm install --frozen-lockfile
-  #
-  #     - name: Build
-  #       run: pnpm build
-  #
-  #     - name: Install xvfb
-  #       run: |
-  #         sudo apt-get update
-  #         sudo apt-get install -y xvfb
-  #
-  #     - name: Run E2E Tests
-  #       run: xvfb-run -a pnpm test:e2e
-  #
-  #     - name: Upload test results
-  #       if: always()
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: e2e-test-results
-  #         path: |
-  #           .vscode-test/
-  #           out/
-  #         retention-days: 7
+  e2e:
+    runs-on: ${{ matrix.os }}
+    needs: [lint, typecheck, test]
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [lts/*]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.17.1
+
+      - name: Set node version to ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build extension
+        run: pnpm build
+
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            xvfb \
+            libgtk-3-0 \
+            libgbm1 \
+            libnss3 \
+            libasound2 \
+            libxss1 \
+            libxtst6
+
+      - name: Cache VS Code
+        uses: actions/cache@v4
+        with:
+          path: .vscode-test
+          key: ${{ runner.os }}-vscode-test-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-vscode-test-
+
+      - name: Run E2E Tests (Linux)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a pnpm test:e2e
+
+      - name: Run E2E Tests (macOS/Windows)
+        if: runner.os != 'Linux'
+        run: pnpm test:e2e
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-results-${{ matrix.os }}
+          path: |
+            .vscode-test/
+            out/
+          retention-days: 7
