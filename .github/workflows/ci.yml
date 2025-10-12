@@ -56,7 +56,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate metadata
-        run: pnpm update
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
 
       - name: Lint
         run: pnpm lint
@@ -91,7 +91,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate metadata
-        run: pnpm update
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
 
       - name: Typecheck
         run: pnpm typecheck
@@ -126,7 +126,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate metadata
-        run: pnpm update
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
 
       - name: Build
         run: pnpm build
@@ -175,7 +175,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate metadata
-        run: pnpm update
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
 
       - name: Restore build output
         id: cache-build
@@ -229,7 +229,7 @@ jobs:
         run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Generate metadata
-        run: pnpm update
+        run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
 
       - name: Restore build output
         id: cache-build
