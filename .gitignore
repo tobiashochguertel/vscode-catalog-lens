@@ -20,10 +20,18 @@ SECRETS_SETUP.md
 .vscode-test-user-data
 out
 
-#.history
+# History
 **/.history
+
+# SpecStory
 **/.specstory
 
 # Github Instructions
-**/.github/Instructions
+**/.github/prompts
+**/.github/instructions
 **/.github/copilot-instructions.md
+**/.github/agents
+**/.github/agents-config.yaml
+**/.github/AGENTS.md
+**/.github/mcp-switcher
+**/.github/mcp-server-task-configs
