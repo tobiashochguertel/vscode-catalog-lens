@@ -90,8 +90,8 @@ jobs:
         run: |
           VERSION=$(node -p "require('./package.json').version")
           VSIX_FILE="catalog-lens-${VERSION}.vsix"
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "vsix_file=${VSIX_FILE}" >> $GITHUB_OUTPUT
+          echo "version=\"${VERSION}\"" >> "$GITHUB_OUTPUT"
+          echo "vsix_file=\"${VSIX_FILE}\"" >> "$GITHUB_OUTPUT"
 
       - name: Upload VSIX artifact
         uses: actions/upload-artifact@v4
@@ -157,7 +157,7 @@ jobs:
         env:
           OVSX_PAT: ${{ secrets.OVSX_PAT }}
         run: |
-          npx ovsx publish ${{ needs.build.outputs.vsix_file }} -p $OVSX_PAT
+          npx ovsx publish "${{ needs.build.outputs.vsix_file }}" -p "$OVSX_PAT"
 
   create-release:
     name: Create GitHub Release
@@ -185,7 +185,7 @@ jobs:
           if [ -z "$LAST_TAG" ]; then
             COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges)
           else
-            COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
+            COMMITS=$(git log "${LAST_TAG}..HEAD" --pretty=format:"- %s (%h)" --no-merges)
           fi
 
           # Create changelog
@@ -196,7 +196,7 @@ jobs:
           cat changelog.md
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: v${{ needs.build.outputs.version }}
           tag_name: v${{ needs.build.outputs.version }}
