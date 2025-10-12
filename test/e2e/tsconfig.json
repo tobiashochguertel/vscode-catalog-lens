@@ -5,6 +5,7 @@
     "rootDir": ".",
     "module": "commonjs",
     "resolveJsonModule": true,
+    "types": ["mocha", "node"],
     "strict": true,
     "outDir": "../../out/test/e2e",
     "sourceMap": true,
