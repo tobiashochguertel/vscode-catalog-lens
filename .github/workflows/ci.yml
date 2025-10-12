@@ -150,7 +150,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Install pnpm only on Unix (skip Windows)
       - name: Install pnpm
+        if: runner.os != 'Windows'
         uses: pnpm/action-setup@v4
         with:
           version: 10.17.1
@@ -159,7 +161,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: pnpm
+          # Use npm cache on Windows, pnpm on Unix
+          cache: ${{ runner.os == 'Windows' && 'npm' || 'pnpm' }}
 
       - name: Cache node_modules
         uses: actions/cache@v4
@@ -170,16 +173,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Install
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: |
-          for i in 1 2 3; do
-            pnpm install --frozen-lockfile --ignore-scripts && break || sleep 5
-          done
-        shell: bash
+      # Install using npm on Windows, pnpm on Unix
+      - name: Install (Unix - pnpm)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os != 'Windows'
+        run: pnpm install --frozen-lockfile
 
-      - name: Generate metadata
+      - name: Install (Windows - npm)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os == 'Windows'
+        run: npm ci
+
+      # Generate metadata using appropriate package manager
+      - name: Generate metadata (Unix)
+        if: runner.os != 'Windows'
         run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
+
+      - name: Generate metadata (Windows)
+        if: runner.os == 'Windows'
+        run: npx vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
 
       - name: Restore build output
         id: cache-build
@@ -188,14 +198,27 @@ jobs:
           path: dist
           key: build-${{ github.sha }}
 
-      - name: Build (if cache miss)
-        if: steps.cache-build.outputs.cache-hit != 'true'
+      # Build using appropriate package manager (if cache miss)
+      - name: Build (Unix - if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os != 'Windows'
         run: |
           pnpm install --frozen-lockfile
           pnpm build
 
-      - name: Unit Tests
+      - name: Build (Windows - if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os == 'Windows'
+        run: |
+          npm ci
+          npm run build
+
+      # Run tests using appropriate package manager
+      - name: Unit Tests (Unix)
+        if: runner.os != 'Windows'
         run: pnpm test:unit
+
+      - name: Unit Tests (Windows)
+        if: runner.os == 'Windows'
+        run: npm run test:unit
 
   e2e:
     runs-on: ${{ matrix.os }}
@@ -210,7 +233,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Install pnpm only on Unix (skip Windows)
       - name: Install pnpm
+        if: runner.os != 'Windows'
         uses: pnpm/action-setup@v4
         with:
           version: 10.17.1
@@ -219,7 +244,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: pnpm
+          # Use npm cache on Windows, pnpm on Unix
+          cache: ${{ runner.os == 'Windows' && 'npm' || 'pnpm' }}
 
       - name: Cache node_modules
         uses: actions/cache@v4
@@ -230,16 +256,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-modules-
 
-      - name: Install dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: |
-          for i in 1 2 3; do
-            pnpm install --frozen-lockfile --ignore-scripts && break || sleep 5
-          done
-        shell: bash
+      # Install using npm on Windows, pnpm on Unix
+      - name: Install dependencies (Unix - pnpm)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os != 'Windows'
+        run: pnpm install --frozen-lockfile
 
-      - name: Generate metadata
+      - name: Install dependencies (Windows - npm)
+        if: steps.cache-node-modules.outputs.cache-hit != 'true' && runner.os == 'Windows'
+        run: npm ci
+
+      # Generate metadata using appropriate package manager
+      - name: Generate metadata (Unix)
+        if: runner.os != 'Windows'
         run: pnpm exec vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
+
+      - name: Generate metadata (Windows)
+        if: runner.os == 'Windows'
+        run: npx vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens
 
       - name: Restore build output
         id: cache-build
@@ -248,11 +281,24 @@ jobs:
           path: dist
           key: build-${{ github.sha }}
 
-      - name: Build (if cache miss)
-        if: steps.cache-build.outputs.cache-hit != 'true'
+      # Build using appropriate package manager (if cache miss)
+      - name: Build (Unix - if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os != 'Windows'
         run: |
           pnpm install --frozen-lockfile
           pnpm build
 
-      - name: Run E2E Tests
+      - name: Build (Windows - if cache miss)
+        if: steps.cache-build.outputs.cache-hit != 'true' && runner.os == 'Windows'
+        run: |
+          npm ci
+          npm run build
+
+      # Run E2E tests using appropriate package manager
+      - name: Run E2E Tests (Unix)
+        if: runner.os != 'Windows'
         run: pnpm test:e2e
+
+      - name: Run E2E Tests (Windows)
+        if: runner.os == 'Windows'
+        run: npm run test:e2e

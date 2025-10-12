@@ -85,7 +85,7 @@ echo "  4) Publish to both marketplaces"
 echo "  5) Skip publishing"
 echo ""
 
-read -p "Choose an option (1-5): " choice
+read -r -p "Choose an option (1-5): " choice
 
 case $choice in
     1)
