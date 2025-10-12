@@ -10,10 +10,14 @@ import { config } from './config'
 import { catalogPrefix } from './constants'
 import { WorkspaceManager } from './data'
 import { commands } from './generated/meta'
-import { logger } from './logger'
+import { getLogger } from './logger'
 import { getCatalogColor, getNodeRange } from './utils'
 
 const { activate, deactivate } = defineExtension(() => {
+  const logger = getLogger()
+
+  // Initialize logger on activation
+  logger.initialize()
   logger.info('Catalog Lens extension activating...')
 
   // Watch for configuration changes

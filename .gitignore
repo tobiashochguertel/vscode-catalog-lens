@@ -14,3 +14,8 @@ src/generated
 .env
 SECRETS_SETUP.md
 .husky-repo
+
+# E2E test artifacts
+.vscode-test
+.vscode-test-user-data
+out

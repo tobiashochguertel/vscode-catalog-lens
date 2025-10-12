@@ -9,12 +9,36 @@ export enum LogLevel {
 }
 
 class Logger {
-  private outputChannel: OutputChannel
+  private static instance: Logger | null = null
+  private outputChannel: OutputChannel | null = null
   private logLevel: LogLevel = LogLevel.INFO
+  private channelName: string
 
-  constructor(name: string) {
-    this.outputChannel = window.createOutputChannel(name)
-    this.updateLogLevel()
+  private constructor(name: string) {
+    this.channelName = name
+  }
+
+  /**
+   * Get the singleton logger instance
+   * @param name Optional name for the output channel (only used on first call)
+   */
+  static getInstance(name?: string): Logger {
+    if (!Logger.instance) {
+      // Use the extension display name from package.json
+      const extensionName = name || 'Catalog Lens (PNPM|YARN|BUN)'
+      Logger.instance = new Logger(extensionName)
+    }
+    return Logger.instance
+  }
+
+  /**
+   * Initialize the output channel (called once during activation)
+   */
+  initialize() {
+    if (!this.outputChannel) {
+      this.outputChannel = window.createOutputChannel(this.channelName)
+      this.updateLogLevel()
+    }
   }
 
   updateLogLevel() {
@@ -24,6 +48,11 @@ class Logger {
   }
 
   private log(level: LogLevel, message: string, ...args: any[]) {
+    if (!this.outputChannel) {
+      // Lazy initialize if not already done
+      this.initialize()
+    }
+
     if (level < this.logLevel) {
       return
     }
@@ -33,7 +62,7 @@ class Logger {
     const formattedArgs = args.length > 0 ? ` ${JSON.stringify(args)}` : ''
     const logMessage = `[${timestamp}] [${levelName}] ${message}${formattedArgs}`
 
-    this.outputChannel.appendLine(logMessage)
+    this.outputChannel!.appendLine(logMessage)
 
     // Also log errors to console for debugging
     if (level === LogLevel.ERROR) {
@@ -61,12 +90,32 @@ class Logger {
   }
 
   show() {
-    this.outputChannel.show()
+    if (this.outputChannel) {
+      this.outputChannel.show()
+    }
   }
 
   dispose() {
-    this.outputChannel.dispose()
+    if (this.outputChannel) {
+      this.outputChannel.dispose()
+      this.outputChannel = null
+    }
+    Logger.instance = null
+  }
+
+  /**
+   * For testing: reset the singleton instance
+   */
+  static resetForTesting() {
+    if (Logger.instance?.outputChannel) {
+      Logger.instance.outputChannel.dispose()
+    }
+    Logger.instance = null
   }
 }
 
-export const logger = new Logger('Catalog Lens')
+// Export singleton instance getter
+export const getLogger = () => Logger.getInstance()
+
+// For backwards compatibility
+export const logger = getLogger()

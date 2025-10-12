@@ -1,0 +1,12 @@
+{
+  "name": "@workspace/app",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "catalog:",
+    "typescript": "catalog:"
+  },
+  "devDependencies": {
+    "eslint": "catalog:dev",
+    "prettier": "catalog:dev"
+  }
+}

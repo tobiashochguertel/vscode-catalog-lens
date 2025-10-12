@@ -103,6 +103,7 @@ Then reference them in workspace packages:
 | `pnpmCatalogLens.namedCatalogsColors`     | Give each named catalog a unique color                              | `boolean` | `true`                |
 | `pnpmCatalogLens.namedCatalogsColorsSalt` | A random string to adding as the salt for the named catalogs colors | `string`  | `"pnpm-catalog-lens"` |
 | `pnpmCatalogLens.namedCatalogsLabel`      | Show a small label for named catalog in the inlay hint              | `boolean` | `true`                |
+| `pnpmCatalogLens.logLevel`                | Log level for the extension output channel                          | `string`  | `"INFO"`              |
 
 <!-- configs -->
 

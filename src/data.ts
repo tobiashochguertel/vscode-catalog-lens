@@ -2,15 +2,15 @@ import type { Location, TextDocument } from 'vscode'
 import type { AST } from 'yaml-eslint-parser'
 import { dirname } from 'node:path'
 import { parseSync } from '@babel/core'
-// @ts-expect-error missing types
-import preset from '@babel/preset-typescript'
 import traverse from '@babel/traverse'
 import { findUp } from 'find-up'
 import YAML from 'js-yaml'
 import { Range, Uri, workspace } from 'vscode'
 import { parseYAML } from 'yaml-eslint-parser'
 import { WORKSPACE_FILES } from './constants'
-import { logger } from './logger'
+import { getLogger } from './logger'
+
+const logger = getLogger()
 
 export interface WorkspaceData {
   catalog?: Record<string, string>
@@ -213,8 +213,9 @@ export class WorkspaceManager {
           combined,
           {
             filename: doc.uri.fsPath,
-            presets: [preset],
+            presets: [['@babel/preset-typescript', { allowDeclareFields: true }]],
             babelrc: false,
+            configFile: false,
           },
         )
 
