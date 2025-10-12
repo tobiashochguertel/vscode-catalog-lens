@@ -9,119 +9,119 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-printf "%s\n" "${BLUE}🔍 Running pre-commit checks...${NC}"
+printf "%s\n" "${BLUE}🔍 Running pre-commit checks...${NC}" -e
 printf "\n"
 
 # STEP 1: Format code with Prettier
-printf "%s\n" "${BLUE}✨ Step 1/7: Formatting code with Prettier...${NC}"
+printf "%s\n" "${BLUE}✨ Step 1/7: Formatting code with Prettier...${NC}" -e
 pnpm format > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   printf "\n"
-  printf "%s\n" "${RED}❌ Prettier formatting failed!${NC}"
-  printf "%s\n" "${YELLOW}💡 Run 'pnpm format' to see errors.${NC}"
+  printf "%s\n" "${RED}❌ Prettier formatting failed!${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Run 'pnpm format' to see errors.${NC}" -e
   exit 1
 fi
 
-printf "%s\n" "${GREEN}✓ Prettier formatting completed${NC}"
+printf "%s\n" "${GREEN}✓ Prettier formatting completed${NC}" -e
 git add -u
 
 # STEP 2: Lint and fix markdown
 printf "\n"
-printf "%s\n" "${BLUE}📝 Step 2/7: Linting markdown files...${NC}"
+printf "%s\n" "${BLUE}📝 Step 2/7: Linting markdown files...${NC}" -e
 pnpm markdown:fix > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   printf "\n"
-  printf "%s\n" "${YELLOW}⚠️  Markdown linting found issues (attempting fix)${NC}"
+  printf "%s\n" "${YELLOW}⚠️  Markdown linting found issues (attempting fix)${NC}" -e
   pnpm markdown:fix
 fi
 
-printf "%s\n" "${GREEN}✓ Markdown linting completed${NC}"
+printf "%s\n" "${GREEN}✓ Markdown linting completed${NC}" -e
 git add -u
 
 # STEP 3: Auto-fix linting issues
 printf "\n"
-printf "%s\n" "${BLUE}� Step 3/7: Linting and auto-fixing...${NC}"
+printf "%s\n" "${BLUE}� Step 3/7: Linting and auto-fixing...${NC}" -e
 pnpm lint:fix
 
 # Check if auto-fix worked
 if [ $? -ne 0 ]; then
   printf "\n"
-  printf "%s\n" "${RED}❌ Lint auto-fix couldn't resolve all issues!${NC}"
-  printf "%s\n" "${YELLOW}💡 Please fix the remaining errors manually.${NC}"
-  printf "%s\n" "${YELLOW}💡 Run 'pnpm lint' to see all errors.${NC}"
+  printf "%s\n" "${RED}❌ Lint auto-fix couldn't resolve all issues!${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Please fix the remaining errors manually.${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Run 'pnpm lint' to see all errors.${NC}" -e
   exit 1
 fi
 
 # Re-add auto-fixed files to staging
-printf "%s\n" "${GREEN}✓ Auto-fix completed${NC}"
-printf "%s\n" "${BLUE}📦 Re-staging auto-fixed files...${NC}"
+printf "%s\n" "${GREEN}✓ Auto-fix completed${NC}" -e
+printf "%s\n" "${BLUE}📦 Re-staging auto-fixed files...${NC}" -e
 git add -u
 
 # STEP 4: Verify no lint errors remain
 printf "\n"
-printf "%s\n" "${BLUE}📋 Step 4/7: Verifying lint status...${NC}"
+printf "%s\n" "${BLUE}📋 Step 4/7: Verifying lint status...${NC}" -e
 pnpm lint
 
 if [ $? -ne 0 ]; then
   printf "\n"
-  printf "%s\n" "${RED}❌ Lint errors still exist after auto-fix!${NC}"
-  printf "%s\n" "${YELLOW}💡 Some issues require manual fixes.${NC}"
-  printf "%s\n" "${YELLOW}💡 Please review and fix the errors above.${NC}"
+  printf "%s\n" "${RED}❌ Lint errors still exist after auto-fix!${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Some issues require manual fixes.${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Please review and fix the errors above.${NC}" -e
   exit 1
 fi
 
-printf "%s\n" "${GREEN}✓ No lint errors${NC}"
+printf "%s\n" "${GREEN}✓ No lint errors${NC}" -e
 
 # STEP 5: Type checking
 printf "\n"
-printf "%s\n" "${BLUE}� Step 5/7: Type checking...${NC}"
+printf "%s\n" "${BLUE}� Step 5/7: Type checking...${NC}" -e
 pnpm typecheck
 
 if [ $? -ne 0 ]; then
   printf "\n"
-  printf "%s\n" "${RED}❌ Type check failed!${NC}"
-  printf "%s\n" "${YELLOW}💡 Fix type errors before committing.${NC}"
+  printf "%s\n" "${RED}❌ Type check failed!${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Fix type errors before committing.${NC}" -e
   exit 1
 fi
 
-printf "%s\n" "${GREEN}✓ Type check passed${NC}"
+printf "%s\n" "${GREEN}✓ Type check passed${NC}" -e
 
 # STEP 6: Build
 printf "\n"
-printf "%s\n" "${BLUE}🏗️  Step 6/7: Building...${NC}"
+printf "%s\n" "${BLUE}🏗️  Step 6/7: Building...${NC}" -e
 pnpm build > /dev/null 2>&1
 
 if [ $? -ne 0 ]; then
   printf "\n"
-  printf "%s\n" "${RED}❌ Build failed!${NC}"
-  printf "%s\n" "${YELLOW}💡 Run 'pnpm build' to see build errors.${NC}"
+  printf "%s\n" "${RED}❌ Build failed!${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Run 'pnpm build' to see build errors.${NC}" -e
   exit 1
 fi
 
-printf "%s\n" "${GREEN}✓ Build successful${NC}"
+printf "%s\n" "${GREEN}✓ Build successful${NC}" -e
 
 # STEP 7: Validate GitHub Actions workflows (if actionlint is available)
 printf "\n"
-printf "%s\n" "${BLUE}⚙️  Step 7/7: Validating GitHub Actions workflows...${NC}"
+printf "%s\n" "${BLUE}⚙️  Step 7/7: Validating GitHub Actions workflows...${NC}" -e
 
 if command -v actionlint > /dev/null 2>&1; then
   if ./scripts/lint-workflows.sh > /dev/null 2>&1; then
-    printf "%s\n" "${GREEN}✓ Workflow validation passed${NC}"
+    printf "%s\n" "${GREEN}✓ Workflow validation passed${NC}" -e
   else
     printf "\n"
-    printf "%s\n" "${YELLOW}⚠️  Workflow validation found issues (non-blocking):${NC}"
+    printf "%s\n" "${YELLOW}⚠️  Workflow validation found issues (non-blocking):${NC}" -e
     ./scripts/lint-workflows.sh || true  # Prevent exit code from failing the hook
     printf "\n"
-    printf "%s\n" "${YELLOW}💡 Fix workflow errors when convenient.${NC}"
-    printf "%s\n" "${YELLOW}💡 Run 'pnpm workflow:lint' to see details.${NC}"
+    printf "%s\n" "${YELLOW}💡 Fix workflow errors when convenient.${NC}" -e
+    printf "%s\n" "${YELLOW}💡 Run 'pnpm workflow:lint' to see details.${NC}" -e
   fi
 else
-  printf "%s\n" "${YELLOW}⚠️  actionlint not installed (skipping)${NC}"
-  printf "%s\n" "${YELLOW}💡 Install with: brew install actionlint${NC}"
+  printf "%s\n" "${YELLOW}⚠️  actionlint not installed (skipping)${NC}" -e
+  printf "%s\n" "${YELLOW}💡 Install with: brew install actionlint${NC}" -e
 fi
 
 printf "\n"
-printf "%s\n" "${GREEN}✅ All pre-commit checks passed!${NC}"
+printf "%s\n" "${GREEN}✅ All pre-commit checks passed!${NC}" -e
 printf "\n"
