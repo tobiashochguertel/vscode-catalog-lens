@@ -174,6 +174,9 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
 
+      - name: Generate metadata
+        run: pnpm update
+
       - name: Restore build output
         uses: actions/cache@v4
         with:
@@ -220,6 +223,9 @@ jobs:
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: pnpm install --frozen-lockfile
+
+      - name: Generate metadata
+        run: pnpm update
 
       - name: Restore build output
         uses: actions/cache@v4
