@@ -1,0 +1,11 @@
+{
+  "ignores": [
+    "@commitlint/cli",
+    "@commitlint/config-conventional",
+    "ovsx",
+    "vscode-ext-gen",
+    "vite",
+    "@reactive-vscode/mock"
+  ],
+  "skip-missing": true
+}
