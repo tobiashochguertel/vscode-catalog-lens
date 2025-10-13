@@ -2,7 +2,7 @@
   "publisher": "TobiasHochguertel",
   "name": "catalog-lens",
   "displayName": "Catalog Lens (PNPM|YARN|BUN)",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "private": true,
   "packageManager": "pnpm@10.17.1",
   "description": "Show inlay version for PNPM/Yarn/Bun catalogs",
