@@ -14,30 +14,68 @@ echo
 
 # STEP 1: Format code with Prettier
 echo "${BLUE}✨ Step 1/7: Formatting code with Prettier...${NC}"
-pnpm format > /dev/null 2>&1
 
-if [ $? -ne 0 ]; then
+# First, check which files need formatting
+echo "${BLUE}   Checking which files need formatting...${NC}"
+FORMAT_CHECK_OUTPUT=$(pnpm format:check 2>&1)
+FORMAT_CHECK_EXIT=$?
+
+if [ $FORMAT_CHECK_EXIT -ne 0 ]; then
+  echo "${YELLOW}   Files need formatting, auto-fixing...${NC}"
   echo
-  echo "${RED}❌ Prettier formatting failed!${NC}"
-  echo "${YELLOW}💡 Run 'pnpm format' to see errors.${NC}"
-  exit 1
-fi
 
-echo "${GREEN}✓ Prettier formatting completed${NC}"
-git add -u
+  # Show which files need formatting
+  echo "$FORMAT_CHECK_OUTPUT" | grep -E "\[warn\]|\.md$|\.ts$|\.js$|\.json$" || true
+  echo
+
+  # Try to auto-fix
+  echo "${BLUE}   Running prettier --write to auto-fix...${NC}"
+  FORMAT_OUTPUT=$(pnpm format 2>&1)
+  FORMAT_EXIT=$?
+
+  if [ $FORMAT_EXIT -ne 0 ]; then
+    echo
+    echo "${RED}❌ Prettier formatting failed!${NC}"
+    echo "${YELLOW}💡 Error details:${NC}"
+    echo "$FORMAT_OUTPUT"
+    echo
+    echo "${YELLOW}💡 Possible causes:${NC}"
+    echo "   - Syntax errors in files"
+    echo "   - Files that Prettier can't parse"
+    echo "   - Prettier configuration issues"
+    echo
+    echo "${YELLOW}💡 To fix:${NC}"
+    echo "   1. Review the error messages above"
+    echo "   2. Fix syntax errors manually"
+    echo "   3. Run 'pnpm format' to verify"
+    exit 1
+  fi
+
+  # Show which files were formatted
+  echo "$FORMAT_OUTPUT" | grep -v "^>.*catalog-lens" | grep -v "^>.*prettier" | grep -E "\.md$|\.ts$|\.js$|\.json$" || true
+  echo "${GREEN}✓ Files auto-formatted successfully${NC}"
+  git add -u
+else
+  echo "${GREEN}✓ All files already formatted${NC}"
+fi
 
 # STEP 2: Lint and fix markdown
 echo
 echo "${BLUE}📝 Step 2/7: Linting markdown files...${NC}"
-pnpm markdown:fix > /dev/null 2>&1
 
-if [ $? -ne 0 ]; then
+MARKDOWN_OUTPUT=$(pnpm markdown:fix 2>&1)
+MARKDOWN_EXIT=$?
+
+if [ $MARKDOWN_EXIT -ne 0 ]; then
+  echo "${YELLOW}⚠️  Markdown linting found issues${NC}"
+  echo "$MARKDOWN_OUTPUT" | grep -E "error|warning|\.md:" || true
   echo
-  echo "${YELLOW}⚠️  Markdown linting found issues (attempting fix)${NC}"
-  pnpm markdown:fix
+  echo "${YELLOW}💡 Some markdown issues may need manual fixes${NC}"
+  # Don't fail on markdown errors, just warn
+else
+  echo "${GREEN}✓ Markdown linting passed${NC}"
 fi
 
-echo "${GREEN}✓ Markdown linting completed${NC}"
 git add -u
 
 # STEP 3: Auto-fix linting issues

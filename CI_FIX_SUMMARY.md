@@ -2,9 +2,9 @@
 
 ## 🎯 Problem
 
-The publish.yml workflow failed during the "Generate Changelog" step with the error:
+The `publish.yml` workflow failed during the "Generate Changelog" step with the error:
 
-```
+```log
 🔍 Running pre-commit checks...
 ✨ Step 1/7: Formatting code with Prettier...
 husky - pre-commit script failed (code 1)
@@ -20,7 +20,7 @@ husky - pre-commit script failed (code 1)
 1. **File Created:** `WORKFLOW_CHANGES_COMPLETE.md` was created as documentation
 2. **Not Formatted:** The file was created without running Prettier formatting
 3. **Not Committed:** File was untracked and not included in commit 9d2ce93
-4. **Workflow Triggered:** User triggered publish.yml workflow manually
+4. **Workflow Triggered:** User triggered `publish.yml` workflow manually
 5. **Fresh Checkout:** GitHub Actions checked out the repository
 6. **Changelog Generation:** Workflow successfully generated changelog
 7. **Commit Attempt:** Workflow tried to commit changelog with `git commit -m "chore: update changelog"`
@@ -118,7 +118,7 @@ git push
 
 Triggered CI workflow automatically on push. All jobs passed:
 
-```
+```log
 ✓ lint (17s)
 ✓ typecheck (14s)
 ✓ build (15s)
@@ -309,9 +309,9 @@ The publish.yml workflow already includes:
 
 ---
 
-**Summary Compiled By:** GitHub Copilot
-**Issue Fixed:** Prettier formatting failure in CI
-**Root Cause:** Unformatted documentation file
-**Solution:** Format file, commit, verify CI passes
-**Status:** ✅ Resolved
-**Date:** January 21, 2025
+- **Summary Compiled By:** GitHub Copilot
+- **Issue Fixed:** Prettier formatting failure in CI
+- **Root Cause:** Unformatted documentation file
+- **Solution:** Format file, commit, verify CI passes
+- **Status:** ✅ Resolved
+- **Date:** January 21, 2025
