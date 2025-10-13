@@ -1,0 +1,25 @@
+# act configuration for vscode-catalog-lens
+# See: https://nektosact.com for more options
+
+# IMPORTANT: Use node images for proper PATH handling
+# act requires node to be in PATH for JavaScript actions like setup-node
+# Using node:20-bookworm-slim ensures node is always available
+# Reference: https://github.com/nektos/act/issues/973
+-P ubuntu-latest=node:20-bookworm-slim
+-P ubuntu-22.04=node:20-bookworm-slim
+-P ubuntu-20.04=node:20-bookworm-slim
+
+# Use linux/amd64 architecture (compatible with most CI)
+--container-architecture linux/amd64
+
+# If you want to speed up running act and using cached actions and container images you can enable this mode.
+# --action-offline-mode
+
+# Enable verbose output for debugging (remove if too noisy)
+# -v
+
+# Secrets file (add to .gitignore if used)
+# --secret-file .secrets
+
+# Environment file (add to .gitignore if used)
+# --env-file .env.local

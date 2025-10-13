@@ -82,11 +82,11 @@ Restored strict rules per user preference:
     "MD022": true, // Blank lines around headers
     "MD026": {
       // No trailing punctuation in headers
-      "punctuation": ".,;:!"
+      "punctuation": ".,;:!",
     },
     "MD031": true, // Blank lines around code blocks
-    "MD032": true // Blank lines around lists
-  }
+    "MD032": true, // Blank lines around lists
+  },
 }
 ```
 
@@ -290,10 +290,7 @@ Running `pnpm markdown:fix` successfully:
 
 ---
 
-**Investigation Date:** October 12, 2025
-
-**Issue Tracker:** <https://github.com/tobiashochguertel/vscode-catalog-lens/actions/runs/18448789357>
-
-**Fix Verification:** <https://github.com/tobiashochguertel/vscode-catalog-lens/actions/runs/18449036186>
-
-**Status:** ✅ **RESOLVED**
+- **Investigation Date:** October 12, 2025
+- **Issue Tracker:** <https://github.com/tobiashochguertel/vscode-catalog-lens/actions/runs/18448789357>
+- **Fix Verification:** <https://github.com/tobiashochguertel/vscode-catalog-lens/actions/runs/18449036186>
+- **Status:** ✅ **RESOLVED**

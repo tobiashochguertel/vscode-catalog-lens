@@ -61,8 +61,7 @@ vi.mock("find-up", () => ({
   findUp: async (patterns, options) => {
     // Constrained to stay within test/fixtures/* only
     const fixtureMatch = cwd.match(/test\/fixtures\/([^/]+)/);
-    if (!fixtureMatch)
-      return null;
+    if (!fixtureMatch) return null;
 
     // Only search within the fixture directory
     const fixtureRoot = path.join(process.cwd(), "test", "fixtures", fixtureName);

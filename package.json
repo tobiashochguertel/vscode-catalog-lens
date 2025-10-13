@@ -30,93 +30,99 @@
     "vscode": "^1.90.0"
   },
   "activationEvents": [
-    "workspaceContains:pnpm-workspace.yaml",
     "workspaceContains:.yarnrc.yml",
     "workspaceContains:bun.lock",
     "workspaceContains:bun.lockb",
-    "workspaceContains:bunfig.toml"
+    "workspaceContains:bunfig.toml",
+    "workspaceContains:pnpm-workspace.yaml"
   ],
   "contributes": {
     "commands": [
       {
         "category": "Catalog Lens",
-        "title": "Toggle",
-        "command": "pnpmCatalogLens.toggle"
+        "command": "pnpmCatalogLens.toggle",
+        "title": "Toggle"
       },
       {
         "category": "Catalog Lens",
-        "title": "Go to Definition",
-        "command": "pnpmCatalogLens.gotoDefinition"
+        "command": "pnpmCatalogLens.gotoDefinition",
+        "title": "Go to Definition"
       }
     ],
     "configuration": {
       "type": "object",
       "properties": {
         "pnpmCatalogLens.enabled": {
+          "description": "Enable inlay hints",
           "type": "boolean",
-          "default": true,
-          "description": "Enable inlay hints"
+          "default": true
         },
         "pnpmCatalogLens.hover": {
+          "description": "Show dependency info on hover",
           "type": "boolean",
-          "default": true,
-          "description": "Show dependency info on hover"
-        },
-        "pnpmCatalogLens.namedCatalogsColors": {
-          "type": "boolean",
-          "default": true,
-          "description": "Give each named catalog a unique color"
-        },
-        "pnpmCatalogLens.namedCatalogsColorsSalt": {
-          "type": "string",
-          "default": "pnpm-catalog-lens",
-          "description": "A random string to adding as the salt for the named catalogs colors"
-        },
-        "pnpmCatalogLens.namedCatalogsLabel": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show a small label for named catalog in the inlay hint"
+          "default": true
         },
         "pnpmCatalogLens.logLevel": {
+          "description": "Log level for the extension output channel",
           "type": "string",
+          "default": "INFO",
           "enum": [
             "DEBUG",
+            "ERROR",
             "INFO",
-            "WARNING",
-            "ERROR"
-          ],
-          "default": "INFO",
-          "description": "Log level for the extension output channel"
+            "WARNING"
+          ]
+        },
+        "pnpmCatalogLens.namedCatalogsColors": {
+          "description": "Give each named catalog a unique color",
+          "type": "boolean",
+          "default": true
+        },
+        "pnpmCatalogLens.namedCatalogsColorsSalt": {
+          "description": "A random string to adding as the salt for the named catalogs colors",
+          "type": "string",
+          "default": "pnpm-catalog-lens"
+        },
+        "pnpmCatalogLens.namedCatalogsLabel": {
+          "description": "Show a small label for named catalog in the inlay hint",
+          "type": "boolean",
+          "default": true
         }
       }
     }
   },
   "scripts": {
-    "build": "tsdown src/index.ts --external vscode --format cjs",
-    "dev": "nr build --watch",
-    "prepare": "husky && nr update",
-    "update": "vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "markdown:lint": "markdownlint-cli2 \"**/*.md\"",
-    "markdown:fix": "markdownlint-cli2 \"**/*.md\" --fix",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest",
-    "test:unit": "vitest run --config vitest.config.ts",
-    "test:e2e": "vitest run --config vitest.e2e.config.ts",
-    "test:all": "vitest run --config vitest.config.ts && vitest run --config vitest.e2e.config.ts",
-    "precommit": "pnpm format && pnpm markdown:fix && pnpm lint:fix && pnpm lint && pnpm typecheck && pnpm build",
-    "prepush": "pnpm test:unit",
-    "check": "pnpm format:check && pnpm markdown:lint && pnpm lint && pnpm typecheck && pnpm build && pnpm test:unit",
-    "workflow:lint": "./scripts/lint-workflows.sh",
+    "act:build": "./scripts/act-test.sh -j build -W .github/workflows/ci.yml",
+    "act:ci": "./scripts/act-test.sh push -W .github/workflows/ci.yml",
+    "act:lint": "./scripts/act-test.sh -j lint -W .github/workflows/ci.yml",
     "act:list": "./scripts/act-test.sh",
     "act:test": "./scripts/act-test.sh",
-    "vscode:prepublish": "nr build",
+    "act:test-unix": "./scripts/act-test.sh -j test-unix -W .github/workflows/ci.yml",
+    "act:typecheck": "./scripts/act-test.sh -j typecheck -W .github/workflows/ci.yml",
+    "build": "tsdown src/index.ts --external vscode --format cjs",
+    "check": "pnpm format:check && pnpm markdown:lint && pnpm lint && pnpm typecheck && pnpm build && pnpm test:unit",
+    "dev": "nr build --watch",
     "ext:publish": "vsce publish --no-dependencies",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "markdown:fix": "markdownlint-cli2 \"**/*.md\" --fix",
+    "markdown:lint": "markdownlint-cli2 \"**/*.md\"",
     "package": "vsce package --no-dependencies",
-    "release": "bumpp"
+    "precommit": "pnpm format && pnpm markdown:fix && pnpm lint:fix && pnpm lint && pnpm typecheck && pnpm build",
+    "prepare": "husky && nr update",
+    "prepush": "pnpm test:unit",
+    "release": "bumpp",
+    "test": "vitest",
+    "test:all": "vitest run --config vitest.config.ts && vitest run --config vitest.e2e.config.ts",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:unit": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc --noEmit",
+    "update": "vscode-ext-gen --output src/generated/meta.ts --scope pnpmCatalogLens",
+    "vscode:prepublish": "nr build",
+    "workflow:lint": "./scripts/lint-workflows.sh",
+    "workflow:validate": "pnpm workflow:lint"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^5.4.1",
@@ -155,6 +161,7 @@
     "vscode-ext-gen": "^1.3.0",
     "vsxpub": "^0.1.1",
     "yaml-eslint-parser": "^1.3.0"
+
   },
   "lint-staged": {
     "*.{ts,js,json,md}": [

@@ -14,6 +14,15 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true
   },
+  "include": [
+    "eslint.config.ts",
+    "pm.config.js",
+    "src",
+    "test",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "vitest.e2e.config.ts"
+  ],
   "exclude": [
     "**/*.test.ts",
     "node_modules"

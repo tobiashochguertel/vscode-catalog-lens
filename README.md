@@ -100,10 +100,10 @@ Then reference them in workspace packages:
 | ----------------------------------------- | ------------------------------------------------------------------- | --------- | --------------------- |
 | `pnpmCatalogLens.enabled`                 | Enable inlay hints                                                  | `boolean` | `true`                |
 | `pnpmCatalogLens.hover`                   | Show dependency info on hover                                       | `boolean` | `true`                |
+| `pnpmCatalogLens.logLevel`                | Log level for the extension output channel                          | `string`  | `"INFO"`              |
 | `pnpmCatalogLens.namedCatalogsColors`     | Give each named catalog a unique color                              | `boolean` | `true`                |
 | `pnpmCatalogLens.namedCatalogsColorsSalt` | A random string to adding as the salt for the named catalogs colors | `string`  | `"pnpm-catalog-lens"` |
 | `pnpmCatalogLens.namedCatalogsLabel`      | Show a small label for named catalog in the inlay hint              | `boolean` | `true`                |
-| `pnpmCatalogLens.logLevel`                | Log level for the extension output channel                          | `string`  | `"INFO"`              |
 
 <!-- configs -->
 
@@ -183,6 +183,122 @@ pnpm release
 ```
 
 **Note:** VS Code extension publishing works with `npm`, `yarn`, and `pnpm`. This project uses `pnpm` with `vsce --no-dependencies` flag to avoid bundling dependencies that should be bundled by the build process.
+
+### Local CI Validation
+
+This project supports local validation of GitHub Actions workflows before pushing changes, significantly reducing CI failures and feedback time.
+
+#### Prerequisites
+
+Install the required tools:
+
+```bash
+# Install actionlint (workflow YAML validator)
+brew install actionlint  # macOS
+# or: go install github.com/rhysd/actionlint/cmd/actionlint@latest
+
+# Install act (local GitHub Actions runner)
+brew install act  # macOS
+# or: curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
+
+# Docker is required for act
+# Ensure Docker Desktop is running
+```
+
+#### Available Commands
+
+**Workflow Validation (Recommended - Fast & Reliable):**
+
+```bash
+# Validate all workflow YAML files (actionlint) - Takes <1s
+pnpm workflow:lint
+# or use the script directly:
+./scripts/lint-workflows.sh
+
+# Comprehensive validation (actionlint + basic act check)
+pnpm workflow:validate
+```
+
+**Local Workflow Execution with act (Advanced):**
+
+> ⚠️ **Note:** Local execution with act requires Docker and may need large images (~2-20GB). Some complex workflows may not work perfectly locally. For most cases, workflow validation with actionlint is sufficient.
+
+```bash
+# List all available jobs
+./scripts/act-test.sh
+
+# Run specific jobs locally (simulates GitHub Actions environment)
+pnpm act:lint        # Run linting job (simple, works well)
+pnpm act:typecheck   # Run type checking job (requires Node.js image)
+pnpm act:build       # Run build job (requires Node.js image)
+pnpm act:test-unix   # Run Unix tests (complex, may have issues)
+pnpm act:ci          # Run complete CI pipeline (very resource intensive)
+```
+
+**Docker Image Options:**
+The project is configured to use `catthehacker/ubuntu:js-*` images (includes Node.js, ~5GB). Alternative configurations in `.actrc`:
+
+- `act-*` - Lightweight (~500MB) but missing many tools
+- `js-*` - Includes Node.js (~5GB) - **Default for this project**
+- `full-*` - Complete environment (~20GB) - Most compatible but very large
+
+#### Pre-commit Hook Integration
+
+The project uses Husky pre-commit hooks that automatically validate workflows before each commit:
+
+- **Step 7/7:** Workflow validation with actionlint
+- Non-blocking warnings if actionlint is not installed
+- Validates all `.yml`/`.yaml` files in `.github/workflows/`
+
+To skip pre-commit hooks (not recommended):
+
+```bash
+git commit --no-verify -m "your message"
+```
+
+#### Troubleshooting
+
+**act fails with "Cannot connect to Docker daemon":**
+
+```bash
+# Ensure Docker Desktop is running
+docker ps
+# If fails, start Docker Desktop and try again
+```
+
+**actionlint not found during pre-commit:**
+
+```bash
+# Install actionlint
+brew install actionlint
+# or install globally with Go
+go install github.com/rhysd/actionlint/cmd/actionlint@latest
+```
+
+**act fails with "node: executable file not found" or similar:**
+
+```bash
+# You may need larger Docker images with more tools pre-installed
+# Edit .actrc and change from 'js-*' to 'full-*' images:
+# -P ubuntu-latest=catthehacker/ubuntu:full-latest
+# Warning: full images are ~20GB and take time to download
+
+# Alternative: Focus on workflow validation instead
+pnpm workflow:lint  # This always works and catches most issues
+```
+
+**act workflow execution fails or behaves differently than GitHub:**
+
+```bash
+# Some workflows use GitHub-specific features that don't work locally
+# Recommendation: Use act for simple jobs (lint, typecheck, build)
+# Trust GitHub Actions for complex workflows (tests, deployments)
+
+# To debug: enable verbose logging
+act -j lint -W .github/workflows/ci.yml -v
+```
+
+**For more details:** See [docs/research/ci-local-validation/README.md](docs/research/ci-local-validation/README.md)
 
 ## Credits
 
