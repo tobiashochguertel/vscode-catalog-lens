@@ -2,6 +2,9 @@
 
 # Modern Husky v9 - no need to source husky.sh anymore
 
+# CRITICAL: Don't exit on error immediately - we need to capture and show errors!
+set +e  # Disable immediate exit on error
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -17,27 +20,36 @@ echo "${BLUE}✨ Step 1/7: Formatting code with Prettier...${NC}"
 
 # First, check which files need formatting
 echo "${BLUE}   Checking which files need formatting...${NC}"
+
+# Capture both stdout and stderr, and get exit code
+set +e  # Ensure we don't exit on error
 FORMAT_CHECK_OUTPUT=$(pnpm format:check 2>&1)
 FORMAT_CHECK_EXIT=$?
+set -e  # Re-enable exit on error for the rest
 
 if [ $FORMAT_CHECK_EXIT -ne 0 ]; then
   echo "${YELLOW}   Files need formatting, auto-fixing...${NC}"
   echo
 
-  # Show which files need formatting
-  echo "$FORMAT_CHECK_OUTPUT" | grep -E "\[warn\]|\.md$|\.ts$|\.js$|\.json$" || true
+  # Show ALL output from format:check (not just filtered)
+  echo "${BLUE}   Format check output:${NC}"
+  echo "$FORMAT_CHECK_OUTPUT"
   echo
 
   # Try to auto-fix
   echo "${BLUE}   Running prettier --write to auto-fix...${NC}"
+  set +e  # Don't exit on error
   FORMAT_OUTPUT=$(pnpm format 2>&1)
   FORMAT_EXIT=$?
+  set -e
 
   if [ $FORMAT_EXIT -ne 0 ]; then
     echo
     echo "${RED}❌ Prettier formatting failed!${NC}"
-    echo "${YELLOW}💡 Error details:${NC}"
+    echo "${YELLOW}💡 Full error output:${NC}"
+    echo "----------------------------------------"
     echo "$FORMAT_OUTPUT"
+    echo "----------------------------------------"
     echo
     echo "${YELLOW}💡 Possible causes:${NC}"
     echo "   - Syntax errors in files"
@@ -48,11 +60,13 @@ if [ $FORMAT_CHECK_EXIT -ne 0 ]; then
     echo "   1. Review the error messages above"
     echo "   2. Fix syntax errors manually"
     echo "   3. Run 'pnpm format' to verify"
+    echo "   4. Run 'pnpm format:check' to see all issues"
     exit 1
   fi
 
   # Show which files were formatted
-  echo "$FORMAT_OUTPUT" | grep -v "^>.*catalog-lens" | grep -v "^>.*prettier" | grep -E "\.md$|\.ts$|\.js$|\.json$" || true
+  echo "${GREEN}   Formatted files:${NC}"
+  echo "$FORMAT_OUTPUT" | grep -v "^>.*catalog-lens" | grep -v "^>.*prettier" | grep -E "\.md$|\.ts$|\.js$|\.json$|\.yml$|\.yaml$" || echo "   (no files shown - check output above)"
   echo "${GREEN}✓ Files auto-formatted successfully${NC}"
   git add -u
 else
@@ -63,12 +77,17 @@ fi
 echo
 echo "${BLUE}📝 Step 2/7: Linting markdown files...${NC}"
 
+set +e  # Don't exit on error
 MARKDOWN_OUTPUT=$(pnpm markdown:fix 2>&1)
 MARKDOWN_EXIT=$?
+set -e
 
 if [ $MARKDOWN_EXIT -ne 0 ]; then
   echo "${YELLOW}⚠️  Markdown linting found issues${NC}"
-  echo "$MARKDOWN_OUTPUT" | grep -E "error|warning|\.md:" || true
+  echo "${BLUE}   Full output:${NC}"
+  echo "----------------------------------------"
+  echo "$MARKDOWN_OUTPUT"
+  echo "----------------------------------------"
   echo
   echo "${YELLOW}💡 Some markdown issues may need manual fixes${NC}"
   # Don't fail on markdown errors, just warn
@@ -81,15 +100,29 @@ git add -u
 # STEP 3: Auto-fix linting issues
 echo
 echo "${BLUE}✨ Step 3/7: Linting and auto-fixing...${NC}"
-pnpm lint:fix
+
+set +e  # Don't exit on error
+LINT_FIX_OUTPUT=$(pnpm lint:fix 2>&1)
+LINT_FIX_EXIT=$?
+set -e
 
 # Check if auto-fix worked
-if [ $? -ne 0 ]; then
+if [ $LINT_FIX_EXIT -ne 0 ]; then
   echo
   echo "${RED}❌ Lint auto-fix couldn't resolve all issues!${NC}"
+  echo "${YELLOW}💡 Full error output:${NC}"
+  echo "----------------------------------------"
+  echo "$LINT_FIX_OUTPUT"
+  echo "----------------------------------------"
+  echo
   echo "${YELLOW}💡 Please fix the remaining errors manually.${NC}"
   echo "${YELLOW}💡 Run 'pnpm lint' to see all errors.${NC}"
   exit 1
+fi
+
+# Show output if there was any
+if [ -n "$LINT_FIX_OUTPUT" ]; then
+  echo "$LINT_FIX_OUTPUT"
 fi
 
 # Re-add auto-fixed files to staging
@@ -100,11 +133,20 @@ git add -u
 # STEP 4: Verify no lint errors remain
 echo
 echo "${BLUE}📋 Step 4/7: Verifying lint status...${NC}"
-pnpm lint
 
-if [ $? -ne 0 ]; then
+set +e  # Don't exit on error
+LINT_OUTPUT=$(pnpm lint 2>&1)
+LINT_EXIT=$?
+set -e
+
+if [ $LINT_EXIT -ne 0 ]; then
   echo
   echo "${RED}❌ Lint errors still exist after auto-fix!${NC}"
+  echo "${YELLOW}💡 Full error output:${NC}"
+  echo "----------------------------------------"
+  echo "$LINT_OUTPUT"
+  echo "----------------------------------------"
+  echo
   echo "${YELLOW}💡 Some issues require manual fixes.${NC}"
   echo "${YELLOW}💡 Please review and fix the errors above.${NC}"
   exit 1
@@ -115,12 +157,23 @@ echo "${GREEN}✓ No lint errors${NC}"
 # STEP 5: Type checking
 echo
 echo "${BLUE}✨ Step 5/7: Type checking...${NC}"
-pnpm typecheck
 
-if [ $? -ne 0 ]; then
+# Capture output and exit code (don't exit on error yet)
+set +e  # Don't exit on error
+TYPECHECK_OUTPUT=$(pnpm typecheck 2>&1)
+TYPECHECK_EXIT=$?
+set -e  # Re-enable exit on error
+
+if [ $TYPECHECK_EXIT -ne 0 ]; then
   echo
   echo "${RED}❌ Type check failed!${NC}"
+  echo "${YELLOW}💡 Full error output:${NC}"
+  echo "----------------------------------------"
+  echo "$TYPECHECK_OUTPUT"
+  echo "----------------------------------------"
+  echo
   echo "${YELLOW}💡 Fix type errors before committing.${NC}"
+  echo "${YELLOW}💡 Run 'pnpm typecheck' to see all type errors.${NC}"
   exit 1
 fi
 
@@ -129,12 +182,23 @@ echo "${GREEN}✓ Type check passed${NC}"
 # STEP 6: Build
 echo
 echo "${BLUE}🏗️ Step 6/7: Building...${NC}"
-pnpm build > /dev/null 2>&1
 
-if [ $? -ne 0 ]; then
+# Capture output and exit code (don't exit on error yet)
+set +e  # Don't exit on error
+BUILD_OUTPUT=$(pnpm build 2>&1)
+BUILD_EXIT=$?
+set -e  # Re-enable exit on error
+
+if [ $BUILD_EXIT -ne 0 ]; then
   echo
   echo "${RED}❌ Build failed!${NC}"
-  echo "${YELLOW}💡 Run 'pnpm build' to see build errors.${NC}"
+  echo "${YELLOW}💡 Full error output:${NC}"
+  echo "----------------------------------------"
+  echo "$BUILD_OUTPUT"
+  echo "----------------------------------------"
+  echo
+  echo "${YELLOW}💡 Fix build errors before committing.${NC}"
+  echo "${YELLOW}💡 Run 'pnpm build' to see all build errors.${NC}"
   exit 1
 fi
 
@@ -145,12 +209,20 @@ echo
 echo "${BLUE}⚙️ Step 7/7: Validating GitHub Actions workflows...${NC}"
 
 if command -v actionlint > /dev/null 2>&1; then
-  if ./scripts/lint-workflows.sh > /dev/null 2>&1; then
+  # Capture output and exit code (don't exit on error yet)
+  set +e  # Don't exit on error
+  WORKFLOW_OUTPUT=$(./scripts/lint-workflows.sh 2>&1)
+  WORKFLOW_EXIT=$?
+  set -e  # Re-enable exit on error
+
+  if [ $WORKFLOW_EXIT -eq 0 ]; then
     echo "${GREEN}✓ Workflow validation passed${NC}"
   else
     echo
     echo "${YELLOW}⚠️  Workflow validation found issues (non-blocking):${NC}"
-    ./scripts/lint-workflows.sh || true  # Prevent exit code from failing the hook
+    echo "----------------------------------------"
+    echo "$WORKFLOW_OUTPUT"
+    echo "----------------------------------------"
     echo
     echo "${YELLOW}💡 Fix workflow errors when convenient.${NC}"
     echo "${YELLOW}💡 Run 'pnpm workflow:lint' to see details.${NC}"
