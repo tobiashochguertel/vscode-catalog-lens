@@ -185,13 +185,13 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
   pull_request:
     branches: [main]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
 ```
 
 ### 4. Concurrency Control
@@ -217,8 +217,8 @@ on:
   push:
     branches: [main, develop]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
   pull_request:
     branches: [main]
 
@@ -322,7 +322,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: vsix
-          path: '*.vsix'
+          path: "*.vsix"
 ```
 
 **Features:**
@@ -383,10 +383,10 @@ xvfb-run -a npm test
 Modify `runTest.ts` to support version env var:
 
 ```typescript
-import { runTests } from '@vscode/test-electron';
+import { runTests } from "@vscode/test-electron";
 
 async function main() {
-  const vscodeVersion = process.env.VSCODE_VERSION || 'stable';
+  const vscodeVersion = process.env.VSCODE_VERSION || "stable";
 
   await runTests({
     version: vscodeVersion,
@@ -471,7 +471,7 @@ Error: Timeout of 20000ms exceeded
 ```typescript
 // src/test/suite/index.ts
 const mocha = new Mocha({
-  ui: 'tdd',
+  ui: "tdd",
   color: true,
   timeout: 60000, // 60 seconds
 });
@@ -489,14 +489,14 @@ const mocha = new Mocha({
 
 ```typescript
 // ❌ Don't use arbitrary delays
-test('Bad test', () => {
+test("Bad test", () => {
   setTimeout(() => {
     assert.ok(true);
   }, 1000);
 });
 
 // ✅ Use proper async/await
-test('Good test', async () => {
+test("Good test", async () => {
   const result = await someAsyncOperation();
   assert.ok(result);
 });

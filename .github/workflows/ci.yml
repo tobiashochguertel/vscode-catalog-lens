@@ -11,6 +11,9 @@ on:
 
   workflow_dispatch:
 
+env:
+  PRETTIER_EXPERIMENTAL_CLI: 1
+
 jobs:
   # Lint and typecheck jobs run on Ubuntu only
   lint:

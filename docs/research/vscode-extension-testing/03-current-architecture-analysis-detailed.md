@@ -43,15 +43,15 @@ ReferenceError: suite is not defined
 // test/e2e/suite/index.ts
 export function run(): Promise<void> {
   const mocha = new Mocha({
-    ui: 'bdd',
+    ui: "bdd",
     color: true,
     timeout: 60000,
   });
 
   // ATTEMPT 1: Emit pre-require to expose BDD globals
-  mocha.suite.emit('pre-require', globalThis, null, mocha);
+  mocha.suite.emit("pre-require", globalThis, null, mocha);
 
-  const testsRoot = path.resolve(__dirname, '..');
+  const testsRoot = path.resolve(__dirname, "..");
   // ... rest of code
 }
 ```
@@ -73,20 +73,20 @@ export function run(): Promise<void> {
 
 ```typescript
 // test/e2e/suite/index.ts
-import * as BDD from 'mocha/lib/interfaces/bdd';
+import * as BDD from "mocha/lib/interfaces/bdd";
 
 export function run(): Promise<void> {
   const mocha = new Mocha({
-    ui: 'bdd',
+    ui: "bdd",
     color: true,
     timeout: 60000,
   });
 
   // ATTEMPT 2: Explicitly initialize BDD interface
   BDD(mocha.suite);
-  mocha.suite.emit('pre-require', globalThis, null, mocha);
+  mocha.suite.emit("pre-require", globalThis, null, mocha);
 
-  const testsRoot = path.resolve(__dirname, '..');
+  const testsRoot = path.resolve(__dirname, "..");
   // ... rest of code
 }
 ```
@@ -107,20 +107,20 @@ export function run(): Promise<void> {
 // test/e2e/suite/index.ts
 export function run(): Promise<void> {
   const mocha = new Mocha({
-    ui: 'bdd',
+    ui: "bdd",
     color: true,
     timeout: 60000,
   });
 
   // ATTEMPT 3: Create context and copy to globalThis
   const context: any = {};
-  mocha.suite.emit('pre-require', context, null, mocha);
+  mocha.suite.emit("pre-require", context, null, mocha);
 
-  Object.keys(context).forEach(key => {
+  Object.keys(context).forEach((key) => {
     (globalThis as any)[key] = context[key];
   });
 
-  const testsRoot = path.resolve(__dirname, '..');
+  const testsRoot = path.resolve(__dirname, "..");
   // ... rest of code
 }
 ```
@@ -141,29 +141,29 @@ export function run(): Promise<void> {
 // test/e2e/suite/index.ts
 export function run(): Promise<void> {
   const mocha = new Mocha({
-    ui: 'bdd',
+    ui: "bdd",
     color: true,
     timeout: 60000,
   });
 
   // ATTEMPT 4: Manual require() of test files
   const context: any = {};
-  mocha.suite.emit('pre-require', context, null, mocha);
+  mocha.suite.emit("pre-require", context, null, mocha);
 
-  Object.keys(context).forEach(key => {
+  Object.keys(context).forEach((key) => {
     (globalThis as any)[key] = context[key];
   });
 
-  const testsRoot = path.resolve(__dirname, '..');
+  const testsRoot = path.resolve(__dirname, "..");
 
   return new Promise((resolve, reject) => {
-    glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
+    glob("**/**.test.js", { cwd: testsRoot }, (err, files) => {
       if (err) {
         return reject(err);
       }
 
       // Manually require test files before mocha.run()
-      files.forEach(f => {
+      files.forEach((f) => {
         const fullPath = path.resolve(testsRoot, f);
         delete require.cache[fullPath];
         require(fullPath); // Load with current globals
@@ -171,7 +171,7 @@ export function run(): Promise<void> {
       });
 
       try {
-        mocha.run(failures => {
+        mocha.run((failures) => {
           if (failures > 0) {
             reject(new Error(`${failures} tests failed.`));
           } else {
@@ -256,11 +256,11 @@ Error: ReferenceError: suite is not defined
 
 ```typescript
 // test/suite/extension.test.ts
-import * as assert from 'node:assert';
-import * as vscode from 'vscode';
+import * as assert from "node:assert";
+import * as vscode from "vscode";
 
-suite('Extension Test Suite', () => {
-  test('Sample test', () => {
+suite("Extension Test Suite", () => {
+  test("Sample test", () => {
     assert.strictEqual(1 + 1, 2);
   });
 });
@@ -277,12 +277,12 @@ suite('Extension Test Suite', () => {
 **reactive-vscode Extensions**:
 
 ```typescript
-import { defineExtension } from 'reactive-vscode';
+import { defineExtension } from "reactive-vscode";
 // test/e2e/suite/extension.test.ts
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('Extension Test Suite', () => {
-  it('should activate', () => {
+describe("Extension Test Suite", () => {
+  it("should activate", () => {
     // Test code
   });
 });
@@ -301,11 +301,11 @@ describe('Extension Test Suite', () => {
 
 ```typescript
 // Check that BDD is correctly initialized
-import * as BDD from 'mocha/lib/interfaces/bdd';
+import * as BDD from "mocha/lib/interfaces/bdd";
 
-const mocha = new Mocha({ ui: 'bdd' });
+const mocha = new Mocha({ ui: "bdd" });
 BDD(mocha.suite);
-mocha.suite.emit('pre-require', globalThis, null, mocha);
+mocha.suite.emit("pre-require", globalThis, null, mocha);
 
 console.log(typeof globalThis.suite); // 'function'
 console.log(typeof globalThis.test); // 'function'
@@ -323,13 +323,13 @@ Check `out/test/e2e/suite/index.js`:
 function run() {
   return new Promise((resolve, reject) => {
     const mocha = new Mocha({
-      ui: 'bdd',
+      ui: "bdd",
       color: true,
       timeout: 60000,
     });
     const context = {};
-    mocha.suite.emit('pre-require', context, null, mocha);
-    Object.keys(context).forEach(key => {
+    mocha.suite.emit("pre-require", context, null, mocha);
+    Object.keys(context).forEach((key) => {
       globalThis[key] = context[key];
     });
     // ... rest
@@ -345,7 +345,7 @@ function run() {
 
 ```typescript
 // Attempt to load test files with current context
-files.forEach(f => {
+files.forEach((f) => {
   const fullPath = path.resolve(testsRoot, f);
   delete require.cache[fullPath];
   require(fullPath); // Should use current global context
@@ -398,31 +398,31 @@ vitest (Standard Node.js)
 ```typescript
 // test/e2e/suite/extension.test.ts
 // Trying to use vitest syntax with Mocha runner
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('Extension', () => {
+describe("Extension", () => {
   // ReferenceError: suite is not defined
-  it('should work', () => {}); // (never reached)
+  it("should work", () => {}); // (never reached)
 });
 ```
 
 **With @reactive-vscode/mock (Working)**:
 
 ```typescript
-import { defineExtension } from 'reactive-vscode';
+import { defineExtension } from "reactive-vscode";
 // test/e2e/extension.test.ts
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from "vitest";
 
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
   return createMockVSCode({ manifest: {} });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-describe('Extension', () => {
+describe("Extension", () => {
   // ✅ Works - vitest provides describe
-  it('should activate', () => {
+  it("should activate", () => {
     // ✅ Works - vitest provides it
     const { activate } = defineExtension(() => {});
     expect(() => activate(context._extensionContext)).not.toThrow();

@@ -202,9 +202,13 @@ Create `.versionrc`, `.versionrc.json`, or `.versionrc.js`:
 ### Programmatic API
 
 ```typescript
-import { ConventionalChangelog } from 'conventional-changelog';
+import { ConventionalChangelog } from "conventional-changelog";
 
-const changelog = new ConventionalChangelog().readPackage().options({ releaseCount: 1 }).context({ version: '1.2.0' }).write();
+const changelog = new ConventionalChangelog()
+  .readPackage()
+  .options({ releaseCount: 1 })
+  .context({ version: "1.2.0" })
+  .write();
 
 for await (const chunk of changelog) {
   console.log(chunk);

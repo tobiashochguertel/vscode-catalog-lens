@@ -393,8 +393,8 @@ name: Lint Workflows
 on:
   pull_request:
     paths:
-      - '.github/workflows/*.yml'
-      - '.github/workflows/*.yaml'
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
 
 jobs:
   actionlint:

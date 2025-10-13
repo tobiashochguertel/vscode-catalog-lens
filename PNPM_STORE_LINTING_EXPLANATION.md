@@ -156,7 +156,12 @@ The `.pnpm-store/v10/index/` files are **minified JSON**:
   "name": "micromark-extension-gfm-strikethrough",
   "version": "2.1.0",
   "files": {
-    "README.md": { "checkedAt": 1728748899969, "integrity": "sha512-...", "mode": 420, "size": 1234 },
+    "README.md": {
+      "checkedAt": 1728748899969,
+      "integrity": "sha512-...",
+      "mode": 420,
+      "size": 1234
+    },
     "index.js": {
       // ...
     }

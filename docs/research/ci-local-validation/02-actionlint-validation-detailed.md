@@ -152,7 +152,7 @@ config-variables:
 # Ignore specific checks
 ignore:
   - 'property "foo" is not defined in object type'
-  - 'SC2086:.*' # Ignore specific shellcheck warnings
+  - "SC2086:.*" # Ignore specific shellcheck warnings
 ```
 
 ### Integration with shellcheck
@@ -370,11 +370,11 @@ ignore:
   - 'property "custom_input" is not defined in object type'
 
   # Ignore shellcheck warnings
-  - 'SC2086:.*' # Unquoted variable expansion
-  - 'SC2148:.*' # Shebang missing
+  - "SC2086:.*" # Unquoted variable expansion
+  - "SC2148:.*" # Shebang missing
 
   # Ignore specific files
-  - '.github/workflows/experimental.yml:.*'
+  - ".github/workflows/experimental.yml:.*"
 
 # Shellcheck configuration
 shellcheck:
@@ -462,12 +462,12 @@ name: Lint Workflows
 on:
   push:
     paths:
-      - '.github/workflows/*.yml'
-      - '.github/workflows/*.yaml'
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
   pull_request:
     paths:
-      - '.github/workflows/*.yml'
-      - '.github/workflows/*.yaml'
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
 
 jobs:
   actionlint:
@@ -640,7 +640,7 @@ self-hosted-runner:
     - gpu-*
 
 ignore:
-  - 'SC2086:.*' # Allow unquoted variables (project convention)
+  - "SC2086:.*" # Allow unquoted variables (project convention)
 ```
 
 **Benefits:**
@@ -656,10 +656,10 @@ ignore:
 on:
   push:
     paths:
-      - '.github/workflows/*.yml'
+      - ".github/workflows/*.yml"
   pull_request:
     paths:
-      - '.github/workflows/*.yml'
+      - ".github/workflows/*.yml"
 ```
 
 **Benefits:**

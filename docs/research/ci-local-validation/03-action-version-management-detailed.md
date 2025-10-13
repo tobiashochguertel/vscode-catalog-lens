@@ -21,10 +21,10 @@ Create `.github/dependabot.yml` in your repository:
 version: 2
 updates:
   # Monitor GitHub Actions versions
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
 ```
 
 **That's it!** Dependabot will automatically:
@@ -39,48 +39,48 @@ updates:
 ```yaml
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-      timezone: 'America/New_York'
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
 
     # Limit number of open PRs
     open-pull-requests-limit: 5
 
     # Assignees and reviewers
     assignees:
-      - 'team-lead'
+      - "team-lead"
     reviewers:
-      - 'devops-team'
+      - "devops-team"
 
     # PR labels
     labels:
-      - 'dependencies'
-      - 'github-actions'
-      - 'automated'
+      - "dependencies"
+      - "github-actions"
+      - "automated"
 
     # Commit message prefix
     commit-message:
-      prefix: 'chore'
-      prefix-development: 'chore'
-      include: 'scope'
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
 
     # Allow updates
     allow:
-      - dependency-type: 'all'
+      - dependency-type: "all"
 
     # Ignore specific updates
     ignore:
       # Ignore major version updates for specific action
-      - dependency-name: 'actions/checkout'
-        update-types: ['version-update:semver-major']
+      - dependency-name: "actions/checkout"
+        update-types: ["version-update:semver-major"]
 
       # Ignore all updates for specific action
-      - dependency-name: 'actions/setup-node'
-        versions: ['3.x']
+      - dependency-name: "actions/setup-node"
+        versions: ["3.x"]
 ```
 
 ---
@@ -101,10 +101,10 @@ updates:
 
 ```yaml
 schedule:
-  interval: 'weekly'
-  day: 'monday' # monday, tuesday, ..., sunday
-  time: '09:00' # HH:MM in 24-hour format
-  timezone: 'UTC' # IANA timezone identifier
+  interval: "weekly"
+  day: "monday" # monday, tuesday, ..., sunday
+  time: "09:00" # HH:MM in 24-hour format
+  timezone: "UTC" # IANA timezone identifier
 ```
 
 ---
@@ -192,8 +192,8 @@ actions/checkout@v4.0.0  # Major update
 
 ```yaml
 ignore:
-  - dependency-name: 'actions/*'
-    update-types: ['version-update:semver-major'] # Ignore major updates
+  - dependency-name: "actions/*"
+    update-types: ["version-update:semver-major"] # Ignore major updates
 ```
 
 ### SHA Pinning
@@ -236,35 +236,35 @@ open-pull-requests-limit: 5 # Maximum 5 open Dependabot PRs
 
 ```yaml
 assignees:
-  - 'devops-lead'
-  - 'team-maintainer'
+  - "devops-lead"
+  - "team-maintainer"
 
 reviewers:
-  - 'security-team'
-  - 'ci-cd-team'
+  - "security-team"
+  - "ci-cd-team"
 
 # For team reviews
 team-reviewers:
-  - 'platform-team'
+  - "platform-team"
 ```
 
 ### Labels
 
 ```yaml
 labels:
-  - 'dependencies'
-  - 'github-actions'
-  - 'automated'
-  - 'skip-changelog' # Custom label for tooling
+  - "dependencies"
+  - "github-actions"
+  - "automated"
+  - "skip-changelog" # Custom label for tooling
 ```
 
 ### Commit Message Customization
 
 ```yaml
 commit-message:
-  prefix: 'chore' # "chore: bump actions/checkout"
-  prefix-development: 'build' # For dev dependencies
-  include: 'scope' # Include scope in commit message
+  prefix: "chore" # "chore: bump actions/checkout"
+  prefix-development: "build" # For dev dependencies
+  include: "scope" # Include scope in commit message
 ```
 
 **Result:**
@@ -289,10 +289,10 @@ milestone: 10 # Assign PRs to milestone #10
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
 ```
 
 **Result:** Weekly PRs for action updates, minimal configuration.
@@ -303,22 +303,22 @@ updates:
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'daily' # Check daily for security updates
+      interval: "daily" # Check daily for security updates
 
     reviewers:
-      - 'security-team'
+      - "security-team"
 
     labels:
-      - 'security'
-      - 'dependencies'
-      - 'high-priority'
+      - "security"
+      - "dependencies"
+      - "high-priority"
 
     # Don't ignore any updates
     allow:
-      - dependency-type: 'all'
+      - dependency-type: "all"
 ```
 
 ### Example 3: Controlled Updates
@@ -327,26 +327,26 @@ updates:
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
 
     # Limit concurrent PRs
     open-pull-requests-limit: 3
 
     # Ignore major version updates (review manually)
     ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
 
     # Auto-assign for review
     assignees:
-      - 'ci-maintainer'
+      - "ci-maintainer"
 
     commit-message:
-      prefix: 'chore'
-      include: 'scope'
+      prefix: "chore"
+      include: "scope"
 ```
 
 ### Example 4: Multi-Ecosystem Setup
@@ -356,31 +356,31 @@ updates:
 version: 2
 updates:
   # GitHub Actions
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     labels:
-      - 'dependencies'
-      - 'github-actions'
+      - "dependencies"
+      - "github-actions"
 
   # npm dependencies
-  - package-ecosystem: 'npm'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     labels:
-      - 'dependencies'
-      - 'npm'
+      - "dependencies"
+      - "npm"
 
   # Docker base images
-  - package-ecosystem: 'docker'
-    directory: '/'
+  - package-ecosystem: "docker"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     labels:
-      - 'dependencies'
-      - 'docker'
+      - "dependencies"
+      - "docker"
 ```
 
 ---
@@ -618,10 +618,10 @@ echo "✅ Updated workflows"
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
 ```
 
 **Benefits:**
@@ -647,9 +647,9 @@ updates:
 
 ```yaml
 labels:
-  - 'dependencies'
-  - 'automated'
-  - 'skip-changelog' # For release note generation
+  - "dependencies"
+  - "automated"
+  - "skip-changelog" # For release note generation
 ```
 
 **Benefits:**
@@ -720,8 +720,8 @@ git ls-remote https://github.com/actions/checkout.git v4.1.1
 ```yaml
 ignore:
   # Ignore major version updates
-  - dependency-name: '*'
-    update-types: ['version-update:semver-major']
+  - dependency-name: "*"
+    update-types: ["version-update:semver-major"]
 ```
 
 **Reason:**
@@ -872,13 +872,13 @@ https://github.com/<owner>/<repo>/security/dependabot
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
+      interval: "weekly"
     labels:
-      - 'dependencies'
-      - 'automated'
+      - "dependencies"
+      - "automated"
 ```
 
 **Weekly routine:**

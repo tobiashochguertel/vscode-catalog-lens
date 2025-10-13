@@ -64,7 +64,12 @@ vi.mock("find-up", () => ({
     if (!fixtureMatch) return null;
 
     // Only search within the fixture directory
-    const fixtureRoot = path.join(process.cwd(), "test", "fixtures", fixtureName);
+    const fixtureRoot = path.join(
+      process.cwd(),
+      "test",
+      "fixtures",
+      fixtureName,
+    );
     // ... search only in fixtureRoot
   },
 }));

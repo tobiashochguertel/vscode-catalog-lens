@@ -92,21 +92,21 @@ Comprehensive research on testing VS Code extensions using both reactive-vscode 
 
 ```typescript
 // demo/test/index.test.ts
-import { it, vi } from 'vitest';
-import extension from '../src/extension';
+import { it, vi } from "vitest";
+import extension from "../src/extension";
 
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
-  const manifest = await import('../package.json');
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
+  const manifest = await import("../package.json");
   return createMockVSCode({
     manifest,
-    root: resolve(__dirname, '..'),
+    root: resolve(__dirname, ".."),
   });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-it('should activate', async () => {
+it("should activate", async () => {
   extension.activate(context._extensionContext);
 });
 ```

@@ -192,12 +192,12 @@ Done
 
 ```typescript
 // test/e2e/suite/index.ts (Test Suite Loader Context)
-const mocha = new Mocha({ ui: 'bdd' });
-mocha.suite.emit('pre-require', globalThis, null, mocha);
+const mocha = new Mocha({ ui: "bdd" });
+mocha.suite.emit("pre-require", globalThis, null, mocha);
 // globalThis now has: suite, test, before, after, etc.
 
 // test/e2e/suite/extension.test.ts (Extension Host Context - ISOLATED)
-suite('Test', () => {
+suite("Test", () => {
   // ReferenceError: suite is not defined
   // Never reached
 });
@@ -213,12 +213,12 @@ const context = await vi.hoisted(async () => {
   return createMockVSCode({ manifest: {} });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
 // describe, it provided by vitest - same context
-describe('Test', () => {
+describe("Test", () => {
   // ✅ Works
-  it('should work', () => {
+  it("should work", () => {
     // ✅ Works
     // Test code
   });

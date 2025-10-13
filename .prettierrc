@@ -30,8 +30,10 @@
     }
   ],
   "plugins": [
-    "/Users/tobiashochgurtel/dotfiles/apps-config/prettier/node_modules/@prettier/plugin-hermes/index.mjs",
-    "/Users/tobiashochgurtel/dotfiles/apps-config/prettier/node_modules/@prettier/plugin-oxc/index.mjs"
+    "@prettier/plugin-hermes",
+    "@prettier/plugin-oxc",
+    "prettier-plugin-gherkin"
+    // "prettier-plugin-sh"
   ],
   "printWidth": 200,
   "proseWrap": "preserve",

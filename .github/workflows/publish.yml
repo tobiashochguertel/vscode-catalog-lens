@@ -40,6 +40,9 @@ on:
     tags:
       - 'v*'
 
+env:
+  PRETTIER_EXPERIMENTAL_CLI: 1
+
 jobs:
   prepare-release:
     name: Prepare Release (Changelog & Version Bump)

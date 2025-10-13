@@ -440,7 +440,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: vsix
-          path: '*.vsix'
+          path: "*.vsix"
 ```
 
 ## Using GitHub Actions

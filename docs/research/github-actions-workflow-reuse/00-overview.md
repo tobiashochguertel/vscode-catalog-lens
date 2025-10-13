@@ -65,7 +65,7 @@ jobs:
   test-unix:
     uses: ./.github/workflows/test-unix.yml
     with:
-      node-version: 'lts/*'
+      node-version: "lts/*"
 ```
 
 ### Finding 2: Matrix Strategy Works with Reusable Workflows

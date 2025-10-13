@@ -68,7 +68,7 @@ export interface MockVscode extends ExposedEnums, ExposedClases {
 #### 2. createMockVSCode Function
 
 ```typescript
-import { createMockVSCode } from '@reactive-vscode/mock';
+import { createMockVSCode } from "@reactive-vscode/mock";
 
 const context = createMockVSCode({
   manifest, // package.json
@@ -117,23 +117,23 @@ const context = createMockVSCode({
 The recommended pattern uses vitest's `vi.hoisted()` to ensure the mock is created before module imports:
 
 ```typescript
-import { it, vi } from 'vitest';
-import extension from '../src/extension';
+import { it, vi } from "vitest";
+import extension from "../src/extension";
 
 const context = await vi.hoisted(async () => {
-  const { resolve } = await import('node:path');
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
-  const manifest = await import('../package.json');
+  const { resolve } = await import("node:path");
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
+  const manifest = await import("../package.json");
 
   return createMockVSCode({
     manifest,
-    root: resolve(__dirname, '..'),
+    root: resolve(__dirname, ".."),
   });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-it('should activate', async () => {
+it("should activate", async () => {
   extension.activate(context._extensionContext);
 });
 ```
@@ -143,19 +143,19 @@ it('should activate', async () => {
 ### Testing Extension Activation
 
 ```typescript
-import { defineExtension } from 'reactive-vscode';
-import { describe, expect, it, vi } from 'vitest';
+import { defineExtension } from "reactive-vscode";
+import { describe, expect, it, vi } from "vitest";
 
 // Create mock
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
   return createMockVSCode({ manifest: {} });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-describe('Extension Activation', () => {
-  it('should activate successfully', () => {
+describe("Extension Activation", () => {
+  it("should activate successfully", () => {
     const { activate, deactivate } = defineExtension(() => {
       // Extension code
     });
@@ -174,30 +174,30 @@ describe('Extension Activation', () => {
 ### Testing Commands
 
 ```typescript
-import { defineExtension, useCommand } from 'reactive-vscode';
-import { describe, expect, it, vi } from 'vitest';
+import { defineExtension, useCommand } from "reactive-vscode";
+import { describe, expect, it, vi } from "vitest";
 
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
   return createMockVSCode({ manifest: {} });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-describe('Commands', () => {
-  it('should register and execute command', () => {
+describe("Commands", () => {
+  it("should register and execute command", () => {
     const handler = vi.fn();
 
     const { activate } = defineExtension(() => {
-      useCommand('test.command', handler);
+      useCommand("test.command", handler);
     });
 
     activate(context._extensionContext);
 
     // Execute command via mock
-    context.commands.executeCommand('test.command', 'arg1', 'arg2');
+    context.commands.executeCommand("test.command", "arg1", "arg2");
 
-    expect(handler).toHaveBeenCalledWith('arg1', 'arg2');
+    expect(handler).toHaveBeenCalledWith("arg1", "arg2");
   });
 });
 ```
@@ -205,18 +205,18 @@ describe('Commands', () => {
 ### Testing Reactive State
 
 ```typescript
-import { defineExtension, ref, watchEffect } from 'reactive-vscode';
-import { describe, expect, it, vi } from 'vitest';
+import { defineExtension, ref, watchEffect } from "reactive-vscode";
+import { describe, expect, it, vi } from "vitest";
 
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
   return createMockVSCode({ manifest: {} });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-describe('Reactive State', () => {
-  it('should react to state changes', () => {
+describe("Reactive State", () => {
+  it("should react to state changes", () => {
     const spy = vi.fn();
 
     const { activate } = defineExtension(() => {
@@ -241,33 +241,33 @@ describe('Reactive State', () => {
 ### Testing Configuration
 
 ```typescript
-import { defineConfigs, defineExtension } from 'reactive-vscode';
-import { describe, expect, it, vi } from 'vitest';
+import { defineConfigs, defineExtension } from "reactive-vscode";
+import { describe, expect, it, vi } from "vitest";
 
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
   return createMockVSCode({
     manifest: {},
     init: {
       workspace: {
         workspaceConfiguration: {
-          'myExt.setting': 'value',
+          "myExt.setting": "value",
         },
       },
     },
   });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-describe('Configuration', () => {
-  it('should read configuration', () => {
-    const { setting } = defineConfigs('myExt', {
+describe("Configuration", () => {
+  it("should read configuration", () => {
+    const { setting } = defineConfigs("myExt", {
       setting: String,
     });
 
     const { activate } = defineExtension(() => {
-      expect(setting.value).toBe('value');
+      expect(setting.value).toBe("value");
     });
 
     activate(context._extensionContext);
@@ -278,12 +278,12 @@ describe('Configuration', () => {
 ### Testing Window State
 
 ```typescript
-import { defineExtension, useIsDarkTheme } from 'reactive-vscode';
-import { describe, expect, it, vi } from 'vitest';
-import { ColorThemeKind } from 'vscode';
+import { defineExtension, useIsDarkTheme } from "reactive-vscode";
+import { describe, expect, it, vi } from "vitest";
+import { ColorThemeKind } from "vscode";
 
 const context = await vi.hoisted(async () => {
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
   return createMockVSCode({
     manifest: {},
     init: {
@@ -296,10 +296,10 @@ const context = await vi.hoisted(async () => {
   });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-describe('Window State', () => {
-  it('should detect dark theme', () => {
+describe("Window State", () => {
+  it("should detect dark theme", () => {
     const { activate } = defineExtension(() => {
       const isDark = useIsDarkTheme();
       expect(isDark.value).toBe(true);
@@ -308,7 +308,7 @@ describe('Window State', () => {
     activate(context._extensionContext);
   });
 
-  it('should react to theme changes', async () => {
+  it("should react to theme changes", async () => {
     const spy = vi.fn();
 
     const { activate } = defineExtension(() => {
@@ -335,14 +335,14 @@ describe('Window State', () => {
 ### Recommended vitest.config.ts
 
 ```typescript
-import { resolve } from 'node:path';
-import { defineConfig } from 'vitest/config';
+import { resolve } from "node:path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    include: ['test/**/*.test.ts'],
+    include: ["test/**/*.test.ts"],
     globals: true,
-    environment: 'node',
+    environment: "node",
     // No need for vscode alias - @reactive-vscode/mock handles it
   },
 });
@@ -449,22 +449,22 @@ The official reactive-vscode repository includes a demo extension with working t
 **Location**: <https://github.com/kermanx/reactive-vscode/blob/main/demo/test/index.test.ts>
 
 ```typescript
-import { it, vi } from 'vitest';
-import extension from '../src/extension';
+import { it, vi } from "vitest";
+import extension from "../src/extension";
 
 const context = await vi.hoisted(async () => {
-  const { resolve } = await import('node:path');
-  const { createMockVSCode } = await import('@reactive-vscode/mock');
-  const manifest = await import('../package.json');
+  const { resolve } = await import("node:path");
+  const { createMockVSCode } = await import("@reactive-vscode/mock");
+  const manifest = await import("../package.json");
   return createMockVSCode({
     manifest,
-    root: resolve(__dirname, '..'),
+    root: resolve(__dirname, ".."),
   });
 });
 
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 
-it('should activate', async () => {
+it("should activate", async () => {
   extension.activate(context._extensionContext);
 });
 ```
@@ -472,24 +472,30 @@ it('should activate', async () => {
 **Extension Code Being Tested**:
 
 ```typescript
-import { defineExtension, useCommand, useIsDarkTheme, useLogger, watchEffect } from 'reactive-vscode';
-import { window } from 'vscode';
-import { message } from './configs';
-import { calledTimes } from './states';
+import {
+  defineExtension,
+  useCommand,
+  useIsDarkTheme,
+  useLogger,
+  watchEffect,
+} from "reactive-vscode";
+import { window } from "vscode";
+import { message } from "./configs";
+import { calledTimes } from "./states";
 
-const logger = useLogger('Reactive VSCode');
+const logger = useLogger("Reactive VSCode");
 
 export = defineExtension(() => {
-  logger.info('Extension Activated');
+  logger.info("Extension Activated");
 
-  useCommand('reactive-vscode-demo.helloWorld', () => {
+  useCommand("reactive-vscode-demo.helloWorld", () => {
     window.showInformationMessage(message.value);
     calledTimes.value++;
   });
 
   const isDark = useIsDarkTheme();
   watchEffect(() => {
-    logger.info('Is Dark Theme:', isDark.value);
+    logger.info("Is Dark Theme:", isDark.value);
   });
 });
 ```
@@ -527,7 +533,7 @@ The mock uses simple state objects. Complex state interactions might need manual
 ❌ **Don't** test internal state:
 
 ```typescript
-it('should have correct internal ref value', () => {
+it("should have correct internal ref value", () => {
   const extension = defineExtension(() => {
     const count = ref(0);
     // Testing internal ref
@@ -539,13 +545,13 @@ it('should have correct internal ref value', () => {
 ✅ **Do** test observable behavior:
 
 ```typescript
-it('should execute command', () => {
+it("should execute command", () => {
   const spy = vi.fn();
   const extension = defineExtension(() => {
-    useCommand('test', spy);
+    useCommand("test", spy);
   });
   extension.activate(context._extensionContext);
-  context.commands.executeCommand('test');
+  context.commands.executeCommand("test");
   expect(spy).toHaveBeenCalled();
 });
 ```
@@ -554,12 +560,12 @@ it('should execute command', () => {
 
 ```typescript
 // test/fixtures/mockContext.ts
-import { createMockVSCode } from '@reactive-vscode/mock';
+import { createMockVSCode } from "@reactive-vscode/mock";
 
 export async function createTestContext(config = {}) {
   return createMockVSCode({
-    manifest: await import('../../package.json'),
-    root: resolve(__dirname, '../..'),
+    manifest: await import("../../package.json"),
+    root: resolve(__dirname, "../.."),
     ...config,
   });
 }
@@ -567,10 +573,10 @@ export async function createTestContext(config = {}) {
 
 ```typescript
 // test/extension.test.ts
-import { createTestContext } from './fixtures/mockContext';
+import { createTestContext } from "./fixtures/mockContext";
 
 const context = await vi.hoisted(() => createTestContext());
-vi.mock('vscode', () => context);
+vi.mock("vscode", () => context);
 ```
 
 ### 3. Isolate Tests
@@ -578,17 +584,17 @@ vi.mock('vscode', () => context);
 Each test should be independent:
 
 ```typescript
-describe('Extension', () => {
+describe("Extension", () => {
   let context: MockVscode;
 
   beforeEach(async () => {
     context = await createTestContext();
   });
 
-  it('test 1', () => {
+  it("test 1", () => {
     /* ... */
   });
-  it('test 2', () => {
+  it("test 2", () => {
     /* ... */
   });
 });
@@ -597,9 +603,9 @@ describe('Extension', () => {
 ### 4. Test Error Scenarios
 
 ```typescript
-it('should handle missing configuration gracefully', () => {
+it("should handle missing configuration gracefully", () => {
   const { activate } = defineExtension(() => {
-    const { setting } = defineConfigs('myExt', {
+    const { setting } = defineConfigs("myExt", {
       setting: String,
     });
 

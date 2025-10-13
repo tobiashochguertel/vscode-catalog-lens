@@ -83,7 +83,7 @@ The workflow has **5 jobs**:
 - name: Setup Node.js
   uses: actions/setup-node@v4
   with:
-    node-version: '20'
+    node-version: "20"
     cache: pnpm
 
 - name: Install dependencies
@@ -271,7 +271,7 @@ on:
         description: Node.js version to use
         required: false
         type: string
-        default: '20'
+        default: "20"
       fetch-depth:
         description: Git fetch depth
         required: false
@@ -281,7 +281,7 @@ on:
         description: Git ref to checkout
         required: false
         type: string
-        default: ''
+        default: ""
       configure-git:
         description: Configure git user for commits
         required: false
@@ -335,7 +335,7 @@ steps:
   - name: Setup Node.js
     uses: actions/setup-node@v4
     with:
-      node-version: '20'
+      node-version: "20"
       cache: pnpm
 
   - name: Install dependencies

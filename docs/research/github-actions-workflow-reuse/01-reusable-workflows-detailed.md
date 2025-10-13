@@ -77,7 +77,7 @@ jobs:
   call-local-workflow:
     uses: ./.github/workflows/reusable-test.yml
     with:
-      node-version: 'lts/*'
+      node-version: "lts/*"
       runner-os: ubuntu-latest
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
@@ -90,7 +90,7 @@ jobs:
   call-external-workflow:
     uses: org-name/repo-name/.github/workflows/reusable.yml@main
     with:
-      node-version: '18'
+      node-version: "18"
 ```
 
 **Reference Formats:**
@@ -152,7 +152,7 @@ on:
       node-version:
         required: false
         type: string
-        default: 'lts/*'
+        default: "lts/*"
       package-manager:
         required: false
         type: string
@@ -232,7 +232,7 @@ on:
       node-version:
         required: false
         type: string
-        default: 'lts/*'
+        default: "lts/*"
 
 jobs:
   setup:
@@ -265,7 +265,7 @@ on:
       node-version:
         required: false
         type: string
-        default: 'lts/*'
+        default: "lts/*"
 
 jobs:
   setup:
@@ -311,7 +311,7 @@ jobs:
       fail-fast: false
     uses: ./.github/workflows/${{ matrix.workflow }}
     with:
-      node-version: 'lts/*'
+      node-version: "lts/*"
 ```
 
 **Note:** Matrix with reusable workflows requires GitHub Actions version that supports this feature. Alternative approach:
@@ -377,7 +377,7 @@ on:
         description: 'Node.js version to use (e.g., "lts/*", "18", "20")'
         required: false
         type: string
-        default: 'lts/*'
+        default: "lts/*"
 ```
 
 ### 3. Use Defaults for Optional Inputs

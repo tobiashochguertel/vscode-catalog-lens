@@ -96,16 +96,16 @@ This file is the entry point for CI and local testing.
 **Example:**
 
 ```typescript
-import * as path from 'node:path';
-import { runTests } from '@vscode/test-electron';
+import * as path from "node:path";
+import { runTests } from "@vscode/test-electron";
 
 async function main() {
   try {
     // The folder containing the Extension Manifest package.json
-    const extensionDevelopmentPath = path.resolve(__dirname, '../../');
+    const extensionDevelopmentPath = path.resolve(__dirname, "../../");
 
     // The path to test runner (compiled JS)
-    const extensionTestsPath = path.resolve(__dirname, './suite/index');
+    const extensionTestsPath = path.resolve(__dirname, "./suite/index");
 
     // Download VS Code, unzip it and run the integration test
     await runTests({
@@ -113,7 +113,7 @@ async function main() {
       extensionTestsPath,
     });
   } catch (err) {
-    console.error('Failed to run tests', err);
+    console.error("Failed to run tests", err);
     process.exit(1);
   }
 }
@@ -139,28 +139,28 @@ This file configures the Mocha test runner inside VS Code.
 **Example:**
 
 ```typescript
-import * as path from 'node:path';
-import { glob } from 'glob';
-import * as Mocha from 'mocha';
+import * as path from "node:path";
+import { glob } from "glob";
+import * as Mocha from "mocha";
 
 export function run(): Promise<void> {
   // Create the mocha test
   const mocha = new Mocha({
-    ui: 'tdd',
+    ui: "tdd",
     color: true,
   });
 
-  const testsRoot = path.resolve(__dirname, '..');
+  const testsRoot = path.resolve(__dirname, "..");
 
   return new Promise((resolve, reject) => {
-    glob('**/**.test.js', { cwd: testsRoot })
-      .then(files => {
+    glob("**/**.test.js", { cwd: testsRoot })
+      .then((files) => {
         // Add files to the test suite
-        files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
+        files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
 
         try {
           // Run the mocha test
-          mocha.run(failures => {
+          mocha.run((failures) => {
             if (failures > 0) {
               reject(new Error(`${failures} tests failed.`));
             } else {
@@ -172,7 +172,7 @@ export function run(): Promise<void> {
           reject(err);
         }
       })
-      .catch(err => reject(err));
+      .catch((err) => reject(err));
   });
 }
 ```
@@ -191,19 +191,19 @@ Your actual test code using Mocha and the VS Code API.
 **Example:**
 
 ```typescript
-import * as assert from 'node:assert';
-import * as vscode from 'vscode';
+import * as assert from "node:assert";
+import * as vscode from "vscode";
 
-suite('Extension Test Suite', () => {
-  vscode.window.showInformationMessage('Start all tests.');
+suite("Extension Test Suite", () => {
+  vscode.window.showInformationMessage("Start all tests.");
 
-  test('Sample test', () => {
+  test("Sample test", () => {
     assert.strictEqual([1, 2, 3].indexOf(5), -1);
     assert.strictEqual([1, 2, 3].indexOf(0), -1);
   });
 
-  test('Extension is active', async () => {
-    const ext = vscode.extensions.getExtension('your-publisher.your-extension');
+  test("Extension is active", async () => {
+    const ext = vscode.extensions.getExtension("your-publisher.your-extension");
     assert.ok(ext);
     await ext.activate();
     assert.strictEqual(ext.isActive, true);
@@ -252,7 +252,10 @@ Add debug configuration to `.vscode/launch.json`:
       "name": "Extension Tests",
       "type": "extensionHost",
       "request": "launch",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}", "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
+      ],
       "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
       "preLaunchTask": "${defaultBuildTask}"
     }
@@ -310,11 +313,11 @@ npm test
 
 ```typescript
 await runTests({
-  version: '1.90.0', // Specific version
+  version: "1.90.0", // Specific version
   // OR
-  version: 'stable', // Latest stable
+  version: "stable", // Latest stable
   // OR
-  version: 'insiders', // Latest insiders
+  version: "insiders", // Latest insiders
   extensionDevelopmentPath,
   extensionTestsPath,
 });
@@ -323,10 +326,10 @@ await runTests({
 ### Using Downloaded VS Code
 
 ```typescript
-import { downloadAndUnzipVSCode, runTests } from '@vscode/test-electron';
+import { downloadAndUnzipVSCode, runTests } from "@vscode/test-electron";
 
 // Download first
-const vscodeExecutablePath = await downloadAndUnzipVSCode('stable');
+const vscodeExecutablePath = await downloadAndUnzipVSCode("stable");
 
 // Then run tests
 await runTests({
@@ -343,8 +346,8 @@ await runTests({
   extensionDevelopmentPath,
   extensionTestsPath,
   launchArgs: [
-    '--disable-extensions', // Disable other extensions
-    '--locale=en-US', // Force English locale
+    "--disable-extensions", // Disable other extensions
+    "--locale=en-US", // Force English locale
     workspacePath, // Open specific workspace
   ],
 });
@@ -355,10 +358,10 @@ await runTests({
 ### Testing Commands
 
 ```typescript
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
-test('Command execution', async () => {
-  await vscode.commands.executeCommand('extension.myCommand');
+test("Command execution", async () => {
+  await vscode.commands.executeCommand("extension.myCommand");
   // Assert expected behavior
 });
 ```
@@ -366,24 +369,24 @@ test('Command execution', async () => {
 ### Testing Editor Interactions
 
 ```typescript
-test('Editor modifications', async () => {
+test("Editor modifications", async () => {
   const doc = await vscode.workspace.openTextDocument({
-    content: 'Hello World',
+    content: "Hello World",
   });
   const editor = await vscode.window.showTextDocument(doc);
 
-  await editor.edit(editBuilder => {
-    editBuilder.insert(new vscode.Position(0, 0), '# ');
+  await editor.edit((editBuilder) => {
+    editBuilder.insert(new vscode.Position(0, 0), "# ");
   });
 
-  assert.strictEqual(doc.getText(), '# Hello World');
+  assert.strictEqual(doc.getText(), "# Hello World");
 });
 ```
 
 ### Testing with Timeouts
 
 ```typescript
-test('Async operation', async function () {
+test("Async operation", async function () {
   this.timeout(5000); // 5 seconds
 
   const result = await someAsyncOperation();

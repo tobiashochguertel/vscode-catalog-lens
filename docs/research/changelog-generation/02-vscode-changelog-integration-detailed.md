@@ -148,7 +148,7 @@ VSCode's Markdown renderer supports all standard CommonMark features:
 
 ````markdown
 ```typescript
-const example = 'code';
+const example = "code";
 ```
 ````
 
@@ -410,12 +410,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ```typescript
 export const enum ExtensionManagementAssetType {
-  Icon = 'Microsoft.VisualStudio.Services.Icons.Default',
-  Details = 'Microsoft.VisualStudio.Services.Content.Details',
-  Changelog = 'Microsoft.VisualStudio.Services.Content.Changelog',
-  License = 'Microsoft.VisualStudio.Services.Content.License',
-  Repository = 'Microsoft.VisualStudio.Code.Repository',
-  Manifest = 'Microsoft.VisualStudio.Code.Manifest',
+  Icon = "Microsoft.VisualStudio.Services.Icons.Default",
+  Details = "Microsoft.VisualStudio.Services.Content.Details",
+  Changelog = "Microsoft.VisualStudio.Services.Content.Changelog",
+  License = "Microsoft.VisualStudio.Services.Content.License",
+  Repository = "Microsoft.VisualStudio.Code.Repository",
+  Manifest = "Microsoft.VisualStudio.Code.Manifest",
 }
 ```
 
@@ -459,7 +459,10 @@ class ExtensionEditor extends EditorPane {
   }
 
   private addChangelogTab(): void {
-    const changelogParticipant = this.instantiationService.createInstance(ChangelogContentProvider, this.extension);
+    const changelogParticipant = this.instantiationService.createInstance(
+      ChangelogContentProvider,
+      this.extension,
+    );
     this.layoutParticipants.push(changelogParticipant);
   }
 }
@@ -484,10 +487,17 @@ VSCode prompts users to view release notes after extension updates:
 ```typescript
 // Prompt user to view release notes
 if (extension.hasChangelog()) {
-  const viewChangelog = localize('viewChangelog', 'View Changelog');
-  const message = localize('extensionUpdated', "Extension '{0}' has been updated to v{1}.", extension.displayName, extension.version);
+  const viewChangelog = localize("viewChangelog", "View Changelog");
+  const message = localize(
+    "extensionUpdated",
+    "Extension '{0}' has been updated to v{1}.",
+    extension.displayName,
+    extension.version,
+  );
 
-  this.notificationService.prompt(Severity.Info, message, [{ label: viewChangelog, run: () => this.openChangelog(extension) }]);
+  this.notificationService.prompt(Severity.Info, message, [
+    { label: viewChangelog, run: () => this.openChangelog(extension) },
+  ]);
 }
 ```
 

@@ -511,7 +511,13 @@ Create `.depcheckrc.json`:
 
 ```json
 {
-  "ignores": ["@commitlint/cli", "@commitlint/config-conventional", "ovsx", "vscode-ext-gen", "vite"],
+  "ignores": [
+    "@commitlint/cli",
+    "@commitlint/config-conventional",
+    "ovsx",
+    "vscode-ext-gen",
+    "vite"
+  ],
   "skip-missing": true
 }
 ```

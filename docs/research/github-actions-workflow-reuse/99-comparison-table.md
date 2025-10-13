@@ -116,7 +116,7 @@ name: Setup and Test
 inputs:
   use-hoisted:
     required: false
-    default: 'false'
+    default: "false"
 runs:
   using: composite
   steps:
@@ -140,7 +140,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: windows-latest
-            use-hoisted: 'true'
+            use-hoisted: "true"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: ./.github/actions/setup-and-test
