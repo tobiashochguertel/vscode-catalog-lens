@@ -1,3 +1,26 @@
+## [0.6.3](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.1...v0.6.3) (2025-10-13)
+
+### Bug Fixes
+
+- eliminate ALL hidden errors in pre-commit hook ([a683e60](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/a683e60f4ab04b66160eb8d1849e8fd1f366156f))
+- **hooks:** improve pre-commit hook transparency and error reporting ([711317f](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/711317f8d3d892c70d2ff51fc6c11dd25cf67595))
+- pretter is not available error in pipeline ([3108d11](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/3108d1169aa4a4179c98f29ab4418deb6a662f19))
+
+### Features
+
+- **changelog:** implement automatic changelog generation with commitlint validation ([a8759c0](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/a8759c0ec3acc5d5e8fa303d6b672ec9abdbd560))
+- **ci:** enhance publish workflow with automated changelog generation ([dc8a4dd](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/dc8a4ddafc7fdc1510ab6bdf06a4fd5c2dd12e26))
+- **workflows:** add 'none' option to version increment and improve documentation ([9d2ce93](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/9d2ce9322acecf490c2165ce224beb9eaddb1873))
+
+### BREAKING CHANGES
+
+- **workflows:** None (backward compatible - 'none' is new option)
+
+Refs: #workflow-improvements
+
+- **ci:** Workflow now requires version_increment input for manual triggers
+- **changelog:** Commit messages must now follow Conventional Commits format
+
 ## [0.6.2](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.1...v0.6.2) (2025-10-13)
 
 ### Features
