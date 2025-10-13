@@ -14,6 +14,72 @@ We use the modern Husky v9+ style. See [MODERN_HUSKY_MIGRATION.md](./MODERN_HUSK
 
 ## 📋 Available Hooks
 
+### Commit-Msg Hook (NEW!)
+
+**Location:** `.husky/commit-msg`
+
+**Purpose:** Validates commit messages using [commitlint](https://commitlint.js.org/) to ensure they follow [Conventional Commits](https://www.conventionalcommits.org/) format.
+
+**Format Required:**
+
+```
+<type>(<scope>): <description>
+```
+
+**Valid Types:**
+
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation only
+- `style` - Formatting changes
+- `refactor` - Code refactoring
+- `perf` - Performance improvement
+- `test` - Adding or correcting tests
+- `build` - Build system changes
+- `ci` - CI configuration changes
+- `chore` - Other changes
+- `revert` - Revert a commit
+
+**Examples:**
+
+```bash
+✅ Good:
+git commit -m "feat(catalog): add Bun workspace support"
+git commit -m "fix(parser): handle edge case in YAML parsing"
+git commit -m "docs: update README installation steps"
+
+❌ Bad:
+git commit -m "fixed a bug"
+git commit -m "WIP"
+git commit -m "updates"
+```
+
+**Breaking Changes:**
+
+Add `!` before the colon for breaking changes:
+
+```bash
+git commit -m "feat!: remove deprecated catalog API"
+```
+
+**Output on Error:**
+
+```bash
+📝 Validating commit message...
+❌ Commit message validation failed!
+
+💡 Commit message must follow Conventional Commits format:
+   <type>(<scope>): <description>
+
+Examples:
+  feat(catalog): add support for Bun workspaces
+  fix(parser): handle edge case in YAML parsing
+```
+
+**See Also:** [CHANGELOG_SETUP.md](../CHANGELOG_SETUP.md) for complete documentation
+
+---
+
 ### Pre-Commit Hook
 
 **Location:** `.husky/pre-commit`
@@ -22,31 +88,24 @@ We use the modern Husky v9+ style. See [MODERN_HUSKY_MIGRATION.md](./MODERN_HUSK
 
 **Checks Performed:**
 
-1. **📝 Lint & Auto-fix** - Automatically fixes formatting and style issues
-2. **📦 Re-stage** - Re-adds auto-fixed files to staging area
-3. **📋 Verify Lint** - Ensures no unfixable lint errors remain
-4. **🔧 Type Check** - Verifies TypeScript types are correct
-5. **🏗️ Build** - Ensures the extension builds successfully
+1. **📝 Format** - Prettier formatting
+2. **📄 Markdown** - Lint and fix markdown files
+3. **✨ Lint & Auto-fix** - ESLint with auto-fix
+4. **📦 Re-stage** - Re-add auto-fixed files
+5. **📋 Verify Lint** - Final lint check
+6. **🔧 Type Check** - TypeScript validation
+7. **🏗️ Build** - Extension build verification
 
 **Example Output:**
 
 ```bash
 🔍 Running pre-commit checks...
 
-📝 Step 1/4: Linting and auto-fixing...
-✓ Auto-fix completed
-📦 Re-staging auto-fixed files...
+✨ Step 1/7: Formatting code with Prettier...
+✓ Prettier formatting completed
 
-📋 Step 2/4: Verifying lint status...
-✓ No lint errors
-
-🔧 Step 3/4: Type checking...
-✓ Type check passed
-
-🏗️  Step 4/4: Building...
-✓ Build successful
-
-✅ All pre-commit checks passed!
+📝 Step 2/7: Linting markdown files...
+✓ Markdown linting completed
 ```
 
 **If Checks Fail:**
@@ -82,11 +141,11 @@ Pre-commit hooks can be **slow**. We want to:
 
 | Step | Action       | Tool        | Purpose                       | Fail Fast |
 | ---- | ------------ | ----------- | ----------------------------- | --------- |
-| 1    | Auto-fix     | `lint:fix`  | Fix common issues             | ✅        |
-| 2    | Verify Lint  | `lint`      | Ensure no errors remain       | ✅        |
-| 3    | Type Check   | `typecheck` | Verify TypeScript correctness | ✅        |
-| 4    | Build        | `build`     | Ensure extension builds       | ✅        |
-| -    | Tests (push) | `test`      | Full test suite before push   | ✅        |
+| 1    | Auto-fix     | `lint:fix`  | Fix common issues             | ✅         |
+| 2    | Verify Lint  | `lint`      | Ensure no errors remain       | ✅         |
+| 3    | Type Check   | `typecheck` | Verify TypeScript correctness | ✅         |
+| 4    | Build        | `build`     | Ensure extension builds       | ✅         |
+| -    | Tests (push) | `test`      | Full test suite before push   | ✅         |
 
 ### Why Not Run Tests in Pre-Commit?
 
@@ -98,12 +157,12 @@ Tests are **slow** and would make every commit sluggish. Instead:
 
 ### What Runs Where?
 
-| Check      | Pre-Commit  | Pre-Push | CI           |
-| ---------- | ----------- | -------- | ------------ |
+| Check      | Pre-Commit | Pre-Push | CI          |
+| ---------- | ---------- | -------- | ----------- |
 | Lint       | ✅ Step 1-2 | -        | ✅ lint      |
 | Type Check | ✅ Step 3   | -        | ✅ typecheck |
 | Build      | ✅ Step 4   | -        | ✅ build     |
-| Tests      | ❌ (slow)   | ✅       | ✅ test      |
+| Tests      | ❌ (slow)   | ✅        | ✅ test      |
 
 ## 🚫 Important: The `--no-verify` Reality
 
