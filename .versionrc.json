@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/absolute-version/commit-and-tag-version/master/schema.json",
   "header": "# Changelog\n\nAll notable changes to this project will be documented in this file.\n",
   "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
   "scripts": {

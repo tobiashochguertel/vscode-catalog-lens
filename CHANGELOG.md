@@ -1,3 +1,15 @@
+## [0.6.2](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.1...v0.6.2) (2025-10-13)
+
+### Features
+
+- **changelog:** implement automatic changelog generation with commitlint validation ([a8759c0](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/a8759c0ec3acc5d5e8fa303d6b672ec9abdbd560))
+- **ci:** enhance publish workflow with automated changelog generation ([dc8a4dd](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/dc8a4ddafc7fdc1510ab6bdf06a4fd5c2dd12e26))
+
+### BREAKING CHANGES
+
+- **ci:** Workflow now requires version_increment input for manual triggers
+- **changelog:** Commit messages must now follow Conventional Commits format
+
 ## [0.6.1](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.0...v0.6.1) (2025-10-12)
 
 ### Bug Fixes

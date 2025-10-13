@@ -294,15 +294,16 @@ jobs:
           VERSION="${{ needs.build.outputs.version }}"
 
           # Extract the section for this version from CHANGELOG.md
-          # This sed command extracts everything between the current version header
-          # and the next version header (or end of file)
-          sed -n "/## \[${VERSION}\]/,/## \[/p" CHANGELOG.md | sed '$d' > release_notes.md
-
-          # If no specific section found, generate generic changelog
-          if [ ! -s release_notes.md ] || [ $(wc -l < release_notes.md) -lt 3 ]; then
-            echo "## Changes in v${VERSION}" > release_notes.md
-            echo "" >> release_notes.md
-            echo "See [CHANGELOG.md](https://github.com/tobiashochguertel/vscode-catalog-lens/blob/main/CHANGELOG.md) for details." >> release_notes.md
+          if grep -q "^## \[${VERSION}\]" CHANGELOG.md; then
+            # Extract version section, stopping at next version header
+            sed -n "/^## \[${VERSION}\]/,/^## \[/p" CHANGELOG.md | sed '$d' > release_notes.md
+          else
+            # Fallback: generate generic changelog
+            {
+              echo "## Changes in v${VERSION}"
+              echo ""
+              echo "See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
+            } > release_notes.md
           fi
 
           cat release_notes.md
