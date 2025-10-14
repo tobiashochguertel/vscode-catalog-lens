@@ -22,6 +22,7 @@
   "main": "./dist/index.js",
   "icon": "res/icon.png",
   "files": [
+    "CHANGELOG.md",
     "LICENSE.md",
     "dist/*",
     "res/*"
@@ -96,6 +97,8 @@
     "act:ci": "./scripts/act-test.sh push -W .github/workflows/ci.yml",
     "act:lint": "./scripts/act-test.sh -j lint -W .github/workflows/ci.yml",
     "act:list": "./scripts/act-test.sh",
+    "act:publish": "./scripts/act-test.sh workflow_dispatch -W .github/workflows/publish.yml --input mode=real --input version_increment=patch",
+    "act:publish:simulate": "./scripts/act-test.sh workflow_dispatch -W .github/workflows/publish.yml --input mode=simulate --input version_increment=none",
     "act:test": "./scripts/act-test.sh",
     "act:test-unix": "./scripts/act-test.sh -j test-unix -W .github/workflows/ci.yml",
     "act:typecheck": "./scripts/act-test.sh -j typecheck -W .github/workflows/ci.yml",

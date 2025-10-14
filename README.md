@@ -168,6 +168,31 @@ Then press `F5` in VS Code to launch the extension development host.
 
 ### Publishing
 
+This project has an automated publish workflow with **simulation mode** for safe testing.
+
+#### Quick Start
+
+```bash
+# Test the publish workflow locally (simulation mode)
+pnpm act:publish:simulate
+
+# Or run simulation on GitHub
+gh workflow run publish.yml -f mode=simulate -f version_increment=patch
+```
+
+#### Detailed Publishing Guide
+
+See **[PUBLISH_WORKFLOW_GUIDE.md](PUBLISH_WORKFLOW_GUIDE.md)** for comprehensive documentation on:
+
+- 🔍 **Simulation Mode** - Test without actually publishing
+- 🚀 **Real Mode** - Actual publishing
+- 📝 **Main Branch Sync** - How changes are properly merged
+- 🧪 **Act Integration** - Local workflow testing
+- 💡 **Best Practices** - Step-by-step workflows
+- 🔧 **Troubleshooting** - Common issues and solutions
+
+#### Manual Commands
+
 ```bash
 # Package the extension (creates .vsix file)
 pnpm package
@@ -182,7 +207,13 @@ npx ovsx publish
 pnpm release
 ```
 
-**Note:** VS Code extension publishing works with `npm`, `yarn`, and `pnpm`. This project uses `pnpm` with `vsce --no-dependencies` flag to avoid bundling dependencies that should be bundled by the build process.
+**Note:** The automated workflow is recommended over manual commands as it:
+
+- Generates changelogs automatically
+- Runs all quality checks
+- Publishes to multiple marketplaces
+- Creates GitHub releases
+- Syncs changes back to main branch
 
 ### Local CI Validation
 

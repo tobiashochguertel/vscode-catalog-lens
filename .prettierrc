@@ -33,7 +33,7 @@
     "@prettier/plugin-hermes",
     "@prettier/plugin-oxc",
     "prettier-plugin-gherkin"
-    // "prettier-plugin-sh"
+    // "prettier-plugin-sh" // https://github.com/un-ts/prettier/issues/483 (is not compatible with the experimental cli feature)
   ],
   "printWidth": 200,
   "proseWrap": "preserve",

@@ -4,6 +4,14 @@ on:
   # Manual trigger - click "Run workflow" button on GitHub Actions tab
   workflow_dispatch:
     inputs:
+      mode:
+        description: 'Run mode: simulate (test without publishing) or real (actually publish)'
+        required: true
+        type: choice
+        options:
+          - simulate
+          - real
+        default: simulate
       version_increment:
         description: Version increment type
         required: true
@@ -129,9 +137,25 @@ jobs:
           echo "Created tag: v$NEW_VERSION"
 
       - name: Push Changes
+        if: github.event.inputs.mode != 'simulate'
         run: |
+          echo "🚀 Pushing changes to main branch..."
           git push origin main
           git push origin --tags
+          echo "✅ Changes pushed successfully"
+
+      - name: Simulate Push (Dry Run)
+        if: github.event.inputs.mode == 'simulate'
+        run: |
+          echo "🔍 SIMULATION MODE: Would push the following changes:"
+          echo ""
+          echo "📝 Commits to push:"
+          git log origin/main..HEAD --oneline
+          echo ""
+          echo "🏷️ Tags to push:"
+          git tag --points-at HEAD
+          echo ""
+          echo "⚠️ Skipping actual push (simulation mode)"
 
   test:
     name: Test
@@ -142,7 +166,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Fetch latest changes from main (including changelog/version updates from prepare-release)
           ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+          fetch-depth: 0
+
+      - name: Pull Latest Changes
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode != 'simulate'
+        run: |
+          echo "📥 Pulling latest changes from main (including changelog/version updates)..."
+          git pull origin main
+          echo "✅ Up to date with main"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -178,7 +211,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Fetch latest changes from main (including changelog/version updates from prepare-release)
           ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+          fetch-depth: 0
+
+      - name: Pull Latest Changes
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.mode != 'simulate'
+        run: |
+          echo "📥 Pulling latest changes from main (including changelog/version updates)..."
+          git pull origin main
+          echo "✅ Up to date with main"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -219,13 +261,22 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: |
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_marketplace == 'true') ||
-      github.event_name == 'push'
+      ((github.event_name == 'workflow_dispatch' && github.event.inputs.publish_marketplace == 'true' && github.event.inputs.mode == 'real') ||
+       github.event_name == 'push')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Fetch latest changes from main (including changelog/version updates from prepare-release)
           ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+          fetch-depth: 0
+
+      - name: Pull Latest Changes
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "📥 Pulling latest changes from main (including changelog/version updates)..."
+          git pull origin main
+          echo "✅ Up to date with main"
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -253,8 +304,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     if: |
-      (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_openvsx == 'true') ||
-      github.event_name == 'push'
+      ((github.event_name == 'workflow_dispatch' && github.event.inputs.publish_openvsx == 'true' && github.event.inputs.mode == 'real') ||
+       github.event_name == 'push')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -284,13 +335,22 @@ jobs:
       needs.build.result == 'success' &&
       (needs.publish-marketplace.result == 'success' || needs.publish-marketplace.result == 'skipped') &&
       (needs.publish-openvsx.result == 'success' || needs.publish-openvsx.result == 'skipped') &&
-      ((github.event_name == 'workflow_dispatch' && github.event.inputs.create_release == 'true') ||
+      ((github.event_name == 'workflow_dispatch' && github.event.inputs.create_release == 'true' && github.event.inputs.mode == 'real') ||
        github.event_name == 'push')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          # Fetch latest changes from main (including changelog/version updates from prepare-release)
           ref: ${{ github.event_name == 'workflow_dispatch' && 'main' || github.ref }}
+          fetch-depth: 0
+
+      - name: Pull Latest Changes
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "📥 Pulling latest changes from main (including changelog/version updates)..."
+          git pull origin main
+          echo "✅ Up to date with main"
 
       - name: Download VSIX artifact
         uses: actions/download-artifact@v4
@@ -328,3 +388,39 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  simulation-summary:
+    name: Simulation Summary
+    runs-on: ubuntu-latest
+    needs: [prepare-release, test, build]
+    if: |
+      always() &&
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.mode == 'simulate'
+    steps:
+      - name: Display Simulation Results
+        run: |
+          echo "🔍 ============================================"
+          echo "🔍 SIMULATION MODE - SUMMARY"
+          echo "🔍 ============================================"
+          echo ""
+          echo "✅ Completed Steps:"
+          echo "  - Changelog generation: ${{ needs.prepare-release.outputs.changelog_updated == 'true' && '✅ Updated' || '⏭️ Skipped' }}"
+          echo "  - Version bump: ${{ github.event.inputs.version_increment != 'none' && '✅ Bumped' || '⏭️ Skipped' }}"
+          echo "  - Tests: ${{ needs.test.result == 'success' && '✅ Passed' || '❌ Failed' }}"
+          echo "  - Build & Package: ${{ needs.build.result == 'success' && '✅ Success' || '❌ Failed' }}"
+          echo ""
+          echo "⏭️ Skipped Steps (Simulation Mode):"
+          echo "  - Push changes to main branch"
+          echo "  - Push tags to repository"
+          echo "  - Publish to VS Code Marketplace"
+          echo "  - Publish to Open VSX"
+          echo "  - Create GitHub Release"
+          echo ""
+          echo "📦 Package Information:"
+          echo "  - Version: ${{ needs.build.outputs.version }}"
+          echo "  - VSIX File: ${{ needs.build.outputs.vsix_file }}"
+          echo ""
+          echo "💡 To actually publish, run again with mode='real'"
+          echo ""
+          echo "🔍 ============================================"
