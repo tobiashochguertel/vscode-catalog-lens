@@ -1,3 +1,13 @@
+## [0.6.4](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.3...v0.6.4) (2025-10-14)
+
+### Bug Fixes
+
+- fixing release pipeline by updating `bbumb` ([689ccbc](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/689ccbcac1244f645801ef6354b07ebb35cefee6))
+
+### Features
+
+- add simulation mode and main branch sync to publish workflow ([8884b22](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/8884b2264c979cbb44f237bf6a52b90d0f351a6a))
+
 ## [0.6.3](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.1...v0.6.3) (2025-10-13)
 
 ### Bug Fixes
