@@ -91,9 +91,9 @@
     ]
   ],
   // Additional paths to resolve module locations from
-  "modulePaths": [
-    "/Users/tobiashochgurtel/dotfiles/apps-config/markdownlint-cli2"
-  ],
+  // "modulePaths": [
+  //   "/Users/tobiashochgurtel/dotfiles/apps-config/markdownlint-cli2"
+  // ],
   "outputFormatters": [
     [
       "markdownlint-cli2-formatter-pretty"
