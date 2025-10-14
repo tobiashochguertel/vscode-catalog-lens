@@ -13,6 +13,7 @@ export default defineConfig({
       'test/e2e/runTests.ts', // Exclude old test runner
     ],
     globals: true,
+    watch: false,
     environment: 'node',
     // Run E2E tests serially to avoid context conflicts
     pool: 'forks',
