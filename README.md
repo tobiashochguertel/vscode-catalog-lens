@@ -350,7 +350,6 @@ Complete documentation is organized in the `docs/` directory:
 - [Publishing Workflow](docs/ci/PUBLISH_WORKFLOW_GUIDE.md)
 - [Release Process](docs/guides/RELEASE_PROCESS.md)
 
-
 ## Credits
 
 This extension is a fork of [vscode-pnpm-catalog-lens](https://github.com/antfu/vscode-pnpm-catalog-lens) by [Anthony Fu](https://github.com/antfu), with added support for Bun catalogs.

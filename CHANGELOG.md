@@ -1,3 +1,17 @@
+## [0.6.5](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.4...v0.6.5) (2025-10-16)
+
+### Bug Fixes
+
+- use package.json packageManager field for PNPM version in workflows ([51662ca](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/51662ca16176dfc3755a72263018c1abd0cac75c))
+
+### chore
+
+- organize documentation and project structure ([66e0aeb](https://github.com/tobiashochguertel/vscode-catalog-lens/commit/66e0aeb86587be7d43ad9a6f7ece0d0e695dc727))
+
+### BREAKING CHANGES
+
+- Documentation files have been reorganized. Update any external references to documentation paths.
+
 ## [0.6.4](https://github.com/tobiashochguertel/vscode-catalog-lens/compare/v0.6.3...v0.6.4) (2025-10-14)
 
 ### Bug Fixes
