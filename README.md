@@ -182,7 +182,7 @@ gh workflow run publish.yml -f mode=simulate -f version_increment=patch
 
 #### Detailed Publishing Guide
 
-See **[PUBLISH_WORKFLOW_GUIDE.md](PUBLISH_WORKFLOW_GUIDE.md)** for comprehensive documentation on:
+See **[docs/ci/PUBLISH_WORKFLOW_GUIDE.md](docs/ci/PUBLISH_WORKFLOW_GUIDE.md)** for comprehensive documentation on:
 
 - 🔍 **Simulation Mode** - Test without actually publishing
 - 🚀 **Real Mode** - Actual publishing
@@ -330,6 +330,26 @@ act -j lint -W .github/workflows/ci.yml -v
 ```
 
 **For more details:** See [docs/research/ci-local-validation/README.md](docs/research/ci-local-validation/README.md)
+
+## Documentation
+
+Complete documentation is organized in the `docs/` directory:
+
+- **[Documentation Index](docs/INDEX.md)** - Complete documentation index
+- **[CI/CD & Workflows](docs/ci/)** - GitHub Actions, Act testing, publishing workflows
+- **[Development](docs/development/)** - Git hooks, formatting, implementation details
+- **[Testing](docs/testing/)** - Testing strategies, E2E tests, test results
+- **[Guides & References](docs/guides/)** - Quickstarts, publishing, release process
+- **[Research](docs/research/)** - In-depth research and analysis
+
+### Quick Links
+
+- [Quick Start Guide](docs/guides/QUICKSTART.md)
+- [Testing Guide](docs/guides/QUICKSTART_TESTING.md)
+- [CI Validation Guide](docs/guides/QUICKSTART_CI_VALIDATION.md)
+- [Publishing Workflow](docs/ci/PUBLISH_WORKFLOW_GUIDE.md)
+- [Release Process](docs/guides/RELEASE_PROCESS.md)
+
 
 ## Credits
 

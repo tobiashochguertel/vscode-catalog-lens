@@ -27,7 +27,7 @@
 
 ```bash
 cd /Users/tobiashochgurtel/work-dev/vscode/vscode-catalog-lens
-./build-and-publish.sh
+./scripts/build-and-publish.sh
 ```
 
 This script will:
