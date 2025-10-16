@@ -33,8 +33,7 @@ jobs:
       - name: Install pnpm
         if: ${{ !inputs.skip-pnpm-install }}
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.17.1
+        # No version specified - will use packageManager field from package.json
 
       # Setup Node with cache only on Unix
       - name: Set node version (with pnpm cache)
