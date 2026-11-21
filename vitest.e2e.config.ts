@@ -17,11 +17,8 @@ export default defineConfig({
     environment: 'node',
     // Run E2E tests serially to avoid context conflicts
     pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
+    maxWorkers: 1,
+    isolate: false,
     // Reasonable timeout for E2E tests
     testTimeout: 10000,
     alias: {

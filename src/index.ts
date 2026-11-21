@@ -13,6 +13,8 @@ import { commands } from './generated/meta'
 import { getLogger } from './logger'
 import { getCatalogColor, getNodeRange } from './utils'
 
+const PACKAGE_JSON_RE = /[\\/]package\.json$/
+
 const { activate, deactivate } = defineExtension(() => {
   const logger = getLogger()
 
@@ -48,7 +50,7 @@ const { activate, deactivate } = defineExtension(() => {
     if (!editor.value || !editor.value.document)
       return
 
-    if (!editor.value.document.fileName.match(/[\\/]package\.json$/))
+    if (!PACKAGE_JSON_RE.test(editor.value.document.fileName))
       return
 
     return editor.value.document

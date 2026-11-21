@@ -56,7 +56,7 @@ vi.mock('vscode', async () => {
           fileName: filePath,
           positionAt: (offset: number) => {
             const lines = content.slice(0, offset).split('\n')
-            return new actualMock.Position(lines.length - 1, lines[lines.length - 1].length)
+            return new actualMock.Position(lines.length - 1, (lines.at(-1) ?? '').length)
           },
         } as TextDocument
       },

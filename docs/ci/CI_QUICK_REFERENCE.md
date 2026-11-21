@@ -73,17 +73,17 @@ gh workflow run e2e-test.yml \
 # test-unix.yml
 inputs:
   node-version:
-    default: '20'  # Change here
+    default: "20" # Change here
 
 # test-windows.yml
 inputs:
   node-version:
-    default: '20'  # Change here
+    default: "20" # Change here
 
 # e2e-test.yml
 inputs:
   node-version:
-    default: '20'  # Change here
+    default: "20" # Change here
 ```
 
 **Alternative:** Override in ci.yml when calling

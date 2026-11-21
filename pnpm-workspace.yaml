@@ -1,3 +1,19 @@
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
+trustPolicyExclude:
+  - '@oxc-parser/binding-darwin-arm64@0.74.0'
+  - '@oxc-parser/binding-darwin-x64@0.74.0'
+  - '@oxc-parser/binding-linux-arm-gnueabihf@0.74.0'
+  - '@oxc-parser/binding-linux-arm64-gnu@0.74.0'
+  - '@oxc-parser/binding-linux-arm64-musl@0.74.0'
+  - '@oxc-parser/binding-linux-x64-gnu@0.74.0'
+  - '@oxc-parser/binding-linux-x64-musl@0.74.0'
+  - '@oxc-parser/binding-wasm32-wasi@0.74.0'
+  - '@oxc-parser/binding-win32-arm64-msvc@0.74.0'
+  - '@oxc-parser/binding-win32-x64-msvc@0.74.0'
+
 packages:
   - playground
   - examples/*
