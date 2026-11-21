@@ -33,7 +33,7 @@ export function createMockDocument(content: string, filePath: string) {
       const lines = content.substring(0, offset).split('\n')
       return {
         line: lines.length - 1,
-        character: lines[lines.length - 1].length,
+        character: (lines.at(-1) ?? '').length,
       }
     },
   } as any

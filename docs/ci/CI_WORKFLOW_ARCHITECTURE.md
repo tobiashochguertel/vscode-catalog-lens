@@ -160,10 +160,10 @@ steps:
 
 # Job 2: typecheck
 steps:
-  - uses: actions/checkout@v4        # ❌ Duplicate
-  - uses: pnpm/action-setup@v4       # ❌ Duplicate
-  - uses: actions/setup-node@v4      # ❌ Duplicate
-  - run: pnpm install                # ❌ Duplicate
+  - uses: actions/checkout@v4 # ❌ Duplicate
+  - uses: pnpm/action-setup@v4 # ❌ Duplicate
+  - uses: actions/setup-node@v4 # ❌ Duplicate
+  - run: pnpm install # ❌ Duplicate
   - run: pnpm exec vscode-ext-gen... # ❌ Duplicate
 
 # ... (repeated 3 more times)
@@ -185,7 +185,7 @@ jobs:
 # Used by all workflows
 jobs:
   test:
-    uses: ./.github/workflows/setup-node-and-deps.yml  # ✅ Single source of truth
+    uses: ./.github/workflows/setup-node-and-deps.yml # ✅ Single source of truth
 ```
 
 ## Matrix Strategy with Reusable Workflows
